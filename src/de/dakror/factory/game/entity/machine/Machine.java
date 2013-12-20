@@ -1,9 +1,10 @@
-package de.dakror.factory.game.entity;
+package de.dakror.factory.game.entity.machine;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import de.dakror.factory.game.world.Tile;
+import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.world.Block;
 
 /**
  * @author Dakror
@@ -12,9 +13,9 @@ public class Machine extends Entity
 {
 	public Machine(int x, int y, int width, int height)
 	{
-		super(x * Tile.SIZE, y * Tile.SIZE);
-		this.width = width * Tile.SIZE;
-		this.height = height * Tile.SIZE;
+		super(x * Block.SIZE, y * Block.SIZE);
+		this.width = width * Block.SIZE;
+		this.height = height * Block.SIZE;
 	}
 	
 	@Override

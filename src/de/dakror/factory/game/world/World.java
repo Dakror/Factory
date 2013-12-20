@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.gamesetup.util.Drawable;
+import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -24,8 +25,8 @@ public class World implements Drawable
 	
 	public World(int width, int height)
 	{
-		this.width = width * Tile.SIZE;
-		this.height = height * Tile.SIZE;
+		this.width = width * Block.SIZE;
+		this.height = height * Block.SIZE;
 		blocks = new int[width][height];
 		x = y = 0;
 		
@@ -36,20 +37,20 @@ public class World implements Drawable
 	{
 		for (int i = 0; i < blocks.length; i++)
 			for (int j = 0; j < blocks[0].length; j++)
-				blocks[i][j] = Tile.stone.ordinal();
+				blocks[i][j] = Block.stone.ordinal();
 		
 		generate();
 	}
 	
 	public void render()
 	{
-		render = new BufferedImage(blocks.length * Tile.SIZE, blocks[0].length * Tile.SIZE, BufferedImage.TYPE_INT_ARGB);
+		render = new BufferedImage(blocks.length * Block.SIZE, blocks[0].length * Block.SIZE, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) render.getGraphics();
 		for (int i = 0; i < blocks.length; i++)
 		{
 			for (int j = 0; j < blocks[0].length; j++)
 			{
-				g.drawImage(Game.getImage("tile/" + Tile.values()[blocks[i][j]].name() + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, null);
+				Helper.drawImage(Game.getImage("blocks.png"), i * Block.SIZE, j * Block.SIZE, Block.SIZE, Block.SIZE, Block.values()[blocks[i][j]].tx * 16, Block.values()[blocks[i][j]].ty * 16, 16, 16, g);
 			}
 		}
 	}
@@ -77,8 +78,8 @@ public class World implements Drawable
 	
 	public void generate()
 	{
-		Tile[] ores = { Tile.coal_ore, Tile.copper_ore, Tile.gold_ore, Tile.iron_ore };
-		for (int i = 0; i < Math.random() * ores.length * 2; i++)
+		Block[] ores = { Block.coal_ore, Block.iron_ore };
+		for (int i = 0; i < Math.random() * ores.length * 2 + ores.length; i++)
 		{
 			int radius = (int) Math.round(Math.random() * 2) + 2;
 			int index = i % ores.length;
@@ -87,7 +88,7 @@ public class World implements Drawable
 		}
 	}
 	
-	public void fillCircle(Point center, int radius, Tile tile, float chance)
+	public void fillCircle(Point center, int radius, Block tile, float chance)
 	{
 		for (int i = -radius; i < radius; i++)
 		{
