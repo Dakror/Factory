@@ -4,7 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import de.dakror.factory.game.Game;
+import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.settings.TubePoint;
 
 public class Tube extends Machine
 {
@@ -16,20 +18,13 @@ public class Tube extends Machine
 	 */
 	int direction;
 	
-	public Tube(int x, int y, int direction)
+	public Tube(float x, float y, int direction)
 	{
 		super(x, y, 0, 0);
 		this.direction = direction;
-		if (direction == 0 || direction == 3)
-		{
-			width = 3 * Block.SIZE;
-			height = Block.SIZE;
-		}
-		else
-		{
-			height = 3 * Block.SIZE;
-			width = Block.SIZE;
-		}
+		setDirection(direction);
+		
+		name = "Rohr";
 	}
 	
 	@Override
@@ -45,5 +40,38 @@ public class Tube extends Machine
 			g.drawImage(Game.getImage("tube.png"), (int) x - Block.SIZE, (int) y + Block.SIZE, height, width, Game.w);
 			g.setTransform(old);
 		}
+	}
+	
+	public void setDirection(int d)
+	{
+		points.clear();
+		direction = d;
+		if (direction == 0 || direction == 2)
+		{
+			width = 3 * Block.SIZE;
+			height = Block.SIZE;
+			
+			points.add(new TubePoint(0, 0, direction == 2, false, true));
+			points.add(new TubePoint(2, 0, direction == 0, false, false));
+		}
+		else
+		{
+			height = 3 * Block.SIZE;
+			width = Block.SIZE;
+			
+			points.add(new TubePoint(0, 0, direction == 3, true, true));
+			points.add(new TubePoint(0, 2, direction == 1, true, false));
+		}
+	}
+	
+	public int getDirection()
+	{
+		return direction;
+	}
+	
+	@Override
+	public Entity clone()
+	{
+		return new Tube(x / Block.SIZE, y / Block.SIZE, direction);
 	}
 }
