@@ -9,8 +9,10 @@ import de.dakror.factory.game.world.Block;
 /**
  * @author Dakror
  */
-public class Machine extends Entity
+public abstract class Machine extends Entity
 {
+	protected String name;
+	
 	public Machine(int x, int y, int width, int height)
 	{
 		super(x * Block.SIZE, y * Block.SIZE);
@@ -27,8 +29,12 @@ public class Machine extends Entity
 		g.setColor(Color.black);
 		g.drawRect((int) x, (int) y, width, height);
 		
+		drawIcon(g);
+		
 		g.setColor(c);
 	}
+	
+	protected abstract void drawIcon(Graphics2D g);
 	
 	@Override
 	protected void tick(int tick)

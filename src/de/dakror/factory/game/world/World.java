@@ -2,11 +2,14 @@ package de.dakror.factory.game.world;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.machine.Miner;
+import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 
@@ -62,8 +65,15 @@ public class World implements Drawable
 		
 		g.drawImage(render, x, y, Game.w);
 		
+		AffineTransform old = g.getTransform();
+		AffineTransform at = g.getTransform();
+		at.translate(x, y);
+		g.setTransform(at);
+		
 		for (Entity e : entities)
 			e.draw(g);
+		
+		g.setTransform(old);
 	}
 	
 	@Override
@@ -86,6 +96,9 @@ public class World implements Drawable
 			Point point = new Point((int) (Math.random() * (blocks.length - radius * 2) + radius), (int) (Math.random() * (blocks[0].length - radius * 2) + radius));
 			fillCircle(point, radius, ores[index], 0.4f);
 		}
+		
+		entities.add(new Storage((blocks.length - 6) / 2, 2));
+		entities.add(new Miner((blocks.length - 6) / 2, 20));
 	}
 	
 	public void fillCircle(Point center, int radius, Block tile, float chance)
