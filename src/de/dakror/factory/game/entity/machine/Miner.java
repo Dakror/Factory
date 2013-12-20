@@ -21,5 +21,4 @@ public class Miner extends Machine
 		int size = 64;
 		g.drawImage(Game.getImage("machine/miner.png"), (int) x + (width - size) / 2, (int) y + (height - size) / 2, size, size, Game.w);
 	}
-	
 }

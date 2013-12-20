@@ -8,8 +8,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
-import de.dakror.factory.game.entity.machine.Miner;
 import de.dakror.factory.game.entity.machine.Storage;
+import de.dakror.factory.game.entity.machine.Tube;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 
@@ -71,6 +71,9 @@ public class World implements Drawable
 		g.setTransform(at);
 		
 		for (Entity e : entities)
+			e.drawBelow(g);
+		
+		for (Entity e : entities)
 			e.draw(g);
 		
 		g.setTransform(old);
@@ -98,7 +101,7 @@ public class World implements Drawable
 		}
 		
 		entities.add(new Storage((blocks.length - 6) / 2, 2));
-		entities.add(new Miner((blocks.length - 6) / 2, 20));
+		entities.add(new Tube((blocks.length - 6) / 2, 7, 2));
 	}
 	
 	public void fillCircle(Point center, int radius, Block tile, float chance)

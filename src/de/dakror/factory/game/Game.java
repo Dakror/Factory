@@ -5,7 +5,9 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import de.dakror.factory.game.world.World;
+import de.dakror.factory.layer.HUDLayer;
 import de.dakror.gamesetup.GameFrame;
+import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -24,7 +26,9 @@ public class Game extends GameFrame
 	
 	@Override
 	public void initGame()
-	{}
+	{
+		addLayer(new HUDLayer());
+	}
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -35,6 +39,10 @@ public class Game extends GameFrame
 			world.render();
 		}
 		world.draw(g);
+		
+		drawLayers(g);
+		
+		Helper.drawString(getFPS() + " FPS", 0, 26, g, 18);
 	}
 	
 	@Override
