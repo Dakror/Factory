@@ -3,12 +3,13 @@ package de.dakror.factory.game.entity.machine;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
-import de.dakror.factory.settings.TubePoint;
+import de.dakror.factory.util.TubePoint;
 
 /**
  * @author Dakror
@@ -18,11 +19,12 @@ public abstract class Machine extends Entity
 	protected String name;
 	protected ArrayList<TubePoint> points = new ArrayList<>();
 	
+	protected boolean enabled = true;
+	protected boolean drawFrame = true;
+	
 	public Machine(float x, float y, int width, int height)
 	{
-		super(x * Block.SIZE, y * Block.SIZE);
-		this.width = width * Block.SIZE;
-		this.height = height * Block.SIZE;
+		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
 	}
 	
 	@Override
@@ -30,15 +32,15 @@ public abstract class Machine extends Entity
 	{
 		Color c = g.getColor();
 		g.setColor(Color.black);
-		g.drawRect((int) x, (int) y, width, height);
+		if (drawFrame) g.drawRect(x, y, width, height);
 		
 		drawIcon(g);
 		
 		for (TubePoint p : points)
 		{
 			g.setColor(p.in ? Color.blue : Color.red);
-			if (p.horizontal) g.fillRect((int) x + p.x * Block.SIZE + 8, (int) y + p.y * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), Block.SIZE - 16, 4);
-			else g.fillRect((int) x + p.x * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), (int) y + p.y * Block.SIZE + 8, 4, Block.SIZE - 16);
+			if (p.horizontal) g.fillRect(x + p.x * Block.SIZE + 8, y + p.y * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), Block.SIZE - 16, 4);
+			else g.fillRect(x + p.x * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), y + p.y * Block.SIZE + 8, 4, Block.SIZE - 16);
 		}
 		
 		g.setColor(c);
@@ -70,6 +72,12 @@ public abstract class Machine extends Entity
 	@Override
 	protected void onReachTarget()
 	{}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		if (contains(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3) dead = true;
+	}
 	
 	public String getName()
 	{

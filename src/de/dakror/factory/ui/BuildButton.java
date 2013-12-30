@@ -32,7 +32,7 @@ public class BuildButton extends ClickableComponent
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.activeMachine = (Machine) s.clone();
+				if (Game.currentGame.activeMachine == null) Game.currentGame.activeMachine = (Machine) s.clone();
 			}
 		});
 		machine = s;

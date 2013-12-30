@@ -1,77 +1,101 @@
 package de.dakror.factory.game.entity.machine;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
-import de.dakror.factory.settings.TubePoint;
+import de.dakror.factory.util.TubePoint;
+import de.dakror.gamesetup.util.Vector;
 
 public class Tube extends Machine
 {
-	/**
-	 * 0 = left<br>
-	 * 1 = top<br>
-	 * 2 = right<br>
-	 * 3 = down<br>
-	 */
-	int direction;
+	boolean connectedToExit;
+	boolean connectedToInput;
 	
-	public Tube(float x, float y, int direction)
+	public Tube(float x, float y)
 	{
-		super(x, y, 0, 0);
-		this.direction = direction;
-		setDirection(direction);
+		super(x, y, 1, 1);
 		
 		name = "Rohr";
+		drawFrame = false;
+		connectedToExit = connectedToInput = false;
 	}
 	
 	@Override
 	protected void drawIcon(Graphics2D g)
 	{
-		if (width == 3 * Block.SIZE) g.drawImage(Game.getImage("tube.png"), (int) x, (int) y, width, height, Game.w);
-		else
+		Color c = g.getColor();
+		g.setColor(Color.black);
+		
+		if (!Game.world.isTube(x, y - Block.SIZE)) g.fillRect(x, y, width, 4);
+		if (!Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y, 4, height);
+		if (!Game.world.isTube(x, y + Block.SIZE)) g.fillRect(x, y + height - 4, width, 4);
+		if (!Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y, 4, height);
+		
+		if (Game.world.isTube(x, y - Block.SIZE))
 		{
-			AffineTransform old = g.getTransform();
-			AffineTransform at = g.getTransform();
-			at.rotate(Math.toRadians(90), x + width / 2, y + height / 2);
-			g.setTransform(at);
-			g.drawImage(Game.getImage("tube.png"), (int) x - Block.SIZE, (int) y + Block.SIZE, height, width, Game.w);
-			g.setTransform(old);
+			if (Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y, 4, 4);
+			if (Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y, 4, 4);
 		}
-	}
-	
-	public void setDirection(int d)
-	{
-		points.clear();
-		direction = d;
-		if (direction == 0 || direction == 2)
+		if (Game.world.isTube(x, y + Block.SIZE))
 		{
-			width = 3 * Block.SIZE;
-			height = Block.SIZE;
-			
-			points.add(new TubePoint(0, 0, direction == 2, false, true));
-			points.add(new TubePoint(2, 0, direction == 0, false, false));
+			if (Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y + height - 4, 4, 4);
+			if (Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y + height - 4, 4, 4);
 		}
-		else
+		
+		if (connectedToInput)
 		{
-			height = 3 * Block.SIZE;
-			width = Block.SIZE;
-			
-			points.add(new TubePoint(0, 0, direction == 3, true, true));
-			points.add(new TubePoint(0, 2, direction == 1, true, false));
+			g.setColor(Color.blue);
+			g.drawRect(x, y, width, height);
 		}
-	}
-	
-	public int getDirection()
-	{
-		return direction;
+		if (connectedToExit)
+		{
+			g.setColor(Color.red);
+			g.drawRect(x + 1, y + 1, width - 2, height - 2);
+		}
+		
+		g.setColor(c);
 	}
 	
 	@Override
 	public Entity clone()
 	{
-		return new Tube(x / Block.SIZE, y / Block.SIZE, direction);
+		return new Tube(x / Block.SIZE, y / Block.SIZE);
+	}
+	
+	@Override
+	public void onEntityUpdate()
+	{
+		connectedToExit = connectedToInput = false;
+		
+		for (Entity e : Game.world.getEntities())
+		{
+			if (e instanceof Machine && ((Machine) e).points.size() > 0)
+			{
+				for (TubePoint tp : ((Machine) e).points)
+				{
+					if ((tp.in && connectedToInput) || (tp.in && connectedToExit)) continue;
+					
+					if (new Vector(tp.x * Block.SIZE + e.getX(), tp.y * Block.SIZE + e.getY()).getDistance(getPos()) == Block.SIZE)
+					{
+						if (tp.horizontal)
+						{
+							if (tp.y * Block.SIZE + e.getY() == y) continue;
+							if (Game.world.isTube(x - Block.SIZE, y) && Game.world.isTube(x + Block.SIZE, y)) continue;
+						}
+						else
+						{
+							if (tp.x * Block.SIZE + e.getX() == x) continue;
+							if (Game.world.isTube(x, y - Block.SIZE) && Game.world.isTube(x, y + Block.SIZE)) continue;
+						}
+						
+						if (tp.in) connectedToInput = true;
+						else connectedToExit = true;
+					}
+				}
+			}
+		}
 	}
 }

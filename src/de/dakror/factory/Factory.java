@@ -4,6 +4,8 @@ import javax.swing.UIManager;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.UpdateThread;
+import de.dakror.factory.util.TubePathFinder;
+import de.dakror.gamesetup.util.path.AStar;
 
 /**
  * @author Dakror
@@ -26,6 +28,8 @@ public class Factory
 		//
 		// UniVersion.init(SpamWars.class, CFG.VERSION, CFG.PHASE);
 		// if (!UniVersion.offline) Reporter.init(new File(CFG.DIR, "log"));
+		
+		AStar.currentAStar = new TubePathFinder();
 		
 		new Game();
 		Game.currentFrame.init("Factory");

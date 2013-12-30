@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
@@ -26,7 +25,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0, 0), new Miner(0, 0), new Storage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new Miner(0, 0), new Storage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	
@@ -51,8 +50,6 @@ public class Game extends GameFrame
 		{
 			e.printStackTrace();
 		}
-		
-		addLayer(new HUDLayer());
 	}
 	
 	@Override
@@ -61,53 +58,62 @@ public class Game extends GameFrame
 		if (world == null)
 		{
 			world = new World(50, 50);
+			
 			world.render();
+			addLayer(world);
+			addLayer(new HUDLayer());
 		}
-		world.draw(g);
 		
 		drawLayers(g);
 		
 		Helper.drawString(getFPS() + " FPS", 0, 26, g, 18);
 		
-		if (activeMachine != null)
+		try
 		{
-			activeMachine.setX(Helper.round(mouse.x - activeMachine.getWidth() / 2, Block.SIZE) + world.x % Block.SIZE);
-			activeMachine.setY(Helper.round(mouse.y - activeMachine.getHeight() / 2, Block.SIZE) + world.y % Block.SIZE);
-			
-			Composite composite = g.getComposite();
-			
-			activeMachine.drawBelow(g);
-			activeMachine.draw(g);
-			
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
-			
-			Color c = g.getColor();
-			
-			canPlace = true;
-			
-			for (int i = 0; i < activeMachine.getWidth() / Block.SIZE; i++)
+			if (activeMachine != null)
 			{
-				for (int j = 0; j < activeMachine.getHeight() / Block.SIZE; j++)
+				activeMachine.setX(Helper.round(mouse.x - activeMachine.getWidth() / 2 - world.x % Block.SIZE, Block.SIZE) + world.x % Block.SIZE);
+				activeMachine.setY(Helper.round(mouse.y - activeMachine.getHeight() / 2 - world.y % Block.SIZE, Block.SIZE) + world.y % Block.SIZE);
+				
+				Composite composite = g.getComposite();
+				
+				activeMachine.drawBelow(g);
+				activeMachine.draw(g);
+				
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+				
+				Color c = g.getColor();
+				
+				canPlace = true;
+				
+				for (int i = 0; i < activeMachine.getWidth() / Block.SIZE; i++)
 				{
-					boolean free = true;
-					for (Entity e : world.entities)
+					for (int j = 0; j < activeMachine.getHeight() / Block.SIZE; j++)
 					{
-						if (e.getArea().intersects(new Rectangle((int) activeMachine.getX() + i * Block.SIZE, (int) activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE)))
+						boolean free = true;
+						for (Entity e : world.getEntities())
 						{
-							free = false;
-							break;
+							Rectangle r = e.getArea();
+							r.translate(world.x, world.y);
+							if (r.intersects(new Rectangle(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE)))
+							{
+								free = false;
+								break;
+							}
 						}
+						g.setColor(free ? Color.white : Color.red);
+						g.fillRect(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE);
+						
+						if (!free) canPlace = false;
 					}
-					g.setColor(free ? Color.white : Color.red);
-					g.fillRect((int) activeMachine.getX() + i * Block.SIZE, (int) activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE);
-					
-					if (!free) canPlace = false;
 				}
+				
+				g.setColor(c);
+				g.setComposite(composite);
 			}
-			
-			g.setColor(c);
-			g.setComposite(composite);
 		}
+		catch (NullPointerException e)
+		{}
 	}
 	
 	@Override
@@ -144,21 +150,15 @@ public class Game extends GameFrame
 			activeMachine = null;
 			canPlace = false;
 		}
-		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null)
+		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100)
 		{
 			Machine machine = (Machine) activeMachine.clone();
 			machine.setX(machine.getX() - world.x);
 			machine.setY(machine.getY() - world.y);
-			world.entities.add(machine);
+			world.addEntity(machine);
+			
+			world.dispatchEntityUpdate();
 		}
-	}
-	
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e)
-	{
-		super.mouseWheelMoved(e);
-		
-		if (activeMachine != null && activeMachine instanceof Tube) ((Tube) activeMachine).setDirection((((Tube) activeMachine).getDirection() + 1) % 4);
 	}
 	
 	@Override

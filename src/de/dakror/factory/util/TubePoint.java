@@ -1,4 +1,4 @@
-package de.dakror.factory.settings;
+package de.dakror.factory.util;
 
 public class TubePoint
 {

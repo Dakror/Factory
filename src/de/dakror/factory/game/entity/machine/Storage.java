@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
-import de.dakror.factory.settings.TubePoint;
+import de.dakror.factory.util.TubePoint;
 
 /**
  * @author Dakror
@@ -25,7 +25,7 @@ public class Storage extends Machine
 	@Override
 	protected void drawIcon(Graphics2D g)
 	{
-		g.drawImage(Game.getImage("machine/storage.png"), (int) x + (width - 128) / 2, (int) y + (height - 128) / 2, Game.w);
+		g.drawImage(Game.getImage("machine/storage.png"), x + (width - 128) / 2, y + (height - 128) / 2, Game.w);
 	}
 	
 	@Override
@@ -33,4 +33,8 @@ public class Storage extends Machine
 	{
 		return new Storage(x / Block.SIZE, y / Block.SIZE);
 	}
+	
+	@Override
+	public void onEntityUpdate()
+	{}
 }

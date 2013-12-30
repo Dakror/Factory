@@ -9,19 +9,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Storage;
-import de.dakror.gamesetup.util.Drawable;
+import de.dakror.factory.game.entity.machine.Tube;
+import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
  */
-public class World implements Drawable
+public class World extends Layer
 {
 	int[][] blocks;
 	public int width, height;
 	BufferedImage render;
 	
-	public CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
+	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	
 	public int x, y;
 	
@@ -35,6 +36,7 @@ public class World implements Drawable
 		init();
 	}
 	
+	@Override
 	public void init()
 	{
 		for (int i = 0; i < blocks.length; i++)
@@ -72,8 +74,7 @@ public class World implements Drawable
 		for (Entity e : entities)
 			e.drawBelow(g);
 		
-		for (Entity e : entities)
-			e.draw(g);
+		drawComponents(g);
 		
 		g.setTransform(old);
 	}
@@ -83,7 +84,12 @@ public class World implements Drawable
 	{
 		for (Entity e : entities)
 		{
-			if (e.isDead()) entities.remove(e);
+			if (e.isDead())
+			{
+				entities.remove(e);
+				components.remove(e);
+				dispatchEntityUpdate();
+			}
 			else e.update(tick);
 		}
 	}
@@ -99,7 +105,7 @@ public class World implements Drawable
 			fillCircle(point, radius, ores[index], 0.4f);
 		}
 		
-		entities.add(new Storage((blocks.length - 6) / 2, 2));
+		addEntity(new Storage((blocks.length - 6) / 2, 2));
 	}
 	
 	public void fillCircle(Point center, int radius, Block tile, float chance)
@@ -116,5 +122,37 @@ public class World implements Drawable
 				{}
 			}
 		}
+	}
+	
+	public int getBlock(int x, int y)
+	{
+		if (x < 0 || y < 0 || x >= blocks.length || y >= blocks[0].length) return -1;
+		
+		return blocks[x][y];
+	}
+	
+	public boolean isTube(float x, float y)
+	{
+		for (Entity e : entities)
+			if (e instanceof Tube && e.getX() == x && e.getY() == y) return true;
+		
+		return false;
+	}
+	
+	public CopyOnWriteArrayList<Entity> getEntities()
+	{
+		return entities;
+	}
+	
+	public void dispatchEntityUpdate()
+	{
+		for (Entity e : entities)
+			e.onEntityUpdate();
+	}
+	
+	public void addEntity(Entity e)
+	{
+		components.add(e);
+		entities.add(e);
 	}
 }
