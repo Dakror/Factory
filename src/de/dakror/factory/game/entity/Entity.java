@@ -5,56 +5,32 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import de.dakror.factory.game.Game;
+import de.dakror.factory.game.world.Block;
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.gamesetup.util.path.Path;
 
 /**
  * @author Dakror
  */
 public abstract class Entity extends ClickableComponent
 {
-	Vector pos;
+	protected float speed;
+	protected boolean drawBelow, dead;
+	protected Vector pos, target;
+	protected Vector pathTarget;
+	protected Path path;
 	
 	public Entity(float x, float y, int width, int height)
 	{
 		super((int) x, (int) y, width, height);
 		pos = new Vector(x, y);
-		
+		drawBelow = true;
 	}
-	
-	protected float speed;
-	
-	protected boolean dead;
-	
-	protected Vector target;
 	
 	public Vector getPos()
 	{
 		return pos;
-	}
-	
-	@Override
-	public int getWidth()
-	{
-		return width;
-	}
-	
-	@Override
-	public void setWidth(int width)
-	{
-		this.width = width;
-	}
-	
-	@Override
-	public int getHeight()
-	{
-		return height;
-	}
-	
-	@Override
-	public void setHeight(int height)
-	{
-		this.height = height;
 	}
 	
 	public float getSpeed()
@@ -87,6 +63,17 @@ public abstract class Entity extends ClickableComponent
 		this.target = target;
 	}
 	
+	public void setPathTarget(Vector target)
+	{
+		pathTarget = target;
+	}
+	
+	public void setPath(Path p)
+	{
+		path = p;
+		if (path != null) target = path.getNode().clone().mul(Block.SIZE);
+	}
+	
 	public void move()
 	{
 		if (target == null || target.equals(getPos())) return;
@@ -96,13 +83,22 @@ public abstract class Entity extends ClickableComponent
 		pos.x = newPos.x;
 		pos.y = newPos.y;
 		
-		if (distance.getLength() < speed) onReachTarget();
+		if (target.equals(getPos()))
+		{
+			if (path != null) path.setNodeReached();
+			if (path != null && !path.isPathComplete()) target = path.getNode().clone().mul(Block.SIZE);
+			
+			if ((path != null && path.isPathComplete()) || path == null) onReachTarget();
+		}
 	}
 	
 	@Override
 	public void update(int tick)
 	{
 		move();
+		
+		x = (int) pos.x;
+		y = (int) pos.y;
 		
 		tick(tick);
 	}
@@ -119,7 +115,7 @@ public abstract class Entity extends ClickableComponent
 	
 	public void drawBelow(Graphics2D g)
 	{
-		g.fillRect(x, y, width, height);
+		if (drawBelow) g.fillRect(x, y, width, height);
 	}
 	
 	@Override

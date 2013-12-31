@@ -12,7 +12,6 @@ import de.dakror.factory.util.TubePoint;
  */
 public class Storage extends Machine
 {
-	
 	public Storage(float x, float y)
 	{
 		super(x, y, 6, 3);

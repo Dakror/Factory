@@ -34,6 +34,7 @@ public class Game extends GameFrame
 	public Machine activeMachine;
 	public boolean canPlace;
 	
+	
 	public Game()
 	{
 		currentGame = this;
@@ -60,6 +61,7 @@ public class Game extends GameFrame
 			world = new World(50, 50);
 			
 			world.render();
+			
 			addLayer(world);
 			addLayer(new HUDLayer());
 		}

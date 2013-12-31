@@ -18,15 +18,16 @@ public class TubePathFinder extends AStar
 	@Override
 	protected void handleNeighbors(Node node, Vector target, ArrayList<Node> openList, ArrayList<Node> closedList)
 	{
-		for (int i = -1; i < 1; i++)
+		for (int i = -1; i < 2; i++)
 		{
-			for (int j = -1; j < 1; j++)
+			for (int j = -1; j < 2; j++)
 			{
 				if (i == j || (i == -1 && j == 1) || (i == 1 && j == -1)) continue;
 				
 				Vector v = new Vector(node.t.x + i, node.t.y + j);
-				Node n = new Node(node.G + 1, v.sub(target).getLength(), v, node);
+				if (v.x < 0 || v.y < 0) continue;
 				
+				Node n = new Node(node.G + 1, v.clone().sub(target).getLength(), v, node);
 				if (closedList.contains(n)) continue;
 				
 				if (openList.contains(n))
@@ -37,8 +38,17 @@ public class TubePathFinder extends AStar
 						openList.get(openList.indexOf(n)).p = node;
 					}
 				}
-				else for (Entity e : Game.world.getEntities())
-					if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && e instanceof Tube) openList.add(n);
+				else
+				{
+					for (Entity e : Game.world.getEntities())
+					{
+						if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && e instanceof Tube)
+						{
+							openList.add(n);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
