@@ -59,7 +59,7 @@ public class Game extends GameFrame
 		if (world == null)
 		{
 			world = new World(50, 50);
-			
+			world.generate();
 			world.render();
 			
 			addLayer(world);

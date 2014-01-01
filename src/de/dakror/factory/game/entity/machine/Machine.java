@@ -19,7 +19,7 @@ import de.dakror.factory.util.TubePoint;
 public abstract class Machine extends Entity
 {
 	protected String name;
-	public ArrayList<TubePoint> points = new ArrayList<>();
+	protected ArrayList<TubePoint> points = new ArrayList<>();
 	
 	protected boolean enabled = true;
 	protected boolean drawFrame = true;
@@ -87,8 +87,30 @@ public abstract class Machine extends Entity
 		}
 	}
 	
+	public ArrayList<TubePoint> getTubePoints()
+	{
+		return points;
+	}
+	
+	public void placeTubePoints()
+	{
+		for (TubePoint tp : points)
+			Game.world.getEntities().add(new Tube(x / Block.SIZE + tp.x, y / Block.SIZE + tp.y));
+	}
+	
 	public String getName()
 	{
 		return name;
+	}
+	
+	@Override
+	public void onRemoval()
+	{
+		if (this instanceof Tube) return;
+		
+		for (Entity e : Game.world.getEntities())
+		{
+			if (e instanceof Tube && getArea().contains(e.getArea())) e.setDead(true);
+		}
 	}
 }

@@ -128,5 +128,7 @@ public abstract class Entity extends ClickableComponent
 	
 	protected abstract void onReachTarget();
 	
+	public abstract void onRemoval();
+	
 	public abstract void onEntityUpdate();
 }

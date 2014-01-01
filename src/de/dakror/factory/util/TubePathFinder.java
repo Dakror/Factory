@@ -27,6 +27,16 @@ public class TubePathFinder extends AStar
 				Vector v = new Vector(node.t.x + i, node.t.y + j);
 				if (v.x < 0 || v.y < 0) continue;
 				
+				Tube tube = null;
+				for (Entity e : Game.world.getEntities())
+				{
+					if (e.getX() == node.t.x * Block.SIZE && e.getY() == node.t.y * Block.SIZE && e instanceof Tube)
+					{
+						tube = (Tube) e;
+						break;
+					}
+				}
+				
 				Node n = new Node(node.G + 1, v.clone().sub(target).getLength(), v, node);
 				if (closedList.contains(n)) continue;
 				
@@ -42,7 +52,7 @@ public class TubePathFinder extends AStar
 				{
 					for (Entity e : Game.world.getEntities())
 					{
-						if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && e instanceof Tube)
+						if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && e instanceof Tube && tube.isConnectedTo((Tube) e))
 						{
 							openList.add(n);
 							break;

@@ -7,12 +7,16 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
-import de.dakror.gamesetup.util.Vector;
 
 public class Tube extends Machine
 {
 	boolean connectedToExit;
 	boolean connectedToInput;
+	
+	/**
+	 * left, up, right, down
+	 */
+	boolean[] connections = { false, false, false, false };
 	
 	public Tube(float x, float y)
 	{
@@ -29,20 +33,20 @@ public class Tube extends Machine
 		Color c = g.getColor();
 		g.setColor(Color.black);
 		
-		if (!Game.world.isTube(x, y - Block.SIZE)) g.fillRect(x, y, width, 4);
-		if (!Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y, 4, height);
-		if (!Game.world.isTube(x, y + Block.SIZE)) g.fillRect(x, y + height - 4, width, 4);
-		if (!Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y, 4, height);
+		if (!connections[0]) g.fillRect(x, y, 4, height);
+		if (!connections[1]) g.fillRect(x, y, width, 4);
+		if (!connections[2]) g.fillRect(x + width - 4, y, 4, height);
+		if (!connections[3]) g.fillRect(x, y + height - 4, width, 4);
 		
-		if (Game.world.isTube(x, y - Block.SIZE))
+		if (connections[1])
 		{
-			if (Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y, 4, 4);
-			if (Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y, 4, 4);
+			if (connections[0]) g.fillRect(x, y, 4, 4);
+			if (connections[2]) g.fillRect(x + width - 4, y, 4, 4);
 		}
-		if (Game.world.isTube(x, y + Block.SIZE))
+		if (connections[3])
 		{
-			if (Game.world.isTube(x - Block.SIZE, y)) g.fillRect(x, y + height - 4, 4, 4);
-			if (Game.world.isTube(x + Block.SIZE, y)) g.fillRect(x + width - 4, y + height - 4, 4, 4);
+			if (connections[0]) g.fillRect(x, y + height - 4, 4, 4);
+			if (connections[2]) g.fillRect(x + width - 4, y + height - 4, 4, 4);
 		}
 		
 		if (connectedToInput)
@@ -70,32 +74,59 @@ public class Tube extends Machine
 	{
 		connectedToExit = connectedToInput = false;
 		
-		for (Entity e : Game.world.getEntities())
+		connections[0] = Game.world.isTube(x - Block.SIZE, y);
+		TubePoint tp = Game.world.getTubePoint(x - Block.SIZE, y);
+		if (tp != null && (tp.horizontal || (!tp.horizontal && tp.up))) connections[0] = false;
+		else if (tp != null)
 		{
-			if (e instanceof Machine && ((Machine) e).points.size() > 0)
-			{
-				for (TubePoint tp : ((Machine) e).points)
-				{
-					if ((tp.in && connectedToInput) || (tp.in && connectedToExit)) continue;
-					
-					if (new Vector(tp.x * Block.SIZE + e.getX(), tp.y * Block.SIZE + e.getY()).getDistance(getPos()) == Block.SIZE)
-					{
-						if (tp.horizontal)
-						{
-							if (tp.y * Block.SIZE + e.getY() == y) continue;
-							if (Game.world.isTube(x - Block.SIZE, y) && Game.world.isTube(x + Block.SIZE, y)) continue;
-						}
-						else
-						{
-							if (tp.x * Block.SIZE + e.getX() == x) continue;
-							if (Game.world.isTube(x, y - Block.SIZE) && Game.world.isTube(x, y + Block.SIZE)) continue;
-						}
-						
-						if (tp.in) connectedToInput = true;
-						else connectedToExit = true;
-					}
-				}
-			}
+			if (tp.in) connectedToInput = true;
+			else connectedToExit = true;
 		}
+		
+		connections[1] = Game.world.isTube(x, y - Block.SIZE);
+		tp = Game.world.getTubePoint(x, y - Block.SIZE);
+		if (tp != null && (!tp.horizontal || (tp.horizontal && tp.up))) connections[1] = false;
+		else if (tp != null)
+		{
+			if (tp.in) connectedToInput = true;
+			else connectedToExit = true;
+		}
+		
+		connections[2] = Game.world.isTube(x + Block.SIZE, y);
+		tp = Game.world.getTubePoint(x + Block.SIZE, y);
+		if (tp != null && (tp.horizontal || (!tp.horizontal && !tp.up))) connections[2] = false;
+		else if (tp != null)
+		{
+			if (tp.in) connectedToInput = true;
+			else connectedToExit = true;
+		}
+		
+		connections[3] = Game.world.isTube(x, y + Block.SIZE);
+		tp = Game.world.getTubePoint(x, y + Block.SIZE);
+		if (tp != null && (!tp.horizontal || (tp.horizontal && !tp.up))) connections[3] = false;
+		else if (tp != null)
+		{
+			if (tp.in) connectedToInput = true;
+			else connectedToExit = true;
+		}
+	}
+	
+	public boolean isConnectedTo(Tube o)
+	{
+		onEntityUpdate();
+		o.onEntityUpdate();
+		
+		if (o.x == x && Math.abs(o.y - y) == Block.SIZE)
+		{
+			if (o.y > y) return connections[3] && o.connections[1];
+			else return connections[1] && o.connections[3];
+		}
+		else if (o.y == y && Math.abs(o.x - x) == Block.SIZE)
+		{
+			if (o.x > x) return connections[2] && o.connections[0];
+			else return connections[0] && o.connections[2];
+		}
+		
+		return false;
 	}
 }

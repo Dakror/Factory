@@ -8,8 +8,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.entity.machine.Tube;
+import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 
@@ -42,8 +44,6 @@ public class World extends Layer
 		for (int i = 0; i < blocks.length; i++)
 			for (int j = 0; j < blocks[0].length; j++)
 				blocks[i][j] = Block.stone.ordinal();
-		
-		generate();
 	}
 	
 	public void render()
@@ -86,6 +86,7 @@ public class World extends Layer
 		{
 			if (e.isDead())
 			{
+				e.onRemoval();
 				entities.remove(e);
 				components.remove(e);
 				dispatchEntityUpdate();
@@ -124,6 +125,22 @@ public class World extends Layer
 		}
 	}
 	
+	public TubePoint getTubePoint(int x, int y)
+	{
+		for (Entity e : entities)
+		{
+			if (e instanceof Machine)
+			{
+				for (TubePoint tp : ((Machine) e).getTubePoints())
+				{
+					if (e.getX() + tp.x * Block.SIZE == x && e.getY() + tp.y * Block.SIZE == y) return tp;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public int getBlock(int x, int y)
 	{
 		if (x < 0 || y < 0 || x >= blocks.length || y >= blocks[0].length) return -1;
@@ -152,6 +169,8 @@ public class World extends Layer
 	
 	public void addEntity(Entity e)
 	{
+		if (e instanceof Machine) ((Machine) e).placeTubePoints();
+		
 		components.add(e);
 		entities.add(e);
 	}

@@ -76,4 +76,8 @@ public class Item extends Entity
 			setPath(p);
 		}
 	}
+	
+	@Override
+	public void onRemoval()
+	{}
 }

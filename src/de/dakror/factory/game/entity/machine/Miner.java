@@ -70,7 +70,7 @@ public class Miner extends Machine
 						}
 					}
 					
-					Path path = AStar.getPath(new Vector(x / Block.SIZE + points.get(0).x, y / Block.SIZE + points.get(0).y - 1), new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y + 1), new TubePathFinder());
+					Path path = AStar.getPath(new Vector(x / Block.SIZE + points.get(0).x, y / Block.SIZE + points.get(0).y), new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y), new TubePathFinder());
 					if (path != null) if (thePath == null || path.getLength() < thePath.getLength()) thePath = path;
 				}
 			}
