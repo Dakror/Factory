@@ -6,6 +6,7 @@ import java.awt.RenderingHints;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePathFinder;
 import de.dakror.gamesetup.util.Helper;
@@ -19,13 +20,14 @@ import de.dakror.gamesetup.util.path.Path;
 public class Item extends Entity
 {
 	ItemType type;
+	Machine targetMachine;
 	
 	public Item(float x, float y, ItemType type)
 	{
 		super(x, y, Block.SIZE, Block.SIZE);
 		this.type = type;
 		drawBelow = false;
-		speed = 0.5f;
+		speed = 1f;
 	}
 	
 	@Override
@@ -39,7 +41,7 @@ public class Item extends Entity
 		Helper.drawImage(Game.getImage((type.block ? "blocks" : "items") + ".png"), x + (width - 32) / 2, y + (height - 32) / 2, 32, 32, type.tx * 16, type.ty * 16, 16, 16, g);
 		Color c = g.getColor();
 		g.setColor(Color.black);
-		if (type.block) g.drawRect(x + (width - 32) / 2, y + (height - 32) / 2, 32, 32);
+		if (type.block) g.drawRect(x + (width - 32) / 2, y + (height - 32) / 2, 31, 31);
 		g.setColor(c);
 		
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -60,7 +62,23 @@ public class Item extends Entity
 	
 	@Override
 	protected void onReachTarget()
-	{}
+	{
+		if (targetMachine != null)
+		{
+			targetMachine.getItems().add(type, 1);
+			dead = true;
+		}
+	}
+	
+	public void setTargetMachine(Machine m)
+	{
+		targetMachine = m;
+	}
+	
+	public Machine getTargetMachine()
+	{
+		return targetMachine;
+	}
 	
 	@Override
 	public void onEntityUpdate()

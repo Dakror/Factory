@@ -76,6 +76,9 @@ public class World extends Layer
 		
 		drawComponents(g);
 		
+		for (Entity e : entities)
+			if (e instanceof Machine) ((Machine) e).drawAbove(g);
+		
 		g.setTransform(old);
 	}
 	

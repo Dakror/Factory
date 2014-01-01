@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
+import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
 
@@ -21,12 +22,16 @@ public abstract class Machine extends Entity
 	protected String name;
 	protected ArrayList<TubePoint> points = new ArrayList<>();
 	
+	protected Items items;
+	
 	protected boolean enabled = true;
 	protected boolean drawFrame = true;
 	
 	public Machine(float x, float y, int width, int height)
 	{
 		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
+		
+		items = new Items();
 	}
 	
 	@Override
@@ -36,16 +41,29 @@ public abstract class Machine extends Entity
 		g.setColor(Color.black);
 		if (drawFrame) g.drawRect(x, y, width, height);
 		
-		drawIcon(g);
+		g.setColor(c);
+		
+		if (this instanceof Tube) drawIcon(g);
+	}
+	
+	public void drawAbove(Graphics2D g)
+	{
+		if (this instanceof Tube) return;
+		
+		Color c = g.getColor();
 		
 		for (TubePoint p : points)
 		{
+			g.setColor(Color.white);
+			g.fillRect(x + p.x * Block.SIZE + 4, y + p.y * Block.SIZE + 4, Block.SIZE - 8, Block.SIZE - 8);
 			g.setColor(p.in ? Color.blue : Color.red);
 			if (p.horizontal) g.fillRect(x + p.x * Block.SIZE + 8, y + p.y * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), Block.SIZE - 16, 4);
 			else g.fillRect(x + p.x * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), y + p.y * Block.SIZE + 8, 4, Block.SIZE - 16);
 		}
 		
 		g.setColor(c);
+		
+		drawIcon(g);
 	}
 	
 	public BufferedImage getImage()
@@ -101,6 +119,11 @@ public abstract class Machine extends Entity
 	public String getName()
 	{
 		return name;
+	}
+	
+	public Items getItems()
+	{
+		return items;
 	}
 	
 	@Override

@@ -34,7 +34,6 @@ public class Game extends GameFrame
 	public Machine activeMachine;
 	public boolean canPlace;
 	
-	
 	public Game()
 	{
 		currentGame = this;
@@ -81,6 +80,7 @@ public class Game extends GameFrame
 				
 				activeMachine.drawBelow(g);
 				activeMachine.draw(g);
+				activeMachine.drawAbove(g);
 				
 				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 				
