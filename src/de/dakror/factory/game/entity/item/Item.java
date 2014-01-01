@@ -11,6 +11,7 @@ import de.dakror.factory.util.TubePathFinder;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.AStar;
+import de.dakror.gamesetup.util.path.Path;
 
 /**
  * @author Dakror
@@ -64,6 +65,15 @@ public class Item extends Entity
 	@Override
 	public void onEntityUpdate()
 	{
-		setPath(AStar.getPath(new Vector(Math.round(x / Block.SIZE), Math.round(y / Block.SIZE)), pathTarget, new TubePathFinder()));
+		Path p = AStar.getPath(new Vector(Math.round(x / Block.SIZE), Math.round(y / Block.SIZE)), pathTarget, new TubePathFinder());
+		if (p == null)
+		{
+			setPath(null);
+			target = null;
+		}
+		else
+		{
+			setPath(p);
+		}
 	}
 }

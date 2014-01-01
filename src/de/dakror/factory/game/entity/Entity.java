@@ -68,7 +68,7 @@ public abstract class Entity extends ClickableComponent
 		pathTarget = target;
 	}
 	
-	public void setPath(Path p)
+	public synchronized void setPath(Path p)
 	{
 		path = p;
 		if (path != null) target = path.getNode().clone().mul(Block.SIZE);

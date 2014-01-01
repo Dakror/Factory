@@ -155,9 +155,10 @@ public class Game extends GameFrame
 		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100)
 		{
 			Machine machine = (Machine) activeMachine.clone();
-			machine.setX(machine.getX() - world.x);
-			machine.setY(machine.getY() - world.y);
-			world.addEntity(machine);
+			machine.setX(activeMachine.getX() - world.x);
+			machine.setY(activeMachine.getY() - world.y);
+			
+			world.addEntity(machine.clone());
 			
 			world.dispatchEntityUpdate();
 		}

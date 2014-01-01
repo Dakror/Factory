@@ -51,7 +51,7 @@ public class Miner extends Machine
 		
 		if (enabled)
 		{
-			Item item = new Item(x + points.get(0).x * Block.SIZE + 8, y + points.get(0).y * Block.SIZE + 8, ItemType.IRON_DUST);
+			Item item = new Item(x + points.get(0).x * Block.SIZE, y + points.get(0).y * Block.SIZE, ItemType.IRON_DUST);
 			
 			Path thePath = null;
 			for (Entity e : Game.world.getEntities())
@@ -77,6 +77,7 @@ public class Miner extends Machine
 			
 			if (thePath != null)
 			{
+				thePath.setNodeReached();
 				item.setPathTarget(thePath.getNode(thePath.getNodeCount() - 1));
 				item.setPath(thePath);
 				Game.world.addEntity(item);

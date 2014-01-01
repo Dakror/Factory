@@ -7,7 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
 
@@ -17,7 +19,7 @@ import de.dakror.factory.util.TubePoint;
 public abstract class Machine extends Entity
 {
 	protected String name;
-	protected ArrayList<TubePoint> points = new ArrayList<>();
+	public ArrayList<TubePoint> points = new ArrayList<>();
 	
 	protected boolean enabled = true;
 	protected boolean drawFrame = true;
@@ -76,7 +78,13 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (contains(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3) dead = true;
+		if (contains(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3)
+		{
+			for (Entity e1 : Game.world.getEntities())
+				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
+			
+			dead = true;
+		}
 	}
 	
 	public String getName()
