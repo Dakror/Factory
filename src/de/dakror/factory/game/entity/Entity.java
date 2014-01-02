@@ -86,7 +86,11 @@ public abstract class Entity extends ClickableComponent
 		if (target.equals(getPos()))
 		{
 			if (path != null) path.setNodeReached();
-			if (path != null && !path.isPathComplete()) target = path.getNode().clone().mul(Block.SIZE);
+			if (path != null && !path.isPathComplete())
+			{
+				target = path.getNode().clone().mul(Block.SIZE);
+				onReachPathNode();
+			}
 			
 			if ((path != null && path.isPathComplete()) || path == null) onReachTarget();
 		}
@@ -129,6 +133,8 @@ public abstract class Entity extends ClickableComponent
 	protected abstract void onReachTarget();
 	
 	public abstract void onRemoval();
+	
+	public abstract void onReachPathNode();
 	
 	public abstract void onEntityUpdate();
 }

@@ -9,6 +9,7 @@ import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePathFinder;
+import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.AStar;
@@ -20,7 +21,10 @@ import de.dakror.gamesetup.util.path.Path;
 public class Item extends Entity
 {
 	ItemType type;
+	Class<?> targetMachineType;
 	Machine targetMachine;
+	
+	boolean findPathOnReachNode;
 	
 	public Item(float x, float y, ItemType type)
 	{
@@ -70,32 +74,85 @@ public class Item extends Entity
 		}
 	}
 	
-	public void setTargetMachine(Machine m)
+	public boolean setTargetMachineType(Class<?> m)
 	{
-		targetMachine = m;
+		targetMachineType = m;
+		
+		return findPathToTargetMachine();
 	}
 	
-	public Machine getTargetMachine()
+	public boolean findPathToTargetMachine()
 	{
-		return targetMachine;
+		Path thePath = null;
+		for (Entity e : Game.world.getEntities())
+		{
+			if (e.getClass().equals(targetMachineType))
+			{
+				Machine s = (Machine) e;
+				if (!s.isRunning()) continue;
+				
+				TubePoint tp = null;
+				for (TubePoint p : s.getTubePoints())
+				{
+					if (p.in)
+					{
+						tp = p;
+						break;
+					}
+				}
+				
+				Path path = AStar.getPath(new Vector(Math.round((float) x / Block.SIZE), Math.round((float) y / Block.SIZE)), new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y), new TubePathFinder());
+				if (path != null) if (thePath == null || path.getLength() < thePath.getLength())
+				{
+					thePath = path;
+					targetMachine = s;
+				}
+			}
+		}
+		
+		if (thePath == null) return false;
+		else
+		{
+			if (thePath.getNodeCount() > 1 && thePath.getNode().clone().mul(Block.SIZE).equals(getPos())) thePath.setNodeReached();
+			
+			if (path == null || !path.equals(thePath))
+			{
+				setPathTarget(thePath.getNode(thePath.getNodeCount() - 1));
+				setPath(thePath);
+			}
+			
+			return true;
+		}
+	}
+	
+	public Class<?> getTargetMachineType()
+	{
+		return targetMachineType;
 	}
 	
 	@Override
 	public void onEntityUpdate()
 	{
-		Path p = AStar.getPath(new Vector(Math.round(x / Block.SIZE), Math.round(y / Block.SIZE)), pathTarget, new TubePathFinder());
-		if (p == null)
-		{
-			setPath(null);
-			target = null;
-		}
-		else
-		{
-			setPath(p);
-		}
+		findPathOnReachNode = true;
+		if (path == null) onReachPathNode();
 	}
 	
 	@Override
 	public void onRemoval()
 	{}
+	
+	@Override
+	public void onReachPathNode()
+	{
+		if (findPathOnReachNode)
+		{
+			if (!findPathToTargetMachine())
+			{
+				path = null;
+				target = null;
+				targetMachine = null;
+			}
+			findPathOnReachNode = false;
+		}
+	}
 }

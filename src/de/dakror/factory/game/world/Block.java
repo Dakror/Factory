@@ -18,7 +18,7 @@ public enum Block
 	sapphire_ore(3, 1),
 	copper_ore(5, 1),
 	tin_ore(6, 1),
-	uran_ore(7, 1),
+	uranium_ore(7, 1),
 	
 	;
 	

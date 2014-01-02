@@ -5,11 +5,12 @@ package de.dakror.factory.game.entity.item;
  */
 public enum ItemType
 {
-	COAL_ORE(2, 0, true),
-	IRON_ORE(3, 0, true),
+	coal_ore(2, 0, true),
+	iron_ore(3, 0, true),
+	stone(0, 0, true),
 	
-	COAL_DUST(0, 7, false),
-	IRON_DUST(1, 7, false),
+	coal_dust(0, 7, false),
+	iron_dust(1, 7, false),
 	
 	;
 	

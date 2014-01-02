@@ -6,12 +6,15 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
+import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
  */
 public class Storage extends Machine
 {
+	int capacity;
+	
 	public Storage(float x, float y)
 	{
 		super(x, y, 6, 3);
@@ -19,12 +22,30 @@ public class Storage extends Machine
 		points.add(new TubePoint(5, 2, false, true, false));
 		
 		name = "Lager";
+		capacity = 50;
+	}
+	
+	public int getCapacity()
+	{
+		return capacity;
 	}
 	
 	@Override
 	protected void drawIcon(Graphics2D g)
 	{
 		g.drawImage(Game.getImage("machine/storage.png"), x + (width - 128) / 2, y + (height - 128) / 2, Game.w);
+		
+		int h = Math.round(128 * (items.getLength() / capacity));
+		
+		Helper.drawImage(Game.getImage("machine/storage_fill.png"), x + (width - 128) / 2, y + (height - 128) / 2 + 128 - h, 128, h, 0, 128 - h, 128, h, g);
+	}
+	
+	@Override
+	protected void tick(int tick)
+	{
+		boolean en = new Boolean(running);
+		running = items.getLength() < capacity;
+		if (en && !running) Game.world.dispatchEntityUpdate();
 	}
 	
 	@Override

@@ -35,12 +35,6 @@ public class World extends Layer
 		blocks = new int[width][height];
 		x = y = 0;
 		
-		init();
-	}
-	
-	@Override
-	public void init()
-	{
 		for (int i = 0; i < blocks.length; i++)
 			for (int j = 0; j < blocks[0].length; j++)
 				blocks[i][j] = Block.stone.ordinal();
@@ -177,4 +171,8 @@ public class World extends Layer
 		components.add(e);
 		entities.add(e);
 	}
+	
+	@Override
+	public void init()
+	{}
 }

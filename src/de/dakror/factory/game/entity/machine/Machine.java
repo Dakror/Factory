@@ -24,7 +24,7 @@ public abstract class Machine extends Entity
 	
 	protected Items items;
 	
-	protected boolean enabled = true;
+	protected boolean running = true;
 	protected boolean drawFrame = true;
 	
 	public Machine(float x, float y, int width, int height)
@@ -136,4 +136,13 @@ public abstract class Machine extends Entity
 			if (e instanceof Tube && getArea().contains(e.getArea())) e.setDead(true);
 		}
 	}
+	
+	public boolean isRunning()
+	{
+		return running;
+	}
+	
+	@Override
+	public void onReachPathNode()
+	{}
 }

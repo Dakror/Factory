@@ -49,17 +49,6 @@ public class Tube extends Machine
 			if (connections[2]) g.fillRect(x + width - 4, y + height - 4, 4, 4);
 		}
 		
-		if (connectedToInput)
-		{
-			g.setColor(Color.blue);
-			g.drawRect(x, y, width, height);
-		}
-		if (connectedToExit)
-		{
-			g.setColor(Color.red);
-			g.drawRect(x + 1, y + 1, width - 2, height - 2);
-		}
-		
 		g.setColor(c);
 	}
 	

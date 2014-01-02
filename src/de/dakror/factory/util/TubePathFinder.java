@@ -52,7 +52,9 @@ public class TubePathFinder extends AStar
 				{
 					for (Entity e : Game.world.getEntities())
 					{
-						if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && e instanceof Tube && tube.isConnectedTo((Tube) e))
+						if (!(e instanceof Tube)) continue;
+						
+						if (e.getX() == v.x * Block.SIZE && e.getY() == v.y * Block.SIZE && tube.isConnectedTo((Tube) e))
 						{
 							openList.add(n);
 							break;
