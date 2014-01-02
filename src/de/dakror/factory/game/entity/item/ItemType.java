@@ -17,6 +17,8 @@ public enum ItemType
 	iron_ore(3, 0, true, "Eisenerz"),
 	stone(0, 0, true, "Stein"),
 	
+	coal(8, 21, false, "Kohle"),
+	
 	coal_dust(0, 7, false, "Kohlestaub"),
 	iron_dust(1, 7, false, "Eisenstaub"),
 	

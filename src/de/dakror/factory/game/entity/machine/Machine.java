@@ -184,7 +184,7 @@ public abstract class Machine extends Entity
 			if (e.getClass().equals(m))
 			{
 				Machine s = (Machine) e;
-				if (!s.isRunning() || s.getItems().get(type) <= 0) continue;
+				if (s.getItems().get(type) <= 0) continue;
 				
 				TubePoint tp = null;
 				for (TubePoint p : s.getTubePoints())

@@ -29,7 +29,7 @@ public class Item extends Entity
 		super(x, y, Block.SIZE, Block.SIZE);
 		this.type = type;
 		drawBelow = false;
-		speed = 1f;
+		speed = 2f;
 	}
 	
 	@Override
@@ -135,6 +135,7 @@ public class Item extends Entity
 	@Override
 	public void onReachPathNode()
 	{
+		// TODO: very lagheavy!!!
 		if (findPathOnReachNode && targetMachineType != null)
 		{
 			if (!findPathToTargetMachine())

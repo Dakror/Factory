@@ -14,27 +14,27 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Pulverizer extends Machine
+public class Washer extends Machine
 {
 	int speed, requested, tick, startTick, in, out;
 	
 	boolean working;
 	
-	public Pulverizer(float x, float y)
+	public Washer(float x, float y)
 	{
-		super(x, y, 3, 2);
+		super(x, y, 3, 3);
 		
-		name = "Pulverisierer";
+		name = "Erzwaescher";
 		running = false;
 		working = false;
 		
 		points.add(new TubePoint(1, 0, true, true, true));
-		points.add(new TubePoint(1, 1, false, true, false));
+		points.add(new TubePoint(1, 2, false, true, false));
 		
 		in = 1;
 		out = 2;
 		
-		speed = 600;
+		speed = 300;
 		requested = 0;
 	}
 	
@@ -42,27 +42,28 @@ public class Pulverizer extends Machine
 	protected void drawIcon(Graphics2D g)
 	{
 		int size = 64;
-		g.drawImage(Game.getImage("machine/pulverizer.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
-		if (working) Helper.drawCooldownCircle(x + Block.SIZE / 2, y, height, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
+		g.drawImage(Game.getImage("machine/washer.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
+		if (working) Helper.drawCooldownCircle(x + Block.SIZE / 2, y + Block.SIZE / 2, Block.SIZE * 2, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override
 	protected void tick(int tick)
 	{
 		this.tick = tick;
+		
 		if (!working)
 		{
-			if (tick % REQUEST_SPEED == 0 && requested < in && requestItemFromMachine(Storage.class, ItemType.iron_ore)) requested++;
+			if (tick % REQUEST_SPEED == 0 && requested < in && requestItemFromMachine(Storage.class, ItemType.coal_ore)) requested++;
 			
-			if (tick % REQUEST_SPEED == 0 && items.get(ItemType.iron_dust) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
+			if (tick % REQUEST_SPEED == 0 && items.get(ItemType.coal) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
 			{
-				Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, ItemType.iron_dust);
+				Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, ItemType.coal);
 				item.setTargetMachineType(Storage.class);
 				Game.world.addEntity(item);
-				items.add(ItemType.iron_dust, -1);
+				items.add(ItemType.coal, -1);
 			}
 			
-			if (items.get(ItemType.iron_ore) == in)
+			if (items.get(ItemType.coal_ore) == in)
 			{
 				requested = 0;
 				working = true;
@@ -72,8 +73,8 @@ public class Pulverizer extends Machine
 		
 		if (working && (tick - startTick) % speed == 0 && startTick != tick)
 		{
-			items.set(ItemType.iron_ore, 0);
-			items.set(ItemType.iron_dust, out);
+			items.set(ItemType.coal_ore, 0);
+			items.set(ItemType.coal, out);
 			working = false;
 		}
 	}
@@ -81,7 +82,7 @@ public class Pulverizer extends Machine
 	@Override
 	public Entity clone()
 	{
-		return new Pulverizer(x / Block.SIZE, y / Block.SIZE);
+		return new Washer(x / Block.SIZE, y / Block.SIZE);
 	}
 	
 	@Override
