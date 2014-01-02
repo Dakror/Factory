@@ -31,7 +31,7 @@ public class Game extends GameFrame
 	
 	Point mouseDown, mouseDownWorld, mouseDrag;
 	
-	public Machine activeMachine;
+	public Machine activeMachine, worldActiveMachine;
 	public boolean canPlace;
 	
 	public Game()
@@ -167,6 +167,7 @@ public class Game extends GameFrame
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
+		worldActiveMachine = null;
 		super.mousePressed(e);
 		
 		mouseDown = e.getPoint();

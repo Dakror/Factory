@@ -1,10 +1,13 @@
 package de.dakror.factory.game.entity.machine;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.ui.ItemSlot;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -41,6 +44,13 @@ public class Storage extends Machine
 	}
 	
 	@Override
+	public void drawGUI(Graphics2D g)
+	{
+		Helper.drawContainer((Game.getWidth() - 600) / 2, (Game.getHeight() - 300) / 3, 600, 300, true, false, g);
+		super.drawGUI(g);
+	}
+	
+	@Override
 	protected void tick(int tick)
 	{
 		boolean en = new Boolean(running);
@@ -56,5 +66,12 @@ public class Storage extends Machine
 	
 	@Override
 	public void onEntityUpdate()
-	{}
+	{
+		container.components.clear();
+		ArrayList<ItemType> filled = items.getFilled();
+		for (int i = 0; i < filled.size(); i++)
+		{
+			container.components.add(new ItemSlot((Game.getWidth() - 560) / 2 + (i * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20, filled.get(i), items.get(filled.get(i))));
+		}
+	}
 }

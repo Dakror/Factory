@@ -44,6 +44,7 @@ public class Miner extends Machine
 	@Override
 	protected void tick(int tick)
 	{
+		speed = 100;
 		if (running && (tick + startTick) % speed == 0) dig();
 	}
 	

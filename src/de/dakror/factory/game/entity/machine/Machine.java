@@ -13,6 +13,8 @@ import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
+import de.dakror.gamesetup.ui.ClickEvent;
+import de.dakror.gamesetup.ui.Container.DefaultContainer;
 
 /**
  * @author Dakror
@@ -27,11 +29,23 @@ public abstract class Machine extends Entity
 	protected boolean running = true;
 	protected boolean drawFrame = true;
 	
+	public DefaultContainer container;
+	
 	public Machine(float x, float y, int width, int height)
 	{
 		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
 		
 		items = new Items();
+		container = new DefaultContainer();
+		
+		addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.worldActiveMachine = Machine.this;
+			}
+		});
 	}
 	
 	@Override
@@ -66,6 +80,11 @@ public abstract class Machine extends Entity
 		drawIcon(g);
 	}
 	
+	public void drawGUI(Graphics2D g)
+	{
+		container.draw(g);
+	}
+	
 	public BufferedImage getImage()
 	{
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -96,6 +115,8 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
+		super.mouseReleased(e);
+		
 		if (contains(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3)
 		{
 			for (Entity e1 : Game.world.getEntities())
