@@ -7,6 +7,9 @@ import de.dakror.factory.ui.BuildBar;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 
+/**
+ * @author Dakror
+ */
 public class HUDLayer extends Layer
 {
 	@Override

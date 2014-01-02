@@ -8,6 +8,9 @@ import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
 
+/**
+ * @author Dakror
+ */
 public class Tube extends Machine
 {
 	boolean connectedToExit;

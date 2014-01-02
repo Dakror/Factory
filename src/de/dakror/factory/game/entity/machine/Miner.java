@@ -24,7 +24,7 @@ public class Miner extends Machine
 		name = "Mine";
 		points.add(new TubePoint(0, 0, false, true, true));
 		running = false;
-		speed = 2000;
+		speed = 800;
 		startTick = (int) (Math.random() * speed);
 	}
 	

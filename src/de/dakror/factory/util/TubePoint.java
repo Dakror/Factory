@@ -1,5 +1,9 @@
 package de.dakror.factory.util;
 
+
+/**
+ * @author Dakror
+ */
 public class TubePoint
 {
 	public int x, y;
