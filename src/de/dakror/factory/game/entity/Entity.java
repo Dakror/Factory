@@ -115,6 +115,13 @@ public abstract class Entity extends ClickableComponent
 		return rectangle.contains(p);
 	}
 	
+	public boolean contains2(Point p)
+	{
+		Rectangle rectangle = getArea();
+		
+		return rectangle.contains(p);
+	}
+	
 	protected abstract void tick(int tick);
 	
 	public void drawBelow(Graphics2D g)
@@ -128,6 +135,11 @@ public abstract class Entity extends ClickableComponent
 	public Rectangle getArea()
 	{
 		return new Rectangle(x, y, width, height);
+	}
+	
+	public boolean isVisible()
+	{
+		return y + Game.world.y >= -height && x + Game.world.x >= -width && y + Game.world.y <= Game.getHeight() && x + Game.world.x <= Game.getWidth();
 	}
 	
 	protected abstract void onReachTarget();

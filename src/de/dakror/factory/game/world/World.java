@@ -12,7 +12,9 @@ import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.entity.machine.Tube;
 import de.dakror.factory.util.TubePoint;
+import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
+import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 
 /**
@@ -66,19 +68,35 @@ public class World extends Layer
 		g.setTransform(at);
 		
 		for (Entity e : entities)
-			e.drawBelow(g);
+			if (e.isVisible()) e.drawBelow(g);
 		
 		drawComponents(g);
 		
 		for (Entity e : entities)
-			if (e instanceof Machine) ((Machine) e).drawAbove(g);
+			if (e instanceof Machine && e.isVisible()) ((Machine) e).drawAbove(g);
 		
 		g.setTransform(old);
 	}
 	
 	@Override
+	protected void drawComponents(Graphics2D g)
+	{
+		Component hovered = null;
+		for (Component c : components)
+		{
+			if (c instanceof Entity && !((Entity) c).isVisible()) continue;
+			c.draw(g);
+			if (c.state == 2) hovered = c;
+		}
+		
+		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x, GameFrame.currentFrame.mouse.y, g);
+	}
+	
+	@Override
 	public void update(int tick)
 	{
+		translateX = -x;
+		translateY = -y;
 		for (Entity e : entities)
 		{
 			if (e.isDead())

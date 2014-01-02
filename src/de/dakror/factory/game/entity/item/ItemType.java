@@ -20,6 +20,8 @@ public enum ItemType
 	coal_dust(0, 7, false, "Kohlestaub"),
 	iron_dust(1, 7, false, "Eisenstaub"),
 	
+	iron_ingot(15, 27, false, "Eisenbarren"),
+	
 	;
 	
 	public static EnumMap<ItemType, BufferedImage> images;

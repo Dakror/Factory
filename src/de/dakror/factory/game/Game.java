@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Miner;
+import de.dakror.factory.game.entity.machine.Pulverizer;
 import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.entity.machine.Tube;
 import de.dakror.factory.game.world.Block;
@@ -25,7 +26,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0), new Miner(0, 0), new Storage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Storage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	
@@ -73,8 +74,9 @@ public class Game extends GameFrame
 		{
 			if (activeMachine != null)
 			{
-				activeMachine.setX(Helper.round(mouse.x - activeMachine.getWidth() / 2 - world.x % Block.SIZE, Block.SIZE) + world.x % Block.SIZE);
-				activeMachine.setY(Helper.round(mouse.y - activeMachine.getHeight() / 2 - world.y % Block.SIZE, Block.SIZE) + world.y % Block.SIZE);
+				Point p = mouseDrag == null ? mouse : mouseDrag;
+				activeMachine.setX(Helper.round(p.x - activeMachine.getWidth() / 2 - world.x % Block.SIZE, Block.SIZE) + world.x % Block.SIZE);
+				activeMachine.setY(Helper.round(p.y - activeMachine.getHeight() / 2 - world.y % Block.SIZE, Block.SIZE) + world.y % Block.SIZE);
 				
 				Composite composite = g.getComposite();
 				
@@ -86,7 +88,7 @@ public class Game extends GameFrame
 				
 				Color c = g.getColor();
 				
-				canPlace = true;
+				boolean cp = true;
 				
 				for (int i = 0; i < activeMachine.getWidth() / Block.SIZE; i++)
 				{
@@ -106,9 +108,11 @@ public class Game extends GameFrame
 						g.setColor(free ? Color.white : Color.red);
 						g.fillRect(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE);
 						
-						if (!free) canPlace = false;
+						if (!free) cp = false;
 					}
 				}
+				
+				canPlace = cp;
 				
 				g.setColor(c);
 				g.setComposite(composite);
@@ -136,6 +140,11 @@ public class Game extends GameFrame
 			world.x = -x;
 			world.y = -y;
 		}
+		if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			mouseDrag = e.getPoint();
+			if (canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100) build();
+		}
 	}
 	
 	@Override
@@ -145,6 +154,7 @@ public class Game extends GameFrame
 		
 		mouseDown = null;
 		mouseDownWorld = null;
+		if (mouseDrag != null) mouse = (Point) mouseDrag.clone();
 		mouseDrag = null;
 		
 		if (e.getButton() == MouseEvent.BUTTON3)
@@ -152,16 +162,18 @@ public class Game extends GameFrame
 			activeMachine = null;
 			canPlace = false;
 		}
-		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100)
-		{
-			Machine machine = (Machine) activeMachine.clone();
-			machine.setX(activeMachine.getX() - world.x);
-			machine.setY(activeMachine.getY() - world.y);
-			
-			world.addEntity(machine.clone());
-			
-			world.dispatchEntityUpdate();
-		}
+		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100) build();
+	}
+	
+	public void build()
+	{
+		Machine machine = (Machine) activeMachine.clone();
+		machine.setX(activeMachine.getX() - world.x);
+		machine.setY(activeMachine.getY() - world.y);
+		
+		world.addEntity(machine.clone());
+		
+		world.dispatchEntityUpdate();
 	}
 	
 	@Override

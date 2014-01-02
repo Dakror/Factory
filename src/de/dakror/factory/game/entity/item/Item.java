@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
+import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePathFinder;
 import de.dakror.factory.util.TubePoint;
@@ -55,6 +56,11 @@ public class Item extends Entity
 			targetMachine.getItems().add(type, 1);
 			dead = true;
 		}
+	}
+	
+	public void setTargetMachine(Machine m)
+	{
+		targetMachine = m;
 	}
 	
 	public boolean setTargetMachineType(Class<?> m)
@@ -118,6 +124,8 @@ public class Item extends Entity
 	{
 		findPathOnReachNode = true;
 		if (path == null) onReachPathNode();
+		
+		if (targetMachine != null && targetMachineType == null && targetMachine.isDead()) setTargetMachineType(Storage.class);
 	}
 	
 	@Override
@@ -127,7 +135,7 @@ public class Item extends Entity
 	@Override
 	public void onReachPathNode()
 	{
-		if (findPathOnReachNode)
+		if (findPathOnReachNode && targetMachineType != null)
 		{
 			if (!findPathToTargetMachine())
 			{

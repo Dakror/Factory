@@ -10,17 +10,24 @@ import java.util.ArrayList;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
+import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.TubePathFinder;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Container.DefaultContainer;
+import de.dakror.gamesetup.util.Vector;
+import de.dakror.gamesetup.util.path.AStar;
+import de.dakror.gamesetup.util.path.Path;
 
 /**
  * @author Dakror
  */
 public abstract class Machine extends Entity
 {
+	public static final int REQUEST_SPEED = 40;
+	
 	protected String name;
 	protected ArrayList<TubePoint> points = new ArrayList<>();
 	
@@ -115,15 +122,15 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		super.mouseReleased(e);
-		
-		if (contains(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3)
+		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3)
 		{
 			for (Entity e1 : Game.world.getEntities())
 				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
 			
 			dead = true;
 		}
+		
+		if (!dead) super.mouseReleased(e);
 	}
 	
 	public ArrayList<TubePoint> getTubePoints()
@@ -166,4 +173,61 @@ public abstract class Machine extends Entity
 	@Override
 	public void onReachPathNode()
 	{}
+	
+	public boolean requestItemFromMachine(Class<?> m, ItemType type)
+	{
+		Path thePath = null;
+		TubePoint tubepoint = null;
+		Machine machine = null;
+		for (Entity e : Game.world.getEntities())
+		{
+			if (e.getClass().equals(m))
+			{
+				Machine s = (Machine) e;
+				if (!s.isRunning() || s.getItems().get(type) <= 0) continue;
+				
+				TubePoint tp = null;
+				for (TubePoint p : s.getTubePoints())
+				{
+					if (!p.in)
+					{
+						tp = p;
+						break;
+					}
+				}
+				
+				TubePoint tp2 = null;
+				for (TubePoint p : getTubePoints())
+				{
+					if (p.in)
+					{
+						tp2 = p;
+						break;
+					}
+				}
+				
+				Path p = AStar.getPath(new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y), new Vector(x / Block.SIZE + tp2.x, y / Block.SIZE + tp2.y), new TubePathFinder());
+				if (p != null)
+				{
+					if (thePath == null || p.getLength() < thePath.getLength())
+					{
+						thePath = p;
+						machine = s;
+						tubepoint = tp;
+					}
+				}
+			}
+		}
+		
+		if (thePath == null) return false;
+		
+		thePath.setNodeReached();
+		machine.getItems().add(type, -1);
+		Item item = new Item(machine.getX() + tubepoint.x * Block.SIZE, machine.getY() + tubepoint.y * Block.SIZE, type);
+		item.setTargetMachine(this);
+		item.setPath(thePath);
+		Game.world.addEntity(item);
+		
+		return true;
+	}
 }
