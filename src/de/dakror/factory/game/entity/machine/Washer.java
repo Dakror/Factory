@@ -21,7 +21,6 @@ public class Washer extends Machine
 		
 		name = "Erzwaescher";
 		running = false;
-		working = false;
 		
 		points.add(new TubePoint(1, 0, true, true, true));
 		points.add(new TubePoint(1, 2, false, true, false));

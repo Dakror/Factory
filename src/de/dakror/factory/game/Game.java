@@ -10,8 +10,10 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Miner;
+import de.dakror.factory.game.entity.machine.Platery;
 import de.dakror.factory.game.entity.machine.Pulverizer;
 import de.dakror.factory.game.entity.machine.Smeltery;
 import de.dakror.factory.game.entity.machine.Storage;
@@ -31,7 +33,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0), new SpeedTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new SpeedTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	
@@ -103,6 +105,7 @@ public class Game extends GameFrame
 						boolean free = true;
 						for (Entity e : world.getEntities())
 						{
+							if (e instanceof Item) continue;
 							Rectangle r = e.getArea();
 							r.translate(world.x, world.y);
 							if (r.intersects(new Rectangle(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE)))

@@ -39,6 +39,12 @@ public enum ItemType
 	silver_ingot(1, 27, "Silberbarren", Category.ingot),
 	gold_ingot(8, 28, "Goldbarren", Category.ingot),
 	
+	iron_plate(0, 30, "Eisenplatte", Category.plate),
+	copper_plate(4, 30, "Kupferplatte", Category.plate),
+	tin_plate(3, 30, "Zinnplatte", Category.plate),
+	silver_plate(5, 30, "Silberplatte", Category.plate),
+	gold_plate(1, 30, "Goldplatte", Category.plate),
+	
 	;
 	
 	public static enum Category
@@ -47,6 +53,7 @@ public enum ItemType
 		ore,
 		dust,
 		ingot,
+		plate,
 		none;
 	}
 	

@@ -70,7 +70,7 @@ public class Storage extends Machine
 	@Override
 	public void drawGUI(Graphics2D g)
 	{
-		Helper.drawContainer((Game.getWidth() - 600) / 2, (Game.getHeight() - 300) / 3, 600, 300, true, false, g);
+		Helper.drawContainer((Game.getWidth() - 616) / 2, (Game.getHeight() - 300) / 3, 616, 300, true, false, g);
 		super.drawGUI(g);
 	}
 	
@@ -93,9 +93,12 @@ public class Storage extends Machine
 	{
 		container.components.clear();
 		ArrayList<ItemType> filled = items.getFilled();
+		
+		int perRow = 576 / ItemSlot.SIZE;
+		
 		for (int i = 0; i < filled.size(); i++)
 		{
-			container.components.add(new ItemSlot((Game.getWidth() - 560) / 2 + (i * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20, filled.get(i), items.get(filled.get(i))));
+			container.components.add(new ItemSlot((Game.getWidth() - 576) / 2 + (i % perRow * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20 + (i / perRow * ItemSlot.SIZE), filled.get(i), items.get(filled.get(i))));
 		}
 	}
 }

@@ -32,6 +32,8 @@ public class Tube extends Machine
 		}
 	}
 	
+	public static float highestSpeed = 10f; // keep in sync!!
+	
 	boolean connectedToExit;
 	boolean connectedToInput;
 	
