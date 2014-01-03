@@ -7,8 +7,10 @@ import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.util.TubePathFinder;
 import de.dakror.factory.util.TubePoint;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.AStar;
 import de.dakror.gamesetup.util.path.Path;
@@ -43,9 +45,16 @@ public class Item extends Entity
 	{}
 	
 	@Override
+	public void move()
+	{
+		speed = Game.world.getTubeSpeed(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE));
+		super.move();
+	}
+	
+	@Override
 	public Entity clone()
 	{
-		return null;
+		return new Item(x, y, type);
 	}
 	
 	@Override
@@ -54,8 +63,14 @@ public class Item extends Entity
 		if (targetMachine != null)
 		{
 			targetMachine.getItems().add(type, 1);
+			deathCause = Cause.ITEM_CONSUMED;
 			dead = true;
 		}
+	}
+	
+	public ItemType getItemType()
+	{
+		return type;
 	}
 	
 	public void setTargetMachine(Machine m)
@@ -75,7 +90,7 @@ public class Item extends Entity
 		Path thePath = null;
 		for (Entity e : Game.world.getEntities())
 		{
-			if (e.getClass().equals(targetMachineType))
+			if (e.getClass().equals(targetMachineType) || e.getClass().getSuperclass().equals(targetMachineType))
 			{
 				Machine s = (Machine) e;
 				if (!s.isRunning()) continue;
@@ -120,12 +135,15 @@ public class Item extends Entity
 	}
 	
 	@Override
-	public void onEntityUpdate()
+	public void onEntityUpdate(Cause cause, Object source)
 	{
-		findPathOnReachNode = true;
-		if (path == null) onReachPathNode();
-		
-		if (targetMachine != null && targetMachineType == null && targetMachine.isDead()) setTargetMachineType(Storage.class);
+		if (cause == Cause.STORAGE_FULL || cause == Cause.ENTITY_REMOVED || cause == Cause.ENTITY_ADDED)
+		{
+			findPathOnReachNode = true;
+			if (path == null) onReachPathNode();
+			
+			if (targetMachine != null && targetMachineType == null && targetMachine.isDead()) setTargetMachineType(Storage.class);
+		}
 	}
 	
 	@Override
@@ -135,16 +153,23 @@ public class Item extends Entity
 	@Override
 	public void onReachPathNode()
 	{
-		// TODO: very lagheavy!!!
 		if (findPathOnReachNode && targetMachineType != null)
 		{
-			if (!findPathToTargetMachine())
+			new Thread()
 			{
-				path = null;
-				target = null;
-				targetMachine = null;
-			}
-			findPathOnReachNode = false;
+				@Override
+				public void run()
+				{
+					
+					if (!findPathToTargetMachine())
+					{
+						path = null;
+						target = null;
+						targetMachine = null;
+					}
+					findPathOnReachNode = false;
+				}
+			}.start();
 		}
 	}
 }

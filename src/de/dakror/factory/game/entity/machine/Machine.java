@@ -13,6 +13,7 @@ import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.util.TubePathFinder;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -30,11 +31,19 @@ public abstract class Machine extends Entity
 	
 	protected String name;
 	protected ArrayList<TubePoint> points = new ArrayList<>();
+	protected ArrayList<ItemType> inputs = new ArrayList<>();
+	protected ArrayList<ItemType> outputs = new ArrayList<>();
 	
 	protected Items items;
 	
+	protected ItemType requestedItemType;
+	
 	protected boolean running = true;
 	protected boolean drawFrame = true;
+	protected boolean waitWithRequestUntilEntityUpdate = false;
+	protected boolean working = false;
+	
+	protected int speed, requested, tick, startTick;
 	
 	public DefaultContainer container;
 	
@@ -43,6 +52,7 @@ public abstract class Machine extends Entity
 		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
 		
 		items = new Items();
+		requested = 0;
 		container = new DefaultContainer();
 		
 		addClickEvent(new ClickEvent()
@@ -113,7 +123,49 @@ public abstract class Machine extends Entity
 	
 	@Override
 	protected void tick(int tick)
-	{}
+	{
+		this.tick = tick;
+		if (inputs.size() > 0)
+		{
+			if (!working)
+			{
+				if (tick % REQUEST_SPEED == 0 && requested < inputs.size() && !waitWithRequestUntilEntityUpdate && items.getLength(outputs) == 0) doRequest();
+				
+				if (tick % REQUEST_SPEED == 0 && items.getLength(outputs) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
+				{
+					ItemType it = items.getFilled().get(0);
+					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
+					item.setTargetMachineType(Storage.class);
+					Game.world.addEntity(item);
+					items.add(it, -1);
+				}
+				
+				if (items.getLength(inputs) == inputs.size())
+				{
+					requested = 0;
+					working = true;
+					startTick = tick;
+				}
+			}
+			
+			if (working && (tick - startTick) % speed == 0 && startTick != tick)
+			{
+				for (ItemType it : inputs)
+					items.set(it, 0);
+				
+				for (ItemType it : outputs)
+					items.add(it, 1);
+				
+				working = false;
+			}
+		}
+	}
+	
+	protected void doRequest()
+	{
+		if (requestItemFromMachine(Storage.class, inputs.get(requested))) requested++;
+		else waitWithRequestUntilEntityUpdate = true;
+	}
 	
 	@Override
 	protected void onReachTarget()
@@ -174,17 +226,25 @@ public abstract class Machine extends Entity
 	public void onReachPathNode()
 	{}
 	
-	public boolean requestItemFromMachine(Class<?> m, ItemType type)
+	@Override
+	public void onEntityUpdate(Cause cause, Object source)
+	{
+		if ((cause == Cause.ITEM_CONSUMED) || cause == Cause.ENTITY_ADDED) waitWithRequestUntilEntityUpdate = false;
+	}
+	
+	public boolean requestItemFromMachine(Class<?> m, ItemType... types)
 	{
 		Path thePath = null;
 		TubePoint tubepoint = null;
 		Machine machine = null;
+		
 		for (Entity e : Game.world.getEntities())
 		{
-			if (e.getClass().equals(m))
+			if (e.getClass().equals(m) || e.getClass().getSuperclass().equals(m))
 			{
 				Machine s = (Machine) e;
-				if (s.getItems().get(type) <= 0) continue;
+				
+				if (s.getItems().getLength(types) <= 0) continue;
 				
 				TubePoint tp = null;
 				for (TubePoint p : s.getTubePoints())
@@ -222,6 +282,10 @@ public abstract class Machine extends Entity
 		if (thePath == null) return false;
 		
 		thePath.setNodeReached();
+		
+		ItemType type = machine.getItems().getFilled(types).get(0);
+		requestedItemType = type;
+		
 		machine.getItems().add(type, -1);
 		Item item = new Item(machine.getX() + tubepoint.x * Block.SIZE, machine.getY() + tubepoint.y * Block.SIZE, type);
 		item.setTargetMachine(this);

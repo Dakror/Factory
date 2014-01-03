@@ -7,6 +7,7 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.ui.ItemSlot;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
@@ -16,6 +17,29 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Storage extends Machine
 {
+	public static class SuperStorage extends Storage
+	{
+		public SuperStorage(float x, float y)
+		{
+			super(x, y);
+			width = 12 * Block.SIZE;
+			height = 6 * Block.SIZE;
+			points.get(1).x = 11;
+			points.get(0).y = 5;
+			points.get(1).y = 5;
+			
+			name = "Riesenlager";
+			
+			capacity = 5000;
+		}
+		
+		@Override
+		public Entity clone()
+		{
+			return new SuperStorage(x / Block.SIZE, y / Block.SIZE);
+		}
+	}
+	
 	int capacity;
 	
 	public Storage(float x, float y)
@@ -55,7 +79,7 @@ public class Storage extends Machine
 	{
 		boolean en = new Boolean(running);
 		running = items.getLength() < capacity;
-		if (en && !running) Game.world.dispatchEntityUpdate();
+		if (en && !running) Game.world.dispatchEntityUpdate(Cause.STORAGE_FULL, this);
 	}
 	
 	@Override
@@ -65,7 +89,7 @@ public class Storage extends Machine
 	}
 	
 	@Override
-	public void onEntityUpdate()
+	public void onEntityUpdate(Cause cause, Object source)
 	{
 		container.components.clear();
 		ArrayList<ItemType> filled = items.getFilled();

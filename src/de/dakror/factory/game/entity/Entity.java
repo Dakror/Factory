@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.Path;
@@ -20,6 +21,7 @@ public abstract class Entity extends ClickableComponent
 	protected Vector pos, target;
 	protected Vector pathTarget;
 	protected Path path;
+	public Cause deathCause;
 	
 	public Entity(float x, float y, int width, int height)
 	{
@@ -148,5 +150,5 @@ public abstract class Entity extends ClickableComponent
 	
 	public abstract void onReachPathNode();
 	
-	public abstract void onEntityUpdate();
+	public abstract void onEntityUpdate(Cause cause, Object source);
 }

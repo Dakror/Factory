@@ -22,6 +22,15 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class World extends Layer
 {
+	public static enum Cause
+	{
+		ENTITY_ADDED,
+		ENTITY_REMOVED,
+		
+		STORAGE_FULL,
+		ITEM_CONSUMED,
+	}
+	
 	int[][] blocks;
 	public int width, height;
 	BufferedImage render;
@@ -104,7 +113,7 @@ public class World extends Layer
 				e.onRemoval();
 				entities.remove(e);
 				components.remove(e);
-				dispatchEntityUpdate();
+				dispatchEntityUpdate(e.deathCause == null ? Cause.ENTITY_REMOVED : e.deathCause, e);
 			}
 			else e.update(tick);
 		}
@@ -112,7 +121,7 @@ public class World extends Layer
 	
 	public void generate()
 	{
-		Block[] ores = { Block.coal_ore, Block.iron_ore };
+		Block[] ores = { Block.coal_ore, Block.iron_ore, Block.copper_ore, Block.tin_ore, Block.silver_ore, Block.gold_ore };
 		for (int i = 0; i < Math.random() * ores.length * 2 + ores.length; i++)
 		{
 			int radius = (int) Math.round(Math.random() * 2) + 2;
@@ -171,15 +180,23 @@ public class World extends Layer
 		return false;
 	}
 	
+	public float getTubeSpeed(float x, float y)
+	{
+		for (Entity e : entities)
+			if (e instanceof Tube && e.getX() == x && e.getY() == y) return e.getSpeed();
+		
+		return 0;
+	}
+	
 	public CopyOnWriteArrayList<Entity> getEntities()
 	{
 		return entities;
 	}
 	
-	public void dispatchEntityUpdate()
+	public void dispatchEntityUpdate(Cause cause, Object source)
 	{
 		for (Entity e : entities)
-			e.onEntityUpdate();
+			e.onEntityUpdate(cause, source);
 	}
 	
 	public void addEntity(Entity e)

@@ -1,7 +1,11 @@
 package de.dakror.factory.game.entity.item;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
+
+import de.dakror.factory.game.entity.item.ItemType.Category;
 
 /**
  * @author Dakror
@@ -85,12 +89,63 @@ public class Items
 		return length;
 	}
 	
+	public float getLength(ItemType... types)
+	{
+		float length = 0;
+		
+		for (ItemType r : types)
+			length += getF(r);
+		
+		return length;
+	}
+	
+	public float getLength(Category category)
+	{
+		float length = 0;
+		
+		for (ItemType r : ItemType.values())
+			if (r.category.contains(category)) length += getF(r);
+		
+		return length;
+	}
+	
+	public float getLength(ArrayList<ItemType> types)
+	{
+		float length = 0;
+		
+		for (ItemType r : types)
+			length += getF(r);
+		
+		return length;
+	}
+	
 	public ArrayList<ItemType> getFilled()
 	{
 		ArrayList<ItemType> res = new ArrayList<>();
 		
 		for (ItemType r : ItemType.values())
 			if (getF(r) != 0) res.add(r);
+		
+		return res;
+	}
+	
+	public ArrayList<ItemType> getFilled(ItemType... types)
+	{
+		List<ItemType> tps = Arrays.asList(types);
+		ArrayList<ItemType> res = new ArrayList<>();
+		
+		for (ItemType r : ItemType.values())
+			if (getF(r) != 0 && tps.contains(r)) res.add(r);
+		
+		return res;
+	}
+	
+	public ArrayList<ItemType> getFilled(Category category)
+	{
+		ArrayList<ItemType> res = new ArrayList<>();
+		
+		for (ItemType r : ItemType.values())
+			if (getF(r) != 0 && r.category.contains(category)) res.add(r);
 		
 		return res;
 	}

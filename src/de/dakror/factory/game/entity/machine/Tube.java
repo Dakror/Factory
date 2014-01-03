@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.util.TubePoint;
 
 /**
@@ -13,8 +14,29 @@ import de.dakror.factory.util.TubePoint;
  */
 public class Tube extends Machine
 {
+	public static class SpeedTube extends Tube
+	{
+		public SpeedTube(float x, float y)
+		{
+			super(x, y);
+			speed = 10f;
+			color = Color.decode("#cd6f00");
+			
+			name = "5x Speed-Rohr";
+		}
+		
+		@Override
+		public Entity clone()
+		{
+			return new SpeedTube(x / Block.SIZE, y / Block.SIZE);
+		}
+	}
+	
 	boolean connectedToExit;
 	boolean connectedToInput;
+	
+	float speed;
+	Color color;
 	
 	/**
 	 * left, up, right, down
@@ -28,13 +50,16 @@ public class Tube extends Machine
 		name = "Rohr";
 		drawFrame = false;
 		connectedToExit = connectedToInput = false;
+		
+		speed = 2f;
+		color = Color.black;
 	}
 	
 	@Override
 	protected void drawIcon(Graphics2D g)
 	{
 		Color c = g.getColor();
-		g.setColor(Color.black);
+		g.setColor(color);
 		
 		if (!connections[0]) g.fillRect(x, y, 4, height);
 		if (!connections[1]) g.fillRect(x, y, width, 4);
@@ -56,13 +81,19 @@ public class Tube extends Machine
 	}
 	
 	@Override
+	public float getSpeed()
+	{
+		return speed;
+	}
+	
+	@Override
 	public Entity clone()
 	{
 		return new Tube(x / Block.SIZE, y / Block.SIZE);
 	}
 	
 	@Override
-	public void onEntityUpdate()
+	public void onEntityUpdate(Cause cause, Object source)
 	{
 		connectedToExit = connectedToInput = false;
 		
@@ -105,8 +136,8 @@ public class Tube extends Machine
 	
 	public boolean isConnectedTo(Tube o)
 	{
-		onEntityUpdate();
-		o.onEntityUpdate();
+		onEntityUpdate(null, null);
+		o.onEntityUpdate(null, null);
 		
 		if (o.x == x && Math.abs(o.y - y) == Block.SIZE)
 		{
