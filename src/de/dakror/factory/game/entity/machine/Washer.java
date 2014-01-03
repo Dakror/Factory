@@ -32,6 +32,7 @@ public class Washer extends Machine
 		
 		outputs.add(ItemType.coal);
 		outputs.add(ItemType.coal);
+		outputs.add(ItemType.coal);
 	}
 	
 	@Override

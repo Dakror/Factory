@@ -75,8 +75,9 @@ public class Game extends GameFrame
 		
 		drawLayers(g);
 		
-		Helper.drawString(getFPS() + " FPS", 0, 26, g, 18);
-		Helper.drawString(getUPS() + " UPS", 0, 52, g, 18);
+		Helper.drawString("FPS: " + getFPS(), 0, 26, g, 18);
+		Helper.drawString("UPS: " + getUPS(), 0, 52, g, 18);
+		Helper.drawString("E: " + Game.world.getEntities().size(), 0, 78, g, 18);
 		
 		try
 		{

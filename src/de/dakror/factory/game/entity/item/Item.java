@@ -42,7 +42,20 @@ public class Item extends Entity
 	
 	@Override
 	protected void tick(int tick)
-	{}
+	{
+		if (!Game.world.isTube(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE)))
+		{
+			for (Entity e : Game.world.getEntities())
+			{
+				if (e instanceof Storage)
+				{
+					((Storage) e).getItems().add(type, 1);
+					break;
+				}
+			}
+			dead = true;
+		}
+	}
 	
 	@Override
 	public void move()

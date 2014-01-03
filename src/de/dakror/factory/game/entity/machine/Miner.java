@@ -64,16 +64,14 @@ public class Miner extends Machine
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		running = Game.world.isTube(x, y - Block.SIZE);
-		
-		types = new ItemType[4];
-		
-		if (Game.world != null)
+		if (cause == Cause.ENTITY_ADDED)
 		{
-			for (int i = 0; i < 4; i++)
-			{
+			running = Game.world.isTube(x, y - Block.SIZE);
+			
+			types = new ItemType[4];
+			
+			if (Game.world != null) for (int i = 0; i < 4; i++)
 				types[i] = ItemType.valueOf(Block.values()[Game.world.getBlock(x / Block.SIZE + i % 2, y / Block.SIZE + i / 2)].name());
-			}
 		}
 	}
 }

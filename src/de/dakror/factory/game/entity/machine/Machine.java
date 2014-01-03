@@ -129,7 +129,17 @@ public abstract class Machine extends Entity
 		{
 			if (!working)
 			{
-				if (tick % REQUEST_SPEED == 0 && requested < inputs.size() && !waitWithRequestUntilEntityUpdate && items.getLength(outputs) == 0) doRequest();
+				if (tick % REQUEST_SPEED == 0 && requested < inputs.size() && !waitWithRequestUntilEntityUpdate && items.getLength(outputs) == 0)
+				{
+					new Thread()
+					{
+						@Override
+						public void run()
+						{
+							doRequest();
+						}
+					}.start();
+				}
 				
 				if (tick % REQUEST_SPEED == 0 && items.getLength(outputs) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
 				{
@@ -282,8 +292,8 @@ public abstract class Machine extends Entity
 		if (thePath == null) return false;
 		
 		thePath.setNodeReached();
-		
-		ItemType type = machine.getItems().getFilled(types).get(0);
+		ArrayList<ItemType> filled = machine.getItems().getFilled(types);
+		ItemType type = filled.get((int) (Math.random() * filled.size()));
 		requestedItemType = type;
 		
 		machine.getItems().add(type, -1);
