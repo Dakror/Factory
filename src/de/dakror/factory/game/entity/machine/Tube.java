@@ -16,21 +16,57 @@ import de.dakror.factory.util.TubePoint;
  */
 public class Tube extends Machine
 {
-	public static class SpeedTube extends Tube
+	public static class GoldTube extends Tube
 	{
-		public SpeedTube(float x, float y)
+		public GoldTube(float x, float y)
 		{
 			super(x, y);
 			speed = 10f;
 			color = Color.decode("#cd6f00");
 			
-			name = "5x Speed-Rohr";
+			name = "Gold-Rohr";
 		}
 		
 		@Override
 		public Entity clone()
 		{
-			return new SpeedTube(x / Block.SIZE, y / Block.SIZE);
+			return new GoldTube(x / Block.SIZE, y / Block.SIZE);
+		}
+	}
+	
+	public static class IronTube extends Tube
+	{
+		public IronTube(float x, float y)
+		{
+			super(x, y);
+			color = Color.darkGray;
+			bgColor = Color.decode("#cccccc");
+			
+			name = "Eisen-Rohr";
+		}
+		
+		@Override
+		public Entity clone()
+		{
+			return new IronTube(x / Block.SIZE, y / Block.SIZE);
+		}
+	}
+	
+	public static class SilverTube extends IronTube
+	{
+		public SilverTube(float x, float y)
+		{
+			super(x, y);
+			speed = 10f;
+			color = Color.decode("#5b7c82");
+			
+			name = "Silber-Rohr";
+		}
+		
+		@Override
+		public Entity clone()
+		{
+			return new SilverTube(x / Block.SIZE, y / Block.SIZE);
 		}
 	}
 	
@@ -51,7 +87,7 @@ public class Tube extends Machine
 	{
 		super(x, y, 1, 1);
 		
-		name = "Rohr";
+		name = "Stein-Rohr";
 		drawFrame = false;
 		connectedToExit = connectedToInput = false;
 		
@@ -81,6 +117,18 @@ public class Tube extends Machine
 			if (connections[2]) g.fillRect(x + width - 4, y + height - 4, 4, 4);
 		}
 		
+		if (connectedToInput)
+		{
+			g.setColor(Color.blue);
+			g.drawRect(x, y, width - 1, height - 1);
+		}
+		
+		if (connectedToExit)
+		{
+			g.setColor(Color.blue);
+			g.drawRect(x + 1, y + 1, width - 1, height - 1);
+		}
+		
 		g.setColor(c);
 	}
 	
@@ -99,42 +147,31 @@ public class Tube extends Machine
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		connectedToExit = connectedToInput = false;
-		
-		connections[0] = Game.world.isTube(x - Block.SIZE, y);
-		TubePoint tp = Game.world.getTubePoint(x - Block.SIZE, y);
-		if (tp != null && (tp.horizontal || (!tp.horizontal && tp.up))) connections[0] = false;
-		else if (tp != null)
+		if (cause == Cause.ENTITY_ADDED || cause == Cause.ENTITY_REMOVED)
 		{
-			if (tp.in) connectedToInput = true;
-			else connectedToExit = true;
-		}
-		
-		connections[1] = Game.world.isTube(x, y - Block.SIZE);
-		tp = Game.world.getTubePoint(x, y - Block.SIZE);
-		if (tp != null && (!tp.horizontal || (tp.horizontal && tp.up))) connections[1] = false;
-		else if (tp != null)
-		{
-			if (tp.in) connectedToInput = true;
-			else connectedToExit = true;
-		}
-		
-		connections[2] = Game.world.isTube(x + Block.SIZE, y);
-		tp = Game.world.getTubePoint(x + Block.SIZE, y);
-		if (tp != null && (tp.horizontal || (!tp.horizontal && !tp.up))) connections[2] = false;
-		else if (tp != null)
-		{
-			if (tp.in) connectedToInput = true;
-			else connectedToExit = true;
-		}
-		
-		connections[3] = Game.world.isTube(x, y + Block.SIZE);
-		tp = Game.world.getTubePoint(x, y + Block.SIZE);
-		if (tp != null && (!tp.horizontal || (tp.horizontal && !tp.up))) connections[3] = false;
-		else if (tp != null)
-		{
-			if (tp.in) connectedToInput = true;
-			else connectedToExit = true;
+			connectedToExit = connectedToInput = false;
+			TubePoint tp = Game.world.getTubePoint(x, y);
+			if (tp != null)
+			{
+				if (tp.in) connectedToInput = true;
+				else connectedToExit = true;
+			}
+			
+			connections[0] = Game.world.isTube(x - Block.SIZE, y);
+			tp = Game.world.getTubePoint(x - Block.SIZE, y);
+			if (tp != null && (tp.horizontal || (!tp.horizontal && tp.up))) connections[0] = false;
+			
+			connections[1] = Game.world.isTube(x, y - Block.SIZE);
+			tp = Game.world.getTubePoint(x, y - Block.SIZE);
+			if (tp != null && (!tp.horizontal || (tp.horizontal && tp.up))) connections[1] = false;
+			
+			connections[2] = Game.world.isTube(x + Block.SIZE, y);
+			tp = Game.world.getTubePoint(x + Block.SIZE, y);
+			if (tp != null && (tp.horizontal || (!tp.horizontal && !tp.up))) connections[2] = false;
+			
+			connections[3] = Game.world.isTube(x, y + Block.SIZE);
+			tp = Game.world.getTubePoint(x, y + Block.SIZE);
+			if (tp != null && (!tp.horizontal || (tp.horizontal && !tp.up))) connections[3] = false;
 		}
 	}
 	
@@ -167,5 +204,15 @@ public class Tube extends Machine
 		o.put("y", y);
 		
 		return o;
+	}
+	
+	public boolean isConnectedToExit()
+	{
+		return connectedToExit;
+	}
+	
+	public boolean isConnectedToInput()
+	{
+		return connectedToInput;
 	}
 }

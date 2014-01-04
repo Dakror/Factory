@@ -37,6 +37,8 @@ public class TubePathFinder extends AStar
 					}
 				}
 				
+				if (tube == null) continue;
+				
 				Node n = new Node(node.G + Tube.highestSpeed / tube.getSpeed(), v.clone().sub(target).getLength(), v, node);
 				if (closedList.contains(n)) continue;
 				

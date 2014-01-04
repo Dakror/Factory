@@ -1,6 +1,7 @@
 package de.dakror.factory.game.entity.item;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import org.json.JSONObject;
 
@@ -8,14 +9,11 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Storage;
+import de.dakror.factory.game.entity.machine.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
-import de.dakror.factory.util.TubePathFinder;
-import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
-import de.dakror.gamesetup.util.path.AStar;
-import de.dakror.gamesetup.util.path.Path;
 
 /**
  * @author Dakror
@@ -23,10 +21,7 @@ import de.dakror.gamesetup.util.path.Path;
 public class Item extends Entity
 {
 	ItemType type;
-	Class<?> targetMachineType;
-	Machine targetMachine;
-	
-	boolean findPathOnReachNode;
+	Vector lastPos;
 	
 	public Item(float x, float y, ItemType type)
 	{
@@ -45,7 +40,7 @@ public class Item extends Entity
 	@Override
 	protected void tick(int tick)
 	{
-		if (!Game.world.isTube(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE)))
+		if (!Game.world.isTube(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE))) // kill if stuck
 		{
 			for (Entity e : Game.world.getEntities())
 			{
@@ -72,121 +67,24 @@ public class Item extends Entity
 		return new Item(x, y, type);
 	}
 	
-	@Override
-	protected void onReachTarget()
-	{
-		if (targetMachine != null)
-		{
-			targetMachine.getItems().add(type, 1);
-			deathCause = Cause.ITEM_CONSUMED;
-			dead = true;
-		}
-	}
-	
 	public ItemType getItemType()
 	{
 		return type;
 	}
 	
-	public void setTargetMachine(Machine m)
-	{
-		targetMachine = m;
-	}
-	
-	public boolean setTargetMachineType(Class<?> m)
-	{
-		targetMachineType = m;
-		
-		return findPathToTargetMachine();
-	}
-	
-	public boolean findPathToTargetMachine()
-	{
-		Path thePath = null;
-		for (Entity e : Game.world.getEntities())
-		{
-			if (e.getClass().equals(targetMachineType) || e.getClass().getSuperclass().equals(targetMachineType))
-			{
-				Machine s = (Machine) e;
-				if (!s.isRunning()) continue;
-				
-				TubePoint tp = null;
-				for (TubePoint p : s.getTubePoints())
-				{
-					if (p.in)
-					{
-						tp = p;
-						break;
-					}
-				}
-				
-				Path path = AStar.getPath(new Vector(Math.round((float) x / Block.SIZE), Math.round((float) y / Block.SIZE)), new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y), new TubePathFinder());
-				if (path != null) if (thePath == null || path.getLength() < thePath.getLength())
-				{
-					thePath = path;
-					targetMachine = s;
-				}
-			}
-		}
-		
-		if (thePath == null) return false;
-		else
-		{
-			if (thePath.getNodeCount() > 1 && thePath.getNode().clone().mul(Block.SIZE).equals(getPos())) thePath.setNodeReached();
-			
-			if (path == null || !path.equals(thePath))
-			{
-				setPathTarget(thePath.getNode(thePath.getNodeCount() - 1));
-				setPath(thePath);
-			}
-			
-			return true;
-		}
-	}
-	
-	public Class<?> getTargetMachineType()
-	{
-		return targetMachineType;
-	}
-	
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		if (cause == Cause.STORAGE_FULL || cause == Cause.ENTITY_REMOVED/* || cause == Cause.ENTITY_ADDED */)
+		if (target == null && cause == Cause.ENTITY_ADDED)
 		{
-			findPathOnReachNode = true;
-			if (path == null) onReachPathNode();
-			
-			if (targetMachine != null && targetMachineType == null && targetMachine.isDead()) setTargetMachineType(Storage.class);
+			lastPos = pos.clone();
+			onReachTarget();
 		}
 	}
 	
 	@Override
 	public void onRemoval()
 	{}
-	
-	@Override
-	public void onReachPathNode()
-	{
-		if (findPathOnReachNode && targetMachineType != null)
-		{
-			new Thread()
-			{
-				@Override
-				public void run()
-				{
-					
-					if (!findPathToTargetMachine())
-					{
-						path = null;
-						target = null;
-						targetMachine = null;
-					}
-					findPathOnReachNode = false;
-				}
-			}.start();
-		}
-	}
 	
 	@Override
 	public JSONObject getData() throws Exception
@@ -202,5 +100,56 @@ public class Item extends Entity
 	
 	@Override
 	public void setData(JSONObject data)
+	{}
+	
+	@Override
+	protected void onReachTarget()
+	{
+		ArrayList<Tube> neighbors = new ArrayList<>();
+		
+		Tube t = Game.world.getTube(pos.x, pos.y);
+		
+		if (t.isConnectedToInput())
+		{
+			for (Entity e : Game.world.getEntities())
+			{
+				if (e instanceof Machine && e.getArea().contains(pos.x, pos.y) && ((Machine) e).getTubePoints().size() > 0)
+				{
+					((Machine) e).getItems().add(type, 1);
+					deathCause = Cause.ITEM_CONSUMED;
+					dead = true;
+					return;
+				}
+			}
+		}
+		
+		int[][] neigh = { { -1, 0 }, { 0, -1 }, { 1, 0 }, { 0, 1 } };
+		
+		for (int i = 0; i < neigh.length; i++)
+		{
+			Tube l = Game.world.getTube(pos.x + Block.SIZE * neigh[i][0], pos.y + Block.SIZE * neigh[i][1]);
+			if (l != null && l.isConnectedTo(t) && !l.isConnectedToExit()) neighbors.add(l);
+		}
+		
+		if (neighbors.size() == 0) return;
+		
+		if (neighbors.size() > 1)
+		{
+			for (Tube tube : neighbors)
+			{
+				if (tube.x == lastPos.x && tube.y == lastPos.y)
+				{
+					neighbors.remove(tube);
+					break;
+				}
+			}
+		}
+		
+		lastPos = pos.clone();
+		setTarget(neighbors.get((int) Math.floor((Math.random() * neighbors.size()))).getPos());
+	}
+	
+	@Override
+	public void onReachPathNode()
 	{}
 }

@@ -22,11 +22,12 @@ import de.dakror.factory.game.entity.machine.Smeltery;
 import de.dakror.factory.game.entity.machine.Storage;
 import de.dakror.factory.game.entity.machine.Storage.SuperStorage;
 import de.dakror.factory.game.entity.machine.Tube;
-import de.dakror.factory.game.entity.machine.Tube.SpeedTube;
+import de.dakror.factory.game.entity.machine.Tube.GoldTube;
+import de.dakror.factory.game.entity.machine.Tube.IronTube;
+import de.dakror.factory.game.entity.machine.Tube.SilverTube;
 import de.dakror.factory.game.entity.machine.Washer;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
-import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.layer.HUDLayer;
 import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.GameFrame;
@@ -37,7 +38,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0), new SpeedTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	public static String gameName;
@@ -190,8 +191,6 @@ public class Game extends GameFrame
 		machine.setY(activeMachine.getY() - world.y);
 		
 		world.addEntity(machine.clone());
-		
-		world.dispatchEntityUpdate(Cause.ENTITY_ADDED, machine.clone());
 	}
 	
 	@Override

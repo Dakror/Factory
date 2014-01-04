@@ -202,6 +202,14 @@ public class World extends Layer
 		return 0;
 	}
 	
+	public Tube getTube(float x, float y)
+	{
+		for (Entity e : entities)
+			if (e instanceof Tube && e.getX() == x && e.getY() == y) return (Tube) e;
+		
+		return null;
+	}
+	
 	public CopyOnWriteArrayList<Entity> getEntities()
 	{
 		return entities;
@@ -219,6 +227,8 @@ public class World extends Layer
 		
 		components.add(e);
 		entities.add(e);
+		
+		dispatchEntityUpdate(Cause.ENTITY_ADDED, e.clone());
 	}
 	
 	public long getSeed()

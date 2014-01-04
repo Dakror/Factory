@@ -1,5 +1,6 @@
 package de.dakror.factory.game.entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -24,6 +25,7 @@ public abstract class Entity extends ClickableComponent
 	protected Vector pathTarget;
 	protected Path path;
 	public Cause deathCause;
+	protected Color bgColor = Color.white;
 	
 	public Entity(float x, float y, int width, int height)
 	{
@@ -130,7 +132,13 @@ public abstract class Entity extends ClickableComponent
 	
 	public void drawBelow(Graphics2D g)
 	{
-		if (drawBelow) g.fillRect(x, y, width, height);
+		if (drawBelow)
+		{
+			Color c = g.getColor();
+			g.setColor(bgColor);
+			g.fillRect(x, y, width, height);
+			g.setColor(c);
+		}
 	}
 	
 	@Override

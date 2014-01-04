@@ -2,6 +2,7 @@ package de.dakror.factory.game.entity.machine;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
@@ -21,6 +22,8 @@ public class Miner extends Machine
 	int startTick;
 	int speed;
 	int tick;
+	
+	boolean spittout;
 	
 	public Miner(float x, float y)
 	{
@@ -51,23 +54,31 @@ public class Miner extends Machine
 		this.tick = tick;
 		if (startTick == 0) startTick = tick;
 		
-		if (running && (tick - startTick) % speed == 0) dig();
-	}
-	
-	public void dig()
-	{
-		Item item = new Item(x + points.get(0).x * Block.SIZE, y + points.get(0).y * Block.SIZE, types[(int) (Math.random() * types.length)]);
-		if (item.setTargetMachineType(Storage.class)) Game.world.addEntity(item);
-		else running = false;
+		if (running && (tick - startTick) % speed == 0 && tick != startTick)
+		{
+			items.add(types[(int) (Math.random() * types.length)], 1);
+			return;
+		}
+		
+		if ((tick - startTick) % REQUEST_SPEED == 0 && spittout && items.getLength() > 0)
+		{
+			ArrayList<ItemType> filled = items.getFilled();
+			ItemType type = filled.get((int) (Math.random() * filled.size()));
+			Item item = new Item(x + points.get(0).x * Block.SIZE, y + points.get(0).y * Block.SIZE, type);
+			items.add(type, -1);
+			Game.world.addEntity(item);
+		}
 	}
 	
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
+		running = true;
+		
+		if (cause == Cause.ENTITY_ADDED || cause == Cause.ENTITY_REMOVED) spittout = Game.world.isTube(x, y - Block.SIZE);
+		
 		if (cause == Cause.ENTITY_ADDED)
 		{
-			running = Game.world.isTube(x, y - Block.SIZE);
-			
 			types = new ItemType[4];
 			
 			if (Game.world != null) for (int i = 0; i < 4; i++)

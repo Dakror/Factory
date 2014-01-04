@@ -16,13 +16,9 @@ import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
-import de.dakror.factory.util.TubePathFinder;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Container.DefaultContainer;
-import de.dakror.gamesetup.util.Vector;
-import de.dakror.gamesetup.util.path.AStar;
-import de.dakror.gamesetup.util.path.Path;
 
 /**
  * @author Dakror
@@ -131,23 +127,10 @@ public abstract class Machine extends Entity
 		{
 			if (!working)
 			{
-				if (tick % REQUEST_SPEED == 0 && requested < inputs.size() && !waitWithRequestUntilEntityUpdate && items.getLength(outputs) == 0)
-				{
-					new Thread()
-					{
-						@Override
-						public void run()
-						{
-							doRequest();
-						}
-					}.start();
-				}
-				
 				if (tick % REQUEST_SPEED == 0 && items.getLength(outputs) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
 				{
 					ItemType it = items.getFilled().get(0);
 					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
-					item.setTargetMachineType(Storage.class);
 					Game.world.addEntity(item);
 					items.add(it, -1);
 				}
@@ -171,12 +154,6 @@ public abstract class Machine extends Entity
 				working = false;
 			}
 		}
-	}
-	
-	protected void doRequest()
-	{
-		if (requestItemFromMachine(Storage.class, inputs.get(requested))) requested++;
-		else waitWithRequestUntilEntityUpdate = true;
 	}
 	
 	@Override
@@ -242,72 +219,6 @@ public abstract class Machine extends Entity
 	public void onEntityUpdate(Cause cause, Object source)
 	{
 		if ((cause == Cause.ITEM_CONSUMED) || cause == Cause.ENTITY_ADDED) waitWithRequestUntilEntityUpdate = false;
-	}
-	
-	public boolean requestItemFromMachine(Class<?> m, ItemType... types)
-	{
-		Path thePath = null;
-		TubePoint tubepoint = null;
-		Machine machine = null;
-		
-		for (Entity e : Game.world.getEntities())
-		{
-			if (e.getClass().equals(m) || e.getClass().getSuperclass().equals(m))
-			{
-				Machine s = (Machine) e;
-				
-				if (s.getItems().getLength(types) <= 0) continue;
-				
-				TubePoint tp = null;
-				for (TubePoint p : s.getTubePoints())
-				{
-					if (!p.in)
-					{
-						tp = p;
-						break;
-					}
-				}
-				
-				TubePoint tp2 = null;
-				for (TubePoint p : getTubePoints())
-				{
-					if (p.in)
-					{
-						tp2 = p;
-						break;
-					}
-				}
-				
-				Path p = AStar.getPath(new Vector(s.getX() / Block.SIZE + tp.x, s.getY() / Block.SIZE + tp.y), new Vector(x / Block.SIZE + tp2.x, y / Block.SIZE + tp2.y), new TubePathFinder());
-				if (p != null)
-				{
-					if (thePath == null || p.getLength() < thePath.getLength())
-					{
-						thePath = p;
-						machine = s;
-						tubepoint = tp;
-					}
-				}
-			}
-		}
-		
-		if (thePath == null) return false;
-		
-		thePath.setNodeReached();
-		ArrayList<ItemType> filled = machine.getItems().getFilled(types);
-		
-		if (filled.size() == 0) return false;
-		
-		ItemType type = filled.get((int) (Math.random() * filled.size()));
-		requestedItemType = type;
-		
-		machine.getItems().add(type, -1);
-		Item item = new Item(machine.getX() + tubepoint.x * Block.SIZE, machine.getY() + tubepoint.y * Block.SIZE, type);
-		item.setTargetMachine(this);
-		item.setPath(thePath);
-		Game.world.addEntity(item);
-		
-		return true;
 	}
 	
 	@Override

@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
-import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
@@ -31,21 +30,6 @@ public class Platery extends Machine
 		inputs.add(ItemType.iron_ingot);
 		
 		outputs.add(ItemType.iron_plate);
-	}
-	
-	@Override
-	protected void doRequest()
-	{
-		if (requestItemFromMachine(Storage.class, ItemType.getItemsByCategory(Category.ingot)))
-		{
-			inputs.set(0, requestedItemType);
-			
-			String name = requestedItemType.name();
-			outputs.set(0, ItemType.valueOf(name.substring(0, name.indexOf("_") + 1) + "plate"));
-			
-			requested++;
-		}
-		else waitWithRequestUntilEntityUpdate = true;
 	}
 	
 	@Override

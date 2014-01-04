@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
-import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
@@ -32,25 +31,6 @@ public class Smeltery extends Machine
 		inputs.add(ItemType.coal);
 		
 		outputs.add(ItemType.iron_ingot);
-	}
-	
-	@Override
-	protected void doRequest()
-	{
-		if (requested == 0)
-		{
-			if (requestItemFromMachine(Storage.class, ItemType.getItemsByCategory(Category.dust)))
-			{
-				inputs.set(0, requestedItemType);
-				
-				String name = requestedItemType.name();
-				outputs.set(0, ItemType.valueOf(name.substring(0, name.indexOf("_") + 1) + "ingot"));
-				
-				requested++;
-			}
-			else waitWithRequestUntilEntityUpdate = true;
-		}
-		else super.doRequest();
 	}
 	
 	@Override

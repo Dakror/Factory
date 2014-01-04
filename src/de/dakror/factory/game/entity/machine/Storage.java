@@ -91,14 +91,17 @@ public class Storage extends Machine
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		container.components.clear();
-		ArrayList<ItemType> filled = items.getFilled();
-		
-		int perRow = 576 / ItemSlot.SIZE;
-		
-		for (int i = 0; i < filled.size(); i++)
+		if (cause == Cause.ITEM_CONSUMED)
 		{
-			container.components.add(new ItemSlot((Game.getWidth() - 576) / 2 + (i % perRow * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20 + (i / perRow * ItemSlot.SIZE), filled.get(i), items.get(filled.get(i))));
+			container.components.clear();
+			ArrayList<ItemType> filled = items.getFilled();
+			
+			int perRow = 576 / ItemSlot.SIZE;
+			
+			for (int i = 0; i < filled.size(); i++)
+			{
+				container.components.add(new ItemSlot((Game.getWidth() - 576) / 2 + (i % perRow * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20 + (i / perRow * ItemSlot.SIZE), filled.get(i), items.get(filled.get(i))));
+			}
 		}
 	}
 }
