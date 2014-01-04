@@ -3,6 +3,8 @@ package de.dakror.factory.game.entity.machine;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import org.json.JSONObject;
+
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.world.Block;
@@ -153,5 +155,17 @@ public class Tube extends Machine
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public JSONObject getData() throws Exception
+	{
+		JSONObject o = new JSONObject();
+		
+		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
+		o.put("x", x);
+		o.put("y", y);
+		
+		return o;
 	}
 }

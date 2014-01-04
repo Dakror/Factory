@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.factory.game.entity.item.ItemType.Category;
 
 /**
@@ -20,16 +24,16 @@ public class Items
 			res.put(t, 0f);
 	}
 	
-	// public Items(JSONObject data) throws JSONException
-	// {
-	// this();
-	//
-	// JSONArray names = data.names();
-	// for (int i = 0; i < data.length(); i++)
-	// {
-	// res.put(ItemType.valueOf(names.getString(i)), (float) data.getDouble(names.getString(i)));
-	// }
-	// }
+	public Items(JSONObject data) throws JSONException
+	{
+		this();
+		
+		JSONArray names = data.names();
+		for (int i = 0; i < data.length(); i++)
+		{
+			res.put(ItemType.valueOf(names.getString(i)), (float) data.getDouble(names.getString(i)));
+		}
+	}
 	
 	public int get(ItemType t)
 	{
@@ -150,22 +154,20 @@ public class Items
 		return res;
 	}
 	
-	// public JSONObject getData()
-	// {
-	// JSONObject o = new JSONObject();
-	// try
-	// {
-	// for (ItemType r : ItemType.values())
-	// {
-	// o.put(r.name(), getF(r));
-	// }
-	// }
-	// catch (JSONException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// return o;
-	// }
+	public JSONObject getData()
+	{
+		JSONObject o = new JSONObject();
+		try
+		{
+			for (ItemType r : ItemType.values())
+				if (getF(r) != 0) o.put(r.name(), getF(r));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return o;
+	}
 	
 	public static Items mul(Items res, int f)
 	{

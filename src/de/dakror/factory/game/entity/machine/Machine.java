@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -293,6 +295,9 @@ public abstract class Machine extends Entity
 		
 		thePath.setNodeReached();
 		ArrayList<ItemType> filled = machine.getItems().getFilled(types);
+		
+		if (filled.size() == 0) return false;
+		
 		ItemType type = filled.get((int) (Math.random() * filled.size()));
 		requestedItemType = type;
 		
@@ -304,4 +309,28 @@ public abstract class Machine extends Entity
 		
 		return true;
 	}
+	
+	@Override
+	public JSONObject getData() throws Exception
+	{
+		JSONObject o = new JSONObject();
+		
+		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
+		o.put("x", x);
+		o.put("y", y);
+		o.put("i", items.getData());
+		o.put("w", working);
+		o.put("r", running);
+		o.put("is", inputs);
+		o.put("os", outputs);
+		o.put("rIT", requestedItemType);
+		o.put("sT", startTick);
+		o.put("wWRUEU", waitWithRequestUntilEntityUpdate);
+		
+		return o;
+	}
+	
+	@Override
+	public void setData(JSONObject data)
+	{}
 }

@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import org.json.JSONObject;
+
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
@@ -151,4 +153,8 @@ public abstract class Entity extends ClickableComponent
 	public abstract void onReachPathNode();
 	
 	public abstract void onEntityUpdate(Cause cause, Object source);
+	
+	public abstract JSONObject getData() throws Exception;
+	
+	public abstract void setData(JSONObject data);
 }

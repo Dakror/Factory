@@ -18,6 +18,11 @@ public class CFG
 	
 	static long time = 0;
 	
+	static
+	{
+		DIR.mkdirs();
+	}
+	
 	// -- debug profiling -- //
 	public static void u()
 	{

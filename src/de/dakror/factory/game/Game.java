@@ -7,7 +7,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JOptionPane;
 
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -25,6 +28,7 @@ import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.layer.HUDLayer;
+import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
 
@@ -36,11 +40,13 @@ public class Game extends GameFrame
 	public static final Machine[] buildableMachines = { new Tube(0, 0), new SpeedTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
+	public static String gameName;
 	
 	Point mouseDown, mouseDownWorld, mouseDrag;
 	
 	public Machine activeMachine, worldActiveMachine;
 	public boolean canPlace;
+	
 	
 	public Game()
 	{
@@ -65,6 +71,8 @@ public class Game extends GameFrame
 	{
 		if (world == null)
 		{
+			gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
+			if (gameName == null) gameName = System.currentTimeMillis() + "";
 			world = new World(50, 50);
 			world.generate();
 			world.render();
@@ -184,6 +192,14 @@ public class Game extends GameFrame
 		world.addEntity(machine.clone());
 		
 		world.dispatchEntityUpdate(Cause.ENTITY_ADDED, machine.clone());
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		super.keyPressed(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.saveGame();
 	}
 	
 	@Override

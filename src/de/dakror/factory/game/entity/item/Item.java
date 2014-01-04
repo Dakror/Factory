@@ -2,6 +2,8 @@ package de.dakror.factory.game.entity.item;
 
 import java.awt.Graphics2D;
 
+import org.json.JSONObject;
+
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
@@ -150,7 +152,7 @@ public class Item extends Entity
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		if (cause == Cause.STORAGE_FULL || cause == Cause.ENTITY_REMOVED || cause == Cause.ENTITY_ADDED)
+		if (cause == Cause.STORAGE_FULL || cause == Cause.ENTITY_REMOVED/* || cause == Cause.ENTITY_ADDED */)
 		{
 			findPathOnReachNode = true;
 			if (path == null) onReachPathNode();
@@ -185,4 +187,20 @@ public class Item extends Entity
 			}.start();
 		}
 	}
+	
+	@Override
+	public JSONObject getData() throws Exception
+	{
+		JSONObject o = new JSONObject();
+		
+		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
+		o.put("x", getPos().x);
+		o.put("y", getPos().y);
+		
+		return o;
+	}
+	
+	@Override
+	public void setData(JSONObject data)
+	{}
 }

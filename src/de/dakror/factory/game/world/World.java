@@ -4,7 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
@@ -34,6 +38,8 @@ public class World extends Layer
 	int[][] blocks;
 	public int width, height;
 	BufferedImage render;
+	
+	long seed;
 	
 	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	
@@ -121,19 +127,27 @@ public class World extends Layer
 	
 	public void generate()
 	{
+		long seed = (long) (System.nanoTime() + Math.random() * System.currentTimeMillis());
+		generate(seed);
+		this.seed = seed;
+	}
+	
+	public void generate(long seed)
+	{
+		Random random = new Random(seed);
 		Block[] ores = { Block.coal_ore, Block.iron_ore, Block.copper_ore, Block.tin_ore, Block.silver_ore, Block.gold_ore };
-		for (int i = 0; i < Math.random() * ores.length * 2 + ores.length; i++)
+		for (int i = 0; i < random.nextDouble() * ores.length * 2 + ores.length; i++)
 		{
-			int radius = (int) Math.round(Math.random() * 2) + 2;
+			int radius = (int) Math.round(random.nextDouble() * 2) + 2;
 			int index = i % ores.length;
-			Point point = new Point((int) (Math.random() * (blocks.length - radius * 2) + radius), (int) (Math.random() * (blocks[0].length - radius * 2) + radius));
-			fillCircle(point, radius, ores[index], 0.4f);
+			Point point = new Point((int) (random.nextDouble() * (blocks.length - radius * 2) + radius), (int) (random.nextDouble() * (blocks[0].length - radius * 2) + radius));
+			fillCircle(point, radius, ores[index], 0.4f, random);
 		}
 		
 		addEntity(new Storage((blocks.length - 6) / 2, 2));
 	}
 	
-	public void fillCircle(Point center, int radius, Block tile, float chance)
+	public void fillCircle(Point center, int radius, Block tile, float chance, Random random)
 	{
 		for (int i = -radius; i < radius; i++)
 		{
@@ -141,7 +155,7 @@ public class World extends Layer
 			{
 				try
 				{
-					if (new Point(i + center.x, j + center.y).distance(center) <= radius && Math.random() <= chance) blocks[i + center.x][j + center.y] = tile.ordinal();
+					if (new Point(i + center.x, j + center.y).distance(center) <= radius && random.nextDouble() <= chance) blocks[i + center.x][j + center.y] = tile.ordinal();
 				}
 				catch (ArrayIndexOutOfBoundsException e)
 				{}
@@ -207,7 +221,27 @@ public class World extends Layer
 		entities.add(e);
 	}
 	
+	public long getSeed()
+	{
+		return seed;
+	}
+	
 	@Override
 	public void init()
 	{}
+	
+	public JSONObject getData() throws Exception
+	{
+		JSONObject data = new JSONObject();
+		
+		data.put("seed", seed);
+		
+		JSONArray e = new JSONArray();
+		for (Entity e1 : entities)
+			e.put(e1.getData());
+		
+		data.put("entities", e);
+		
+		return data;
+	}
 }
