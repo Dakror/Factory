@@ -1,4 +1,4 @@
-package de.dakror.factory.game.entity.machine;
+package de.dakror.factory.game.entity.machine.tube;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.util.TubePoint;
@@ -16,60 +17,6 @@ import de.dakror.factory.util.TubePoint;
  */
 public class Tube extends Machine
 {
-	public static class GoldTube extends Tube
-	{
-		public GoldTube(float x, float y)
-		{
-			super(x, y);
-			speed = 10f;
-			color = Color.decode("#cd6f00");
-			
-			name = "Gold-Rohr";
-		}
-		
-		@Override
-		public Entity clone()
-		{
-			return new GoldTube(x / Block.SIZE, y / Block.SIZE);
-		}
-	}
-	
-	public static class IronTube extends Tube
-	{
-		public IronTube(float x, float y)
-		{
-			super(x, y);
-			color = Color.darkGray;
-			bgColor = Color.decode("#cccccc");
-			
-			name = "Eisen-Rohr";
-		}
-		
-		@Override
-		public Entity clone()
-		{
-			return new IronTube(x / Block.SIZE, y / Block.SIZE);
-		}
-	}
-	
-	public static class SilverTube extends IronTube
-	{
-		public SilverTube(float x, float y)
-		{
-			super(x, y);
-			speed = 10f;
-			color = Color.decode("#5b7c82");
-			
-			name = "Silber-Rohr";
-		}
-		
-		@Override
-		public Entity clone()
-		{
-			return new SilverTube(x / Block.SIZE, y / Block.SIZE);
-		}
-	}
-	
 	public static float highestSpeed = 10f; // keep in sync!!
 	
 	boolean connectedToExit;

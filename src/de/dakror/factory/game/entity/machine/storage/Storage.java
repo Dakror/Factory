@@ -1,14 +1,14 @@
-package de.dakror.factory.game.entity.machine;
+package de.dakror.factory.game.entity.machine.storage;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
-import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
-import de.dakror.factory.ui.ItemSlot;
+import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -17,29 +17,6 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Storage extends Machine
 {
-	public static class SuperStorage extends Storage
-	{
-		public SuperStorage(float x, float y)
-		{
-			super(x, y);
-			width = 12 * Block.SIZE;
-			height = 6 * Block.SIZE;
-			points.get(1).x = 11;
-			points.get(0).y = 5;
-			points.get(1).y = 5;
-			
-			name = "Riesenlager";
-			
-			capacity = 5000;
-		}
-		
-		@Override
-		public Entity clone()
-		{
-			return new SuperStorage(x / Block.SIZE, y / Block.SIZE);
-		}
-	}
-	
 	int capacity;
 	
 	public Storage(float x, float y)
@@ -68,13 +45,6 @@ public class Storage extends Machine
 	}
 	
 	@Override
-	public void drawGUI(Graphics2D g)
-	{
-		Helper.drawContainer((Game.getWidth() - 616) / 2, (Game.getHeight() - 300) / 3, 616, 300, true, false, g);
-		super.drawGUI(g);
-	}
-	
-	@Override
 	protected void tick(int tick)
 	{
 		boolean en = new Boolean(running);
@@ -91,16 +61,27 @@ public class Storage extends Machine
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		if (cause == Cause.ITEM_CONSUMED)
+		if (cause == Cause.ITEM_CONSUMED && Game.currentGame.getActiveLayer() instanceof ItemList) Game.currentGame.getActiveLayer().init();
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		super.mousePressed(e);
+		if (state == 1)
 		{
-			container.components.clear();
-			ArrayList<ItemType> filled = items.getFilled();
-			
-			int perRow = 576 / ItemSlot.SIZE;
-			
-			for (int i = 0; i < filled.size(); i++)
+			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
 			{
-				container.components.add(new ItemSlot((Game.getWidth() - 576) / 2 + (i % perRow * ItemSlot.SIZE), (Game.getHeight() - 300) / 3 + 20 + (i / perRow * ItemSlot.SIZE), filled.get(i), items.get(filled.get(i))));
+				ItemList itemList = new ItemList(items);
+				itemList.killOnUnfocus = true;
+				Game.currentGame.addLayer(itemList);
+			}
+			else
+			{
+				((ItemList) Game.currentGame.getActiveLayer()).items = items;
+				((ItemList) Game.currentGame.getActiveLayer()).killOnUnfocus = true;
+				((ItemList) Game.currentGame.getActiveLayer()).addCategories = false;
+				((ItemList) Game.currentGame.getActiveLayer()).init();
 			}
 		}
 	}

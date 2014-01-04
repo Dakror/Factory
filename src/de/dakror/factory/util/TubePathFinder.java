@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
-import de.dakror.factory.game.entity.machine.Tube;
+import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.AStar;

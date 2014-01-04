@@ -8,8 +8,8 @@ import org.json.JSONObject;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
-import de.dakror.factory.game.entity.machine.Storage;
-import de.dakror.factory.game.entity.machine.Tube;
+import de.dakror.factory.game.entity.machine.storage.Storage;
+import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.gamesetup.util.Helper;
@@ -128,7 +128,25 @@ public class Item extends Entity
 		for (int i = 0; i < neigh.length; i++)
 		{
 			Tube l = Game.world.getTube(pos.x + Block.SIZE * neigh[i][0], pos.y + Block.SIZE * neigh[i][1]);
-			if (l != null && l.isConnectedTo(t) && !l.isConnectedToExit()) neighbors.add(l);
+			if (l != null && l.isConnectedTo(t) && !l.isConnectedToExit())
+			{
+				if (l.isConnectedToInput())
+				{
+					boolean ok = true;
+					for (Entity e : Game.world.getEntities())
+					{
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).isRunning())
+						{
+							ok = false;
+							break;
+						}
+					}
+					
+					if (!ok) continue;
+				}
+				
+				neighbors.add(l);
+			}
 		}
 		
 		if (neighbors.size() == 0) return;

@@ -14,8 +14,10 @@ import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.entity.item.Items;
+import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
+import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Container.DefaultContainer;
@@ -204,6 +206,8 @@ public abstract class Machine extends Entity
 		{
 			if (e instanceof Tube && getArea().contains(e.getArea())) e.setDead(true);
 		}
+		
+		if (Game.currentGame.getActiveLayer() instanceof ItemList) Game.currentGame.removeLayer(Game.currentGame.getActiveLayer());
 	}
 	
 	public boolean isRunning()

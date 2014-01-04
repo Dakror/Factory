@@ -16,13 +16,13 @@ import de.dakror.gamesetup.util.Helper;
  */
 public enum ItemType
 {
+	stone(0, 0, " Stein", Category.block),
 	coal_ore(2, 0, "Kohle-Erz", Category.block),
 	iron_ore(3, 0, "Eisenerz", Category.ore, Category.block),
 	copper_ore(5, 1, "Kupfererz", Category.ore, Category.block),
 	tin_ore(6, 1, "Zinnerz", Category.ore, Category.block),
 	silver_ore(1, 1, "Silbererz", Category.ore, Category.block),
 	gold_ore(4, 0, "Golderz", Category.ore, Category.block),
-	stone(0, 0, "Stein", Category.block),
 	
 	coal(8, 21, "Kohle", Category.none),
 	
@@ -49,12 +49,19 @@ public enum ItemType
 	
 	public static enum Category
 	{
-		block,
-		ore,
-		dust,
-		ingot,
-		plate,
-		none;
+		block("Block"),
+		ore("Erz"),
+		dust("Staub"),
+		ingot("Barren"),
+		plate("Platte"),
+		none("Keine");
+		
+		public String name;
+		
+		private Category(String name)
+		{
+			this.name = name;
+		}
 	}
 	
 	public static EnumMap<ItemType, BufferedImage> images;

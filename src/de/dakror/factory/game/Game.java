@@ -10,8 +10,6 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JOptionPane;
-
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.machine.Machine;
@@ -19,13 +17,13 @@ import de.dakror.factory.game.entity.machine.Miner;
 import de.dakror.factory.game.entity.machine.Platery;
 import de.dakror.factory.game.entity.machine.Pulverizer;
 import de.dakror.factory.game.entity.machine.Smeltery;
-import de.dakror.factory.game.entity.machine.Storage;
-import de.dakror.factory.game.entity.machine.Storage.SuperStorage;
-import de.dakror.factory.game.entity.machine.Tube;
-import de.dakror.factory.game.entity.machine.Tube.GoldTube;
-import de.dakror.factory.game.entity.machine.Tube.IronTube;
-import de.dakror.factory.game.entity.machine.Tube.SilverTube;
 import de.dakror.factory.game.entity.machine.Washer;
+import de.dakror.factory.game.entity.machine.storage.Storage;
+import de.dakror.factory.game.entity.machine.storage.SuperStorage;
+import de.dakror.factory.game.entity.machine.tube.GoldTube;
+import de.dakror.factory.game.entity.machine.tube.IronTube;
+import de.dakror.factory.game.entity.machine.tube.SilverTube;
+import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
 import de.dakror.factory.layer.HUDLayer;
@@ -48,7 +46,6 @@ public class Game extends GameFrame
 	public Machine activeMachine, worldActiveMachine;
 	public boolean canPlace;
 	
-	
 	public Game()
 	{
 		currentGame = this;
@@ -60,6 +57,7 @@ public class Game extends GameFrame
 		try
 		{
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/alagard.ttf")));
+			IronTube.init();
 		}
 		catch (Exception e)
 		{
@@ -72,7 +70,7 @@ public class Game extends GameFrame
 	{
 		if (world == null)
 		{
-			gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
+			// gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
 			if (gameName == null) gameName = System.currentTimeMillis() + "";
 			world = new World(50, 50);
 			world.generate();
@@ -130,6 +128,8 @@ public class Game extends GameFrame
 						if (!free) cp = false;
 					}
 				}
+				
+				if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).contains(activeMachine.getArea())) cp = false;
 				
 				canPlace = cp;
 				
@@ -204,7 +204,6 @@ public class Game extends GameFrame
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		worldActiveMachine = null;
 		super.mousePressed(e);
 		
 		mouseDown = e.getPoint();
