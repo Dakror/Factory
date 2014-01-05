@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
-import de.dakror.factory.game.entity.machine.storage.Storage;
 import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
@@ -43,15 +42,9 @@ public class Item extends Entity
 	{
 		if (!Game.world.isTube(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE))) // kill if stuck
 		{
-			for (Entity e : Game.world.getEntities())
-			{
-				if (e instanceof Storage)
-				{
-					((Storage) e).getItems().add(type, 1);
-					break;
-				}
-			}
-			dead = true;
+			pos = lastPos;
+			x = (int) pos.x;
+			y = (int) pos.y;
 		}
 	}
 	
@@ -76,7 +69,7 @@ public class Item extends Entity
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		if (target == null && cause == Cause.ENTITY_ADDED)
+		if ((target == null || target.equals(pos)) && (cause == Cause.ENTITY_ADDED || cause == Cause.MACHINE_DONE))
 		{
 			lastPos = pos.clone();
 			onReachTarget();
@@ -134,9 +127,10 @@ public class Item extends Entity
 				if (l.isConnectedToInput())
 				{
 					boolean ok = true;
+					
 					for (Entity e : Game.world.getEntities())
 					{
-						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && (!((Machine) e).isRunning() || ((Machine) e).isWorking() || !((Machine) e).matchesFilters(type)))
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).wantsItem(type))
 						{
 							ok = false;
 							break;
@@ -144,6 +138,15 @@ public class Item extends Entity
 					}
 					
 					if (!ok) continue;
+					
+					for (Entity e : Game.world.getEntities())
+					{
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y))
+						{
+							((Machine) e).addItemCommingIn();
+							break;
+						}
+					}
 				}
 				
 				if (t instanceof IronTube && !((IronTube) t).matchesFilters(type, i)) continue;

@@ -5,7 +5,9 @@ import java.awt.Graphics2D;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -25,6 +27,10 @@ public class Crusher extends Machine
 		
 		points.add(new TubePoint(0, 0, true, true, true));
 		points.add(new TubePoint(1, 1, false, true, false));
+		
+		outputSameMaterial = false;
+		
+		outputFilters.add(new Filter(null, ItemType.scrap));
 	}
 	
 	@Override
@@ -40,5 +46,4 @@ public class Crusher extends Machine
 	{
 		return new Crusher(x / Block.SIZE, y / Block.SIZE);
 	}
-	
 }

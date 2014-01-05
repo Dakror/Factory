@@ -43,9 +43,9 @@ public abstract class Machine extends Entity
 	protected boolean working = false;
 	protected boolean outputSameMaterial = true;
 	
-	public boolean forceGuiStay = false;
+	public boolean forceGuiToStay = false;
 	
-	protected int speed, requested, tick, startTick;
+	protected int speed, requested, tick, startTick, itemsCommingIn = 0;
 	
 	public DefaultContainer container;
 	
@@ -62,7 +62,7 @@ public abstract class Machine extends Entity
 			@Override
 			public void trigger()
 			{
-				if (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiStay) Game.currentGame.worldActiveMachine = Machine.this;
+				if (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay) Game.currentGame.worldActiveMachine = Machine.this;
 			}
 		});
 	}
@@ -137,10 +137,13 @@ public abstract class Machine extends Entity
 					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
 					Game.world.addEntity(item);
 					items.add(it, -1);
+					
+					if (items.getLength() == 0) Game.world.dispatchEntityUpdate(Cause.MACHINE_DONE, this);
 				}
 				
 				if (items.getLength(inputFilters) == inputFilters.size())
 				{
+					itemsCommingIn = 0;
 					requested = 0;
 					working = true;
 					startTick = tick;
@@ -251,6 +254,38 @@ public abstract class Machine extends Entity
 		return false;
 	}
 	
+	public boolean wantsItem(ItemType t)
+	{
+		if (working || items.getLength(outputFilters) > 0 || (itemsCommingIn == inputFilters.size() && inputFilters.size() > 0)) return false;
+		
+		if (inputFilters.size() == 0) return true;
+		
+		if (!matchesFilters(t)) return false;
+		
+		int amount = 0;
+		Filter filter = null;
+		for (Filter f : inputFilters)
+		{
+			if (t.matchesFilter(f) && (filter == null || (f.c == filter.c && f.t == filter.t)))
+			{
+				filter = f;
+				amount++;
+			}
+		}
+		
+		return items.get(t) + 1 <= amount;
+	}
+	
+	public void addItemCommingIn()
+	{
+		itemsCommingIn++;
+	}
+	
+	public int getItemsCommingIn()
+	{
+		return itemsCommingIn;
+	}
+	
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{}
@@ -284,4 +319,9 @@ public abstract class Machine extends Entity
 	@Override
 	public void setData(JSONObject data)
 	{}
+	
+	public boolean hasInputFilters()
+	{
+		return inputFilters.size() > 0;
+	}
 }

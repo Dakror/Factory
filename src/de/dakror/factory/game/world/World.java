@@ -31,8 +31,8 @@ public class World extends Layer
 		ENTITY_ADDED,
 		ENTITY_REMOVED,
 		
-		STORAGE_FULL,
 		ITEM_CONSUMED,
+		MACHINE_DONE,
 	}
 	
 	int[][] blocks;

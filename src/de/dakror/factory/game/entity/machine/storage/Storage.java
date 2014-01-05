@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
@@ -45,14 +46,6 @@ public class Storage extends Machine
 	}
 	
 	@Override
-	protected void tick(int tick)
-	{
-		boolean en = new Boolean(running);
-		running = items.getLength() < capacity;
-		if (en && !running) Game.world.dispatchEntityUpdate(Cause.STORAGE_FULL, this);
-	}
-	
-	@Override
 	public Entity clone()
 	{
 		return new Storage(x / Block.SIZE, y / Block.SIZE);
@@ -62,6 +55,12 @@ public class Storage extends Machine
 	public void onEntityUpdate(Cause cause, Object source)
 	{
 		if (cause == Cause.ITEM_CONSUMED && Game.currentGame.getActiveLayer() instanceof ItemList) Game.currentGame.getActiveLayer().init();
+	}
+	
+	@Override
+	public boolean wantsItem(ItemType t)
+	{
+		return items.getLength() + 1 <= capacity;
 	}
 	
 	@Override

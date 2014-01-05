@@ -41,7 +41,7 @@ public class IronTube extends Tube
 		color = Color.darkGray;
 		bgColor = Color.decode("#cccccc");
 		
-		forceGuiStay = true;
+		forceGuiToStay = true;
 		
 		name = "Eisen-Rohr";
 		
