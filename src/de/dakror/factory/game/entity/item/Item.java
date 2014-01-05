@@ -9,6 +9,7 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.storage.Storage;
+import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
@@ -135,7 +136,7 @@ public class Item extends Entity
 					boolean ok = true;
 					for (Entity e : Game.world.getEntities())
 					{
-						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).isRunning())
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && (!((Machine) e).isRunning() || ((Machine) e).isWorking() || !((Machine) e).matchesFilters(type)))
 						{
 							ok = false;
 							break;
@@ -144,6 +145,8 @@ public class Item extends Entity
 					
 					if (!ok) continue;
 				}
+				
+				if (t instanceof IronTube && !((IronTube) t).matchesFilters(type, i)) continue;
 				
 				neighbors.add(l);
 			}

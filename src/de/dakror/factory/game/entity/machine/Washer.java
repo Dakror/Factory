@@ -7,6 +7,7 @@ import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -28,11 +29,11 @@ public class Washer extends Machine
 		speed = 300;
 		requested = 0;
 		
-		inputs.add(ItemType.coal_ore);
+		inputFilters.add(new Filter(null, ItemType.coal_ore));
 		
-		outputs.add(ItemType.coal);
-		outputs.add(ItemType.coal);
-		outputs.add(ItemType.coal);
+		outputFilters.add(new Filter(null, ItemType.coal));
+		outputFilters.add(new Filter(null, ItemType.coal));
+		outputFilters.add(new Filter(null, ItemType.coal));
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.dakror.factory.game.Game;
@@ -18,6 +19,7 @@ import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.ui.ItemList;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Container.DefaultContainer;
@@ -31,17 +33,17 @@ public abstract class Machine extends Entity
 	
 	protected String name;
 	protected ArrayList<TubePoint> points = new ArrayList<>();
-	protected ArrayList<ItemType> inputs = new ArrayList<>();
-	protected ArrayList<ItemType> outputs = new ArrayList<>();
+	protected ArrayList<Filter> inputFilters = new ArrayList<>();
+	protected ArrayList<Filter> outputFilters = new ArrayList<>();
 	
 	protected Items items;
 	
-	protected ItemType requestedItemType;
-	
 	protected boolean running = true;
 	protected boolean drawFrame = true;
-	protected boolean waitWithRequestUntilEntityUpdate = false;
 	protected boolean working = false;
+	protected boolean outputSameMaterial = true;
+	
+	public boolean forceGuiStay = false;
 	
 	protected int speed, requested, tick, startTick;
 	
@@ -60,7 +62,7 @@ public abstract class Machine extends Entity
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.worldActiveMachine = Machine.this;
+				if (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiStay) Game.currentGame.worldActiveMachine = Machine.this;
 			}
 		});
 	}
@@ -125,11 +127,11 @@ public abstract class Machine extends Entity
 	protected void tick(int tick)
 	{
 		this.tick = tick;
-		if (inputs.size() > 0)
+		if (inputFilters.size() > 0)
 		{
 			if (!working)
 			{
-				if (tick % REQUEST_SPEED == 0 && items.getLength(outputs) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
+				if (tick % REQUEST_SPEED == 0 && items.getLength(outputFilters) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
 				{
 					ItemType it = items.getFilled().get(0);
 					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
@@ -137,7 +139,7 @@ public abstract class Machine extends Entity
 					items.add(it, -1);
 				}
 				
-				if (items.getLength(inputs) == inputs.size())
+				if (items.getLength(inputFilters) == inputFilters.size())
 				{
 					requested = 0;
 					working = true;
@@ -147,11 +149,24 @@ public abstract class Machine extends Entity
 			
 			if (working && (tick - startTick) % speed == 0 && startTick != tick)
 			{
-				for (ItemType it : inputs)
-					items.set(it, 0);
+				for (ItemType t : items.getFilled(inputFilters))
+				{
+					if (t.hasMaterial() && outputSameMaterial)
+					{
+						for (Filter f : outputFilters)
+						{
+							if (f.c != null)
+							{
+								items.add(ItemType.getItemsByCategories(t.getMaterial(), f.c)[0], 1);
+							}
+						}
+					}
+					
+					items.set(t, 0);
+				}
 				
-				for (ItemType it : outputs)
-					items.add(it, 1);
+				for (Filter f : outputFilters)
+					if (f.c == null) items.add(f.t, 1);
 				
 				working = false;
 			}
@@ -185,6 +200,8 @@ public abstract class Machine extends Entity
 	{
 		for (TubePoint tp : points)
 			Game.world.getEntities().add(new Tube(x / Block.SIZE + tp.x, y / Block.SIZE + tp.y));
+		
+		running = true;
 	}
 	
 	public String getName()
@@ -215,15 +232,28 @@ public abstract class Machine extends Entity
 		return running;
 	}
 	
+	public boolean isWorking()
+	{
+		return working;
+	}
+	
 	@Override
 	public void onReachPathNode()
 	{}
 	
+	public boolean matchesFilters(ItemType t)
+	{
+		if (inputFilters.size() == 0) return true;
+		
+		for (Filter f : inputFilters)
+			if (t.matchesFilter(f)) return true;
+		
+		return false;
+	}
+	
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
-	{
-		if ((cause == Cause.ITEM_CONSUMED) || cause == Cause.ENTITY_ADDED) waitWithRequestUntilEntityUpdate = false;
-	}
+	{}
 	
 	@Override
 	public JSONObject getData() throws Exception
@@ -236,11 +266,17 @@ public abstract class Machine extends Entity
 		o.put("i", items.getData());
 		o.put("w", working);
 		o.put("r", running);
-		o.put("is", inputs);
-		o.put("os", outputs);
-		o.put("rIT", requestedItemType);
+		
+		JSONArray is = new JSONArray();
+		for (Filter f : inputFilters)
+			is.put(f.getData());
+		o.put("is", is);
+		
+		JSONArray os = new JSONArray();
+		for (Filter f : outputFilters)
+			is.put(f.getData());
+		o.put("os", os);
 		o.put("sT", startTick);
-		o.put("wWRUEU", waitWithRequestUntilEntityUpdate);
 		
 		return o;
 	}

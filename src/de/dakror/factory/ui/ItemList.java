@@ -63,7 +63,7 @@ public class ItemList extends Layer
 		{
 			for (Category c : Category.values())
 			{
-				ItemSlot is = new ItemSlot(Game.getWidth() - WIDTH + 20 + (c.ordinal() % perRow) * ItemSlot.SIZE, 20 + (c.ordinal() / perRow) * ItemSlot.SIZE, ItemType.getItemsByCategory(c)[0], 0);
+				ItemSlot is = new ItemSlot(Game.getWidth() - WIDTH + 20 + (c.ordinal() % perRow) * ItemSlot.SIZE, 20 + (c.ordinal() / perRow) * ItemSlot.SIZE, ItemType.getItemsByCategories(c)[0], 0);
 				is.keepClicked = true;
 				is.category = c;
 				is.tooltipOnRight = false;
@@ -72,6 +72,8 @@ public class ItemList extends Layer
 		}
 		for (ItemType it : ItemType.values())
 		{
+			if (it == ItemType.nul) continue;
+			
 			ItemSlot is = new ItemSlot(Game.getWidth() - WIDTH + 20 + ((it.ordinal() + (addCategories ? Category.values().length : 0)) % perRow) * ItemSlot.SIZE, 20 + ((it.ordinal() + (addCategories ? Category.values().length : 0)) / perRow) * ItemSlot.SIZE, it, items == null ? 1 : items.get(it));
 			is.keepClicked = true;
 			is.tooltipOnRight = false;

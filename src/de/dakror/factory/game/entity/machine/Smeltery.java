@@ -6,7 +6,9 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -27,10 +29,10 @@ public class Smeltery extends Machine
 		
 		speed = 20;
 		
-		inputs.add(ItemType.iron_dust);
-		inputs.add(ItemType.coal);
+		inputFilters.add(new Filter(Category.dust, null));
+		inputFilters.add(new Filter(null, ItemType.coal));
 		
-		outputs.add(ItemType.iron_ingot);
+		outputFilters.add(new Filter(Category.ingot, null));
 	}
 	
 	@Override

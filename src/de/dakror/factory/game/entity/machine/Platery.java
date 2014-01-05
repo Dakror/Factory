@@ -5,8 +5,9 @@ import java.awt.Graphics2D;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
-import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -27,9 +28,9 @@ public class Platery extends Machine
 		
 		speed = 40;
 		
-		inputs.add(ItemType.iron_ingot);
+		inputFilters.add(new Filter(Category.ingot, null));
 		
-		outputs.add(ItemType.iron_plate);
+		outputFilters.add(new Filter(Category.plate, null));
 	}
 	
 	@Override

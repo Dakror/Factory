@@ -65,10 +65,10 @@ public class Storage extends Machine
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
+	public void mouseReleased(MouseEvent e)
 	{
-		super.mousePressed(e);
-		if (state == 1)
+		super.mouseReleased(e);
+		if (state == 2 && e.getButton() == MouseEvent.BUTTON1 && Game.currentGame.worldActiveMachine == this)
 		{
 			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
 			{

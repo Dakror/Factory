@@ -28,9 +28,12 @@ public class Miner extends Machine
 	public Miner(float x, float y)
 	{
 		super(x, y, 2, 2);
+		
 		name = "Mine";
-		points.add(new TubePoint(0, 0, false, true, true));
 		running = false;
+		
+		points.add(new TubePoint(0, 0, false, true, true));
+		
 		speed = 800;
 	}
 	

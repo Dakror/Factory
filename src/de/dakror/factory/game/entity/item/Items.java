@@ -1,15 +1,13 @@
 package de.dakror.factory.game.entity.item;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.factory.game.entity.item.ItemType.Category;
+import de.dakror.factory.util.Filter;
 
 /**
  * @author Dakror
@@ -93,32 +91,40 @@ public class Items
 		return length;
 	}
 	
-	public float getLength(ItemType... types)
-	{
-		float length = 0;
-		
-		for (ItemType r : types)
-			length += getF(r);
-		
-		return length;
-	}
-	
-	public float getLength(Category category)
+	public float getLength(Filter... filters)
 	{
 		float length = 0;
 		
 		for (ItemType r : ItemType.values())
-			if (r.category.contains(category)) length += getF(r);
+		{
+			for (Filter f : filters)
+			{
+				if (r.matchesFilter(f))
+				{
+					length += getF(r);
+					break;
+				}
+			}
+		}
 		
 		return length;
 	}
 	
-	public float getLength(ArrayList<ItemType> types)
+	public float getLength(ArrayList<Filter> filters)
 	{
 		float length = 0;
 		
-		for (ItemType r : types)
-			length += getF(r);
+		for (ItemType r : ItemType.values())
+		{
+			for (Filter f : filters)
+			{
+				if (r.matchesFilter(f))
+				{
+					length += getF(r);
+					break;
+				}
+			}
+		}
 		
 		return length;
 	}
@@ -133,23 +139,21 @@ public class Items
 		return res;
 	}
 	
-	public ArrayList<ItemType> getFilled(ItemType... types)
-	{
-		List<ItemType> tps = Arrays.asList(types);
-		ArrayList<ItemType> res = new ArrayList<>();
-		
-		for (ItemType r : ItemType.values())
-			if (getF(r) != 0 && tps.contains(r)) res.add(r);
-		
-		return res;
-	}
-	
-	public ArrayList<ItemType> getFilled(Category category)
+	public ArrayList<ItemType> getFilled(ArrayList<Filter> filters)
 	{
 		ArrayList<ItemType> res = new ArrayList<>();
 		
 		for (ItemType r : ItemType.values())
-			if (getF(r) != 0 && r.category.contains(category)) res.add(r);
+		{
+			for (Filter f : filters)
+			{
+				if (getF(r) != 0 && r.matchesFilter(f))
+				{
+					res.add(r);
+					break;
+				}
+			}
+		}
 		
 		return res;
 	}
@@ -177,4 +181,5 @@ public class Items
 		
 		return result;
 	}
+	
 }

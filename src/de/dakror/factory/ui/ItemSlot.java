@@ -1,7 +1,5 @@
 package de.dakror.factory.ui;
 
-import java.awt.AlphaComposite;
-import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -60,13 +58,7 @@ public class ItemSlot extends ClickableComponent
 		}
 		if ((state != 0 || (keepClicked && selected))) Helper.drawContainer(x, y, width, height, false, state == 1 || selected, g);
 		
-		if (bg != null)
-		{
-			Composite c = g.getComposite();
-			if (type != null || category != null) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-			g.drawImage(bg, x + 10, y + 10, width - 20, height - 20, Game.w);
-			g.setComposite(c);
-		}
+		if (bg != null && type == null && category == null) g.drawImage(bg, x + 10, y + 10, width - 20, height - 20, Game.w);
 		
 		if (type != null) type.draw(x + (width - 32) / 2, y + (height - 32) / 2, g);
 		

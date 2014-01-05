@@ -15,7 +15,7 @@ public class SilverTube extends IronTube
 		super(x, y);
 		speed = 10f;
 		color = Color.decode("#5b7c82");
-		
+		bgColor = Color.decode("#c1cccc");
 		name = "Silber-Rohr";
 	}
 	

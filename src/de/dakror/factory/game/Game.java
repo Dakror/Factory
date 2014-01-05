@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
+import de.dakror.factory.game.entity.machine.Crusher;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.Miner;
 import de.dakror.factory.game.entity.machine.Platery;
@@ -36,7 +37,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Crusher(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	public static String gameName;
@@ -129,7 +130,7 @@ public class Game extends GameFrame
 					}
 				}
 				
-				if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).contains(activeMachine.getArea())) cp = false;
+				if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).contains(activeMachine.getX(), activeMachine.getY(), activeMachine.getWidth(), activeMachine.getHeight())) cp = false;
 				
 				canPlace = cp;
 				

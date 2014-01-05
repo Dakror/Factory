@@ -5,8 +5,9 @@ import java.awt.Graphics2D;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
-import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
+import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.util.Helper;
 
@@ -27,10 +28,10 @@ public class Pulverizer extends Machine
 		
 		speed = 600;
 		
-		inputs.add(ItemType.iron_ore);
+		inputFilters.add(new Filter(Category.ore, null));
 		
-		outputs.add(ItemType.iron_dust);
-		outputs.add(ItemType.iron_dust);
+		outputFilters.add(new Filter(Category.dust, null));
+		outputFilters.add(new Filter(Category.dust, null));
 	}
 	
 	@Override
