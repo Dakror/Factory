@@ -138,15 +138,6 @@ public class Item extends Entity
 					}
 					
 					if (!ok) continue;
-					
-					for (Entity e : Game.world.getEntities())
-					{
-						if (e instanceof Machine && e.getArea().contains(l.x, l.y))
-						{
-							((Machine) e).addItemCommingIn();
-							break;
-						}
-					}
 				}
 				
 				if (t instanceof IronTube && !((IronTube) t).matchesFilters(type, i)) continue;

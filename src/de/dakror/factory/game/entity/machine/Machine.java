@@ -45,7 +45,7 @@ public abstract class Machine extends Entity
 	
 	public boolean forceGuiToStay = false;
 	
-	protected int speed, requested, tick, startTick, itemsCommingIn = 0;
+	protected int speed, requested, tick, startTick;
 	
 	public DefaultContainer container;
 	
@@ -143,7 +143,6 @@ public abstract class Machine extends Entity
 				
 				if (items.getLength(inputFilters) == inputFilters.size())
 				{
-					itemsCommingIn = 0;
 					requested = 0;
 					working = true;
 					startTick = tick;
@@ -256,7 +255,7 @@ public abstract class Machine extends Entity
 	
 	public boolean wantsItem(ItemType t)
 	{
-		if (working || items.getLength(outputFilters) > 0 || (itemsCommingIn == inputFilters.size() && inputFilters.size() > 0)) return false;
+		if (working || items.getLength(outputFilters) > 0) return false;
 		
 		if (inputFilters.size() == 0) return true;
 		
@@ -274,16 +273,6 @@ public abstract class Machine extends Entity
 		}
 		
 		return items.get(t) + 1 <= amount;
-	}
-	
-	public void addItemCommingIn()
-	{
-		itemsCommingIn++;
-	}
-	
-	public int getItemsCommingIn()
-	{
-		return itemsCommingIn;
 	}
 	
 	@Override
