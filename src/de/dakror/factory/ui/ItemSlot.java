@@ -23,6 +23,7 @@ public class ItemSlot extends ClickableComponent
 	public int amount;
 	public Category category;
 	public boolean keepClicked = false;
+	public boolean keepSelected = false;
 	public boolean tooltipOnRight = true;
 	public boolean rightClickClear = false;
 	
@@ -58,7 +59,7 @@ public class ItemSlot extends ClickableComponent
 		}
 		if ((state != 0 || (keepClicked && selected))) Helper.drawContainer(x, y, width, height, false, state == 1 || selected, g);
 		
-		if (bg != null && type == null && category == null) g.drawImage(bg, x + 10, y + 10, width - 20, height - 20, Game.w);
+		if (bg != null && type == null) g.drawImage(bg, x + 10, y + 10, width - 20, height - 20, Game.w);
 		
 		if (type != null) type.draw(x + (width - 32) / 2, y + (height - 32) / 2, g);
 		
@@ -68,7 +69,7 @@ public class ItemSlot extends ClickableComponent
 			Helper.drawShadow(x - off, y - off, width + off * 2, height + off * 2, g);
 		}
 		
-		if (category != null)
+		if (category != null && type != null)
 		{
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 			Helper.drawHorizontallyCenteredString("?", x, width, y + 50, g, 64);
@@ -93,7 +94,7 @@ public class ItemSlot extends ClickableComponent
 	public void mouseReleased(MouseEvent e)
 	{
 		super.mouseReleased(e);
-		if (!contains(e.getX(), e.getY())) selected = false;
+		if (!contains(e.getX(), e.getY()) && !keepSelected) selected = false;
 		else if (e.getButton() == MouseEvent.BUTTON3 && rightClickClear)
 		{
 			category = null;

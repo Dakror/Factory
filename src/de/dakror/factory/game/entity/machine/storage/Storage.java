@@ -60,7 +60,7 @@ public class Storage extends Machine
 	@Override
 	public boolean wantsItem(ItemType t)
 	{
-		return items.getLength() + 1 <= capacity;
+		return items.getLength() < capacity;
 	}
 	
 	@Override
@@ -72,13 +72,11 @@ public class Storage extends Machine
 			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
 			{
 				ItemList itemList = new ItemList(items);
-				itemList.killOnUnfocus = true;
 				Game.currentGame.addLayer(itemList);
 			}
 			else
 			{
 				((ItemList) Game.currentGame.getActiveLayer()).items = items;
-				((ItemList) Game.currentGame.getActiveLayer()).killOnUnfocus = true;
 				((ItemList) Game.currentGame.getActiveLayer()).addCategories = false;
 				((ItemList) Game.currentGame.getActiveLayer()).init();
 			}

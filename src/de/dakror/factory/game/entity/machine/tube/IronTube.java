@@ -27,8 +27,6 @@ public class IronTube extends Tube
 	static ItemList itemList;
 	static Image[] arrows = new Image[4];
 	
-	public Filter[] filters;
-	
 	protected boolean showItemList = true;
 	
 	public static void init()
@@ -54,9 +52,10 @@ public class IronTube extends Tube
 	
 	protected void initFilters(int length)
 	{
-		filters = new Filter[length];
+		outputFilters.clear();
+		
 		for (int i = 0; i < length; i++)
-			filters[i] = new Filter(null, null);
+			outputFilters.add(new Filter(null, null));
 	}
 	
 	protected void initGUI()
@@ -67,8 +66,8 @@ public class IronTube extends Tube
 		{
 			for (int j = 0; j < (576 / ItemSlot.SIZE); j++)
 			{
-				final ItemSlot is = new ItemSlot((Game.getWidth() - 616) / 2 + 16 + j * ItemSlot.SIZE, (Game.getHeight() - 300) / 3 + 20 + i * ItemSlot.SIZE, filters[i * 9 + j].t, filters[i * 9 + j].t == null ? 0 : 1);
-				is.category = filters[i * 9 + j].c;
+				final ItemSlot is = new ItemSlot((Game.getWidth() - 616) / 2 + 16 + j * ItemSlot.SIZE, (Game.getHeight() - 300) / 3 + 20 + i * ItemSlot.SIZE, outputFilters.get(i * 9 + j).t, outputFilters.get(i * 9 + j).t == null ? 0 : 1);
+				is.category = outputFilters.get(i * 9 + j).c;
 				is.bg = arrows[i];
 				is.rightClickClear = true;
 				is.pressEvent = new ClickEvent()
@@ -98,11 +97,11 @@ public class IronTube extends Tube
 				for (int i = 0; i < container.components.size() - 1; i++)
 				{
 					ItemSlot is = (ItemSlot) container.components.get(i);
-					filters[i].c = is.category;
-					filters[i].t = is.type;
+					outputFilters.get(i).c = is.category;
+					outputFilters.get(i).t = is.type;
 				}
 				
-				Game.currentGame.removeLayer(itemList);
+				if (Game.currentGame.getActiveLayer() instanceof ItemList) Game.currentGame.removeLayer(Game.currentGame.getActiveLayer());
 				Game.currentGame.worldActiveMachine = null;
 			}
 		});
@@ -114,9 +113,9 @@ public class IronTube extends Tube
 	{
 		super.mouseReleased(e);
 		
+		if (state == 2 && Game.currentGame.worldActiveMachine == this) initGUI();
 		if (state == 2 && Game.currentGame.worldActiveMachine == this && showItemList)
 		{
-			initGUI();
 			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
 			{
 				itemList = new ItemList();
@@ -147,9 +146,9 @@ public class IronTube extends Tube
 	
 	public boolean matchesFilters(ItemType type, int direction)
 	{
-		for (int i = 0; i < filters.length / 4; i++)
+		for (int i = 0; i < outputFilters.size() / 4; i++)
 		{
-			Filter f = filters[direction * filters.length / 4 + i];
+			Filter f = outputFilters.get(direction * outputFilters.size() / 4 + i);
 			if (f.t == null) continue;
 			
 			if (!type.matchesFilter(f)) return false;
@@ -164,7 +163,7 @@ public class IronTube extends Tube
 		JSONObject o = super.getData();
 		
 		JSONArray fs = new JSONArray();
-		for (Filter f : filters)
+		for (Filter f : outputFilters)
 			fs.put(f.getData());
 		o.put("f", fs);
 		

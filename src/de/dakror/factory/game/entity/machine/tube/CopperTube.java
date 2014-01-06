@@ -18,6 +18,8 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class CopperTube extends IronTube
 {
+	boolean first;
+	
 	public CopperTube(float x, float y)
 	{
 		super(x, y);
@@ -28,32 +30,32 @@ public class CopperTube extends IronTube
 		bgColor = Color.decode("#a2908d");
 		
 		showItemList = false;
-		
+		first = true;
 		initFilters(4);
 	}
 	
 	@Override
 	protected void initGUI()
 	{
-		boolean hadSome = container.components.size() > 0;
 		container.components.clear();
 		for (int i = 0; i < 4; i++)
 		{
 			final ItemSlot is = new ItemSlot((Game.getWidth() - 318) / 2 + 16 + i * ItemSlot.SIZE, (Game.getHeight() - 104) / 3 + 20, null, 0);
-			is.category = filters[i].c;
-			if (hadSome) is.selected = is.category == null;
+			is.category = outputFilters.get(i).c;
+			if (!first) is.selected = is.category == null;
 			is.bg = arrows[i];
 			is.keepClicked = true;
+			is.keepSelected = true;
 			final int j = i;
 			is.addClickEvent(new ClickEvent()
 			{
 				@Override
 				public void trigger()
 				{
-					for (int i = 0; i < filters.length; i++)
-						filters[i] = new Filter(Category.nul, null);
+					for (int i = 0; i < outputFilters.size(); i++)
+						outputFilters.set(i, new Filter(Category.nul, null));
 					
-					filters[j] = new Filter(null, null);
+					outputFilters.set(j, new Filter(null, null));
 					
 					Game.currentGame.worldActiveMachine = null;
 				}
@@ -71,6 +73,8 @@ public class CopperTube extends IronTube
 			}
 		});
 		container.components.add(cb);
+		
+		first = false;
 	}
 	
 	@Override

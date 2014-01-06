@@ -81,22 +81,31 @@ public abstract class Machine extends Entity
 	
 	public void drawAbove(Graphics2D g)
 	{
-		if (this instanceof Tube) return;
-		
-		Color c = g.getColor();
-		
-		for (TubePoint p : points)
+		if (!(this instanceof Tube))
 		{
-			g.setColor(Color.white);
-			g.fillRect(x + p.x * Block.SIZE + 4, y + p.y * Block.SIZE + 4, Block.SIZE - 8, Block.SIZE - 8);
-			g.setColor(p.in ? Color.blue : Color.red);
-			if (p.horizontal) g.fillRect(x + p.x * Block.SIZE + 8, y + p.y * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), Block.SIZE - 16, 4);
-			else g.fillRect(x + p.x * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), y + p.y * Block.SIZE + 8, 4, Block.SIZE - 16);
+			
+			Color c = g.getColor();
+			
+			for (TubePoint p : points)
+			{
+				g.setColor(Color.white);
+				g.fillRect(x + p.x * Block.SIZE + 4, y + p.y * Block.SIZE + 4, Block.SIZE - 8, Block.SIZE - 8);
+				g.setColor(p.in ? Color.blue : Color.red);
+				if (p.horizontal) g.fillRect(x + p.x * Block.SIZE + 8, y + p.y * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), Block.SIZE - 16, 4);
+				else g.fillRect(x + p.x * Block.SIZE + (p.up ? 4 : Block.SIZE - 8), y + p.y * Block.SIZE + 8, 4, Block.SIZE - 16);
+			}
+			
+			g.setColor(c);
+			
+			drawIcon(g);
 		}
-		
-		g.setColor(c);
-		
-		drawIcon(g);
+		if (state != 0)
+		{
+			Color c = g.getColor();
+			g.setColor(Color.darkGray);
+			g.drawRect(x, y, width - 1, height - 1);
+			g.setColor(c);
+		}
 	}
 	
 	public void drawGUI(Graphics2D g)
