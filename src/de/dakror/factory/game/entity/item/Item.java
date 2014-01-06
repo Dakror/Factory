@@ -128,9 +128,25 @@ public class Item extends Entity
 				{
 					boolean ok = true;
 					
+					Machine machine = null;
+					for (Entity e : Game.world.getEntities())
+					{
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && ((Machine) e).getTubePoints().size() > 0)
+						{
+							machine = (Machine) e;
+							break;
+						}
+					}
+					
 					for (Entity e : Game.world.getEntities())
 					{
 						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).wantsItem(type))
+						{
+							ok = false;
+							break;
+						}
+						
+						if (e instanceof Item && e.getTarget() != null && e.getTarget().equals(l.getPos()) && machine.matchSameFilters(type, ((Item) e).type))
 						{
 							ok = false;
 							break;

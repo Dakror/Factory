@@ -21,6 +21,7 @@ import de.dakror.factory.game.entity.machine.Smeltery;
 import de.dakror.factory.game.entity.machine.Washer;
 import de.dakror.factory.game.entity.machine.storage.Storage;
 import de.dakror.factory.game.entity.machine.storage.SuperStorage;
+import de.dakror.factory.game.entity.machine.tube.CopperTube;
 import de.dakror.factory.game.entity.machine.tube.GoldTube;
 import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.SilverTube;
@@ -37,7 +38,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class Game extends GameFrame
 {
-	public static final Machine[] buildableMachines = { new Tube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Crusher(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
+	public static final Machine[] buildableMachines = { new Tube(0, 0), new CopperTube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Crusher(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
 	public static String gameName;

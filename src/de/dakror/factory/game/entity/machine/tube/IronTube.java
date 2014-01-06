@@ -27,7 +27,9 @@ public class IronTube extends Tube
 	static ItemList itemList;
 	static Image[] arrows = new Image[4];
 	
-	Filter[] filters;
+	public Filter[] filters;
+	
+	protected boolean showItemList = true;
 	
 	public static void init()
 	{
@@ -39,20 +41,25 @@ public class IronTube extends Tube
 	{
 		super(x, y);
 		color = Color.darkGray;
-		bgColor = Color.decode("#cccccc");
+		bgColor = Color.decode("#999999");
 		
 		forceGuiToStay = true;
 		
 		name = "Eisen-Rohr";
 		
-		filters = new Filter[36];
-		for (int i = 0; i < 36; i++)
-			filters[i] = new Filter(null, null);
+		initFilters(36);
 		
 		if (Game.world != null) initGUI();
 	}
 	
-	private void initGUI()
+	protected void initFilters(int length)
+	{
+		filters = new Filter[length];
+		for (int i = 0; i < length; i++)
+			filters[i] = new Filter(null, null);
+	}
+	
+	protected void initGUI()
 	{
 		container.components.clear();
 		
@@ -107,7 +114,7 @@ public class IronTube extends Tube
 	{
 		super.mouseReleased(e);
 		
-		if (state == 2 && Game.currentGame.worldActiveMachine == this)
+		if (state == 2 && Game.currentGame.worldActiveMachine == this && showItemList)
 		{
 			initGUI();
 			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
@@ -130,14 +137,19 @@ public class IronTube extends Tube
 	public void drawGUI(Graphics2D g)
 	{
 		Helper.drawContainer((Game.getWidth() - 660) / 2, (Game.getHeight() - 300) / 3, 660, 300, true, false, g);
+		drawSuper(g);
+	}
+	
+	public void drawSuper(Graphics2D g)
+	{
 		super.drawGUI(g);
 	}
 	
 	public boolean matchesFilters(ItemType type, int direction)
 	{
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < filters.length / 4; i++)
 		{
-			Filter f = filters[direction * 9 + i];
+			Filter f = filters[direction * filters.length / 4 + i];
 			if (f.t == null) continue;
 			
 			if (!type.matchesFilter(f)) return false;

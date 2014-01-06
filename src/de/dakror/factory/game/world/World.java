@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
-import de.dakror.factory.game.entity.machine.storage.Storage;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.util.TubePoint;
 import de.dakror.gamesetup.GameFrame;
@@ -144,7 +143,38 @@ public class World extends Layer
 			fillCircle(point, radius, ores[index], 0.4f, random);
 		}
 		
-		addEntity(new Storage((blocks.length - 6) / 2, 2));
+		// blocks[3][1] = Block.iron_ore.ordinal();
+		// blocks[3][2] = Block.iron_ore.ordinal();
+		// blocks[4][1] = Block.iron_ore.ordinal();
+		// blocks[4][2] = Block.iron_ore.ordinal();
+		//
+		// blocks[8][1] = Block.gold_ore.ordinal();
+		// blocks[8][2] = Block.gold_ore.ordinal();
+		// blocks[9][1] = Block.gold_ore.ordinal();
+		// blocks[9][2] = Block.gold_ore.ordinal();
+		//
+		// addEntity(new Miner(3, 1));
+		// addEntity(new Miner(8, 1));
+		// addEntity(new Pulverizer(5, 1));
+		//
+		// addEntity(new Tube(3, 0));
+		// addEntity(new Tube(4, 0));
+		// addEntity(new Tube(5, 0));
+		//
+		// addEntity(new Tube(6, 3));
+		// addEntity(new Tube(6, 4));
+		// addEntity(new Tube(6, 5));
+		// addEntity(new Tube(6, 6));
+		// addEntity(new Tube(7, 6));
+		//
+		// addEntity(new Storage(7, 3));
+		//
+		// IronTube t = new IronTube(6, 0);
+		// t.filters[0] = new Filter(Category.nul, null);
+		// t.filters[18] = new Filter(Category.nul, null);
+		// addEntity(t);
+		// addEntity(new Tube(7, 0));
+		// addEntity(new Tube(8, 0));
 	}
 	
 	public void fillCircle(Point center, int radius, Block tile, float chance, Random random)

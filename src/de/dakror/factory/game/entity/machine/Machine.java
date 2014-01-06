@@ -253,6 +253,16 @@ public abstract class Machine extends Entity
 		return false;
 	}
 	
+	public boolean matchSameFilters(ItemType t, ItemType t2)
+	{
+		if (inputFilters.size() == 0) return false;
+		
+		for (Filter f : inputFilters)
+			if (t.matchesFilter(f) && t2.matchesFilter(f)) return true;
+		
+		return false;
+	}
+	
 	public boolean wantsItem(ItemType t)
 	{
 		if (working || items.getLength(outputFilters) > 0) return false;

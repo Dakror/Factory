@@ -15,6 +15,7 @@ public class GoldTube extends Tube
 		super(x, y);
 		speed = 10f;
 		color = Color.decode("#cd6f00");
+		bgColor = Color.decode("#cdb598");
 		
 		name = "Gold-Rohr";
 	}
