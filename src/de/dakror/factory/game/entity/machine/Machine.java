@@ -190,7 +190,7 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3)
+		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && Game.currentGame.worldActiveMachine == null)
 		{
 			for (Entity e1 : Game.world.getEntities())
 				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
@@ -198,7 +198,7 @@ public abstract class Machine extends Entity
 			dead = true;
 		}
 		
-		if (!dead) super.mouseReleased(e);
+		if (!dead && (Game.currentGame.worldActiveMachine == null || Game.currentGame.worldActiveMachine.equals(this))) super.mouseReleased(e);
 	}
 	
 	public ArrayList<TubePoint> getTubePoints()

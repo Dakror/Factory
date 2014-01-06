@@ -47,6 +47,9 @@ public class Game extends GameFrame
 	
 	public Machine activeMachine, worldActiveMachine;
 	public boolean canPlace;
+	public boolean paused;
+	
+	int tickWhenPaused;
 	
 	public Game()
 	{
@@ -60,6 +63,7 @@ public class Game extends GameFrame
 		{
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/alagard.ttf")));
 			IronTube.init();
+			paused = false;
 		}
 		catch (Exception e)
 		{
@@ -83,6 +87,12 @@ public class Game extends GameFrame
 		}
 		
 		drawLayers(g);
+		
+		if (paused)
+		{
+			Helper.drawShadow(0, 0, Game.getWidth(), 110, g);
+			Helper.drawHorizontallyCenteredString("Pausiert", Game.getWidth(), 80, g, 80);
+		}
 		
 		Helper.drawString("FPS: " + getFPS(), 0, 26, g, 18);
 		Helper.drawString("UPS: " + getUPS(), 0, 52, g, 18);
@@ -201,6 +211,7 @@ public class Game extends GameFrame
 		super.keyPressed(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.saveGame();
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) paused = !paused;
 	}
 	
 	@Override

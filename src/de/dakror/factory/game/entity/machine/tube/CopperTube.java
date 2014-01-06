@@ -18,8 +18,6 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class CopperTube extends IronTube
 {
-	boolean first;
-	
 	public CopperTube(float x, float y)
 	{
 		super(x, y);
@@ -30,7 +28,7 @@ public class CopperTube extends IronTube
 		bgColor = Color.decode("#a2908d");
 		
 		showItemList = false;
-		first = true;
+		
 		initFilters(4);
 	}
 	
@@ -42,7 +40,7 @@ public class CopperTube extends IronTube
 		{
 			final ItemSlot is = new ItemSlot((Game.getWidth() - 318) / 2 + 16 + i * ItemSlot.SIZE, (Game.getHeight() - 104) / 3 + 20, null, 0);
 			is.category = outputFilters.get(i).c;
-			if (!first) is.selected = is.category == null;
+			if (isFilled()) is.selected = is.category == null;
 			is.bg = arrows[i];
 			is.keepClicked = true;
 			is.keepSelected = true;
@@ -73,8 +71,14 @@ public class CopperTube extends IronTube
 			}
 		});
 		container.components.add(cb);
+	}
+	
+	public boolean isFilled()
+	{
+		for (Filter f : outputFilters)
+			if (f.c != null || f.t != null) return true;
 		
-		first = false;
+		return false;
 	}
 	
 	@Override

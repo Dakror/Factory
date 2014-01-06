@@ -17,7 +17,7 @@ import de.dakror.gamesetup.util.Helper;
  */
 public enum ItemType
 {
-	stone(0, 0, " Stein", Category.block),
+	stone(0, 0, "Stein", Category.block),
 	coal_ore(2, 0, "Kohle-Erz", Category.block),
 	iron_ore(3, 0, "Eisenerz", Category.ore, Category.block, Category.material_iron),
 	copper_ore(5, 1, "Kupfererz", Category.ore, Category.block, Category.material_copper),
@@ -27,7 +27,6 @@ public enum ItemType
 	
 	coal(8, 21, "Kohle", Category.none),
 	scrap(2, 13, "Schrott", Category.none),
-	
 	
 	coal_dust(0, 7, "Kohlestaub", Category.dust),
 	iron_dust(1, 7, "Eisenstaub", Category.dust, Category.material_iron),

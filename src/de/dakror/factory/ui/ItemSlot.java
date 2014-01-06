@@ -44,7 +44,7 @@ public class ItemSlot extends ClickableComponent
 			@Override
 			public void trigger()
 			{
-				selected = true;
+				selected = !selected;
 			}
 		});
 	}

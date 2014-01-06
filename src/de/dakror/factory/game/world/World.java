@@ -112,6 +112,7 @@ public class World extends Layer
 	{
 		translateX = -x;
 		translateY = -y;
+		
 		for (Entity e : entities)
 		{
 			if (e.isDead())
@@ -121,7 +122,7 @@ public class World extends Layer
 				components.remove(e);
 				dispatchEntityUpdate(e.deathCause == null ? Cause.ENTITY_REMOVED : e.deathCause, e);
 			}
-			else e.update(tick);
+			else if (!Game.currentGame.paused) e.update(tick);
 		}
 	}
 	
