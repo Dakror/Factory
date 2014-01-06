@@ -198,7 +198,7 @@ public abstract class Machine extends Entity
 			dead = true;
 		}
 		
-		if (!dead && (Game.currentGame.worldActiveMachine == null || Game.currentGame.worldActiveMachine.equals(this))) super.mouseReleased(e);
+		if (!dead) super.mouseReleased(e);
 	}
 	
 	public ArrayList<TubePoint> getTubePoints()
