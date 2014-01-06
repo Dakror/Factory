@@ -62,6 +62,8 @@ public enum ItemType
 		none("Misc."),
 		nul("Nichts"),
 		
+		item("Alle"),
+		
 		// -- materials -- //
 		material_iron("Eisen"),
 		material_copper("Kuper"),
@@ -94,7 +96,11 @@ public enum ItemType
 	{
 		this.tx = tx;
 		this.ty = ty;
-		categories = Arrays.asList(category);
+		categories = new ArrayList<>();
+		for (Category c : category)
+			categories.add(c);
+		if (!name.equals("Schrott")) categories.add(Category.item);
+		
 		this.name = name;
 	}
 	

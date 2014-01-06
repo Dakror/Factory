@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
@@ -28,8 +29,7 @@ public class Crusher extends Machine
 		points.add(new TubePoint(0, 0, true, true, true));
 		points.add(new TubePoint(1, 1, false, true, false));
 		
-		outputSameMaterial = false;
-		
+		inputFilters.add(new Filter(Category.item, null));
 		outputFilters.add(new Filter(null, ItemType.scrap));
 	}
 	
@@ -38,7 +38,7 @@ public class Crusher extends Machine
 	{
 		int size = 64;
 		g.drawImage(Game.getImage("machine/crusher.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
-		if (running) Helper.drawCooldownCircle(x, y, width, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
+		if (working) Helper.drawCooldownCircle(x, y, width, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override

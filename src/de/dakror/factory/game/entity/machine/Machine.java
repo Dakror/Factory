@@ -137,7 +137,6 @@ public abstract class Machine extends Entity
 					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
 					Game.world.addEntity(item);
 					items.add(it, -1);
-					
 					if (items.getLength() == 0) Game.world.dispatchEntityUpdate(Cause.MACHINE_DONE, this);
 				}
 				
