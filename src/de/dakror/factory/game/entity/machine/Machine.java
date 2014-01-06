@@ -190,7 +190,7 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && Game.currentGame.worldActiveMachine == null)
+		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay))
 		{
 			for (Entity e1 : Game.world.getEntities())
 				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
