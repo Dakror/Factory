@@ -147,11 +147,15 @@ public class Tube extends Machine
 		JSONObject o = new JSONObject();
 		
 		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
-		o.put("x", x);
-		o.put("y", y);
+		o.put("x", x / Block.SIZE);
+		o.put("y", y / Block.SIZE);
 		
 		return o;
 	}
+	
+	@Override
+	public void setData(JSONObject data) throws Exception
+	{}
 	
 	public boolean isConnectedToExit()
 	{

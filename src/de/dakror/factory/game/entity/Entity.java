@@ -164,5 +164,5 @@ public abstract class Entity extends ClickableComponent
 	
 	public abstract JSONObject getData() throws Exception;
 	
-	public abstract void setData(JSONObject data);
+	public abstract void setData(JSONObject data) throws Exception;
 }

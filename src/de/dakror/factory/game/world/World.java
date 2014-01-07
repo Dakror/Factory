@@ -4,6 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -280,11 +283,29 @@ public class World extends Layer
 		data.put("seed", seed);
 		
 		JSONArray e = new JSONArray();
+		ArrayList<Entity> entities = new ArrayList<>(this.entities);
+		Collections.sort(entities, new Comparator<Entity>()
+		{
+			@Override
+			public int compare(Entity o1, Entity o2)
+			{
+				return Float.compare(o1.getPos().getLength(), o2.getPos().getLength());
+			}
+		});
 		for (Entity e1 : entities)
+		{
+			if (e1 instanceof Tube && (((Tube) e1).isConnectedToExit() || ((Tube) e1).isConnectedToInput())) continue;
 			e.put(e1.getData());
+		}
 		
 		data.put("entities", e);
 		
 		return data;
+	}
+	
+	public void clear()
+	{
+		components.clear();
+		entities.clear();
 	}
 }

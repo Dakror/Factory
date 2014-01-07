@@ -31,6 +31,13 @@ public class Item extends Entity
 		speed = 2f;
 	}
 	
+	public Item(float x, float y)
+	{
+		super(x, y, Block.SIZE, Block.SIZE);
+		drawBelow = false;
+		speed = 2f;
+	}
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -86,15 +93,12 @@ public class Item extends Entity
 		JSONObject o = new JSONObject();
 		
 		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
-		o.put("x", getPos().x);
-		o.put("y", getPos().y);
+		o.put("x", (int) getPos().x);
+		o.put("y", (int) getPos().y);
+		o.put("t", type.ordinal());
 		
 		return o;
 	}
-	
-	@Override
-	public void setData(JSONObject data)
-	{}
 	
 	@Override
 	protected void onReachTarget()
@@ -211,4 +215,10 @@ public class Item extends Entity
 	@Override
 	public void onReachPathNode()
 	{}
+	
+	@Override
+	public void setData(JSONObject data) throws Exception
+	{
+		type = ItemType.values()[data.getInt("t")];
+	}
 }

@@ -78,7 +78,7 @@ public class Storage extends Machine
 	@Override
 	public void onEntityUpdate(Cause cause, Object source)
 	{
-		if (cause == Cause.ITEM_CONSUMED && Game.currentGame.getActiveLayer() instanceof ItemList)
+		if (cause == Cause.ITEM_CONSUMED && Game.currentGame.getActiveLayer() instanceof ItemList && Game.currentGame.worldActiveMachine == this)
 		{
 			Game.currentGame.getActiveLayer().init();
 			((ItemList) Game.currentGame.getActiveLayer()).setSelectedItemSlots(outputFilters);

@@ -18,7 +18,6 @@ import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
-import de.dakror.factory.settings.CFG;
 import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
@@ -46,7 +45,7 @@ public abstract class Machine extends Entity
 	
 	public boolean forceGuiToStay = false;
 	
-	protected int speed, requested, tick, startTick;
+	protected int speed, tick, startTick;
 	
 	public DefaultContainer container;
 	
@@ -55,7 +54,6 @@ public abstract class Machine extends Entity
 		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
 		
 		items = new Items();
-		requested = 0;
 		container = new DefaultContainer();
 		
 		addClickEvent(new ClickEvent()
@@ -136,8 +134,6 @@ public abstract class Machine extends Entity
 	@Override
 	protected void tick(int tick)
 	{
-		if (state != 0) CFG.p(items.getData()); // debug
-		
 		this.tick = tick;
 		if (inputFilters.size() > 0)
 		{
@@ -154,7 +150,6 @@ public abstract class Machine extends Entity
 				
 				if (items.getLength(inputFilters) == inputFilters.size())
 				{
-					requested = 0;
 					working = true;
 					startTick = tick;
 				}
@@ -193,7 +188,7 @@ public abstract class Machine extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay))
+		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay) && Game.currentGame.activeMachine == null)
 		{
 			for (Entity e1 : Game.world.getEntities())
 				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
@@ -306,8 +301,8 @@ public abstract class Machine extends Entity
 		JSONObject o = new JSONObject();
 		
 		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
-		o.put("x", x);
-		o.put("y", y);
+		o.put("x", x / Block.SIZE);
+		o.put("y", y / Block.SIZE);
 		o.put("i", items.getData());
 		o.put("w", working);
 		o.put("r", running);
@@ -321,14 +316,30 @@ public abstract class Machine extends Entity
 		for (Filter f : outputFilters)
 			is.put(f.getData());
 		o.put("os", os);
-		o.put("sT", startTick);
+		o.put("sT", startTick % Game.currentGame.getUPS());
 		
 		return o;
 	}
 	
 	@Override
-	public void setData(JSONObject data)
-	{}
+	public void setData(JSONObject data) throws Exception
+	{
+		items = new Items(data.getJSONObject("i"));
+		working = data.getBoolean("w");
+		running = data.getBoolean("r");
+		
+		inputFilters.clear();
+		JSONArray is = data.getJSONArray("is");
+		for (int i = 0; i < is.length(); i++)
+			inputFilters.add(new Filter(is.getJSONArray(i)));
+		
+		outputFilters.clear();
+		JSONArray os = data.getJSONArray("os");
+		for (int i = 0; i < os.length(); i++)
+			outputFilters.add(new Filter(os.getJSONArray(i)));
+		
+		startTick = data.getInt("sT");
+	}
 	
 	public boolean hasInputFilters()
 	{

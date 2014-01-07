@@ -1,6 +1,7 @@
 package de.dakror.factory.util;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.factory.game.entity.item.ItemType;
@@ -17,6 +18,12 @@ public class Filter
 		t = type;
 		
 		if (c != null && t == null) t = ItemType.getItemsByCategories(c)[0];
+	}
+	
+	public Filter(JSONArray a) throws JSONException
+	{
+		if (!a.isNull(0)) c = Category.values()[a.getInt(0)];
+		if (!a.isNull(1)) t = ItemType.values()[a.getInt(1)];
 	}
 	
 	public JSONArray getData()

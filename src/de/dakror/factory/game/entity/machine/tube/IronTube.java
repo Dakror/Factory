@@ -151,6 +151,8 @@ public class IronTube extends Tube
 	public int matchesFilters(ItemType type, int direction)
 	{
 		int emtpy = 0;
+		
+		boolean match = false;
 		for (int i = 0; i < outputFilters.size() / 4; i++)
 		{
 			Filter f = outputFilters.get(direction * outputFilters.size() / 4 + i);
@@ -160,10 +162,10 @@ public class IronTube extends Tube
 				continue;
 			}
 			
-			if (!type.matchesFilter(f)) return 2;
+			if (type.matchesFilter(f)) match = true;
 		}
 		
-		return emtpy == outputFilters.size() / 4 ? 1 : 0;
+		return emtpy == outputFilters.size() / 4 ? 1 : match ? 0 : 2;
 	}
 	
 	@Override

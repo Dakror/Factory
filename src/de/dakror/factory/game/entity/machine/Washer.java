@@ -27,7 +27,6 @@ public class Washer extends Machine
 		points.add(new TubePoint(1, 2, false, true, false));
 		
 		speed = 300;
-		requested = 0;
 		
 		inputFilters.add(new Filter(null, ItemType.coal_ore));
 		

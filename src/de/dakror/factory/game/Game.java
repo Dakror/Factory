@@ -9,6 +9,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -29,6 +33,7 @@ import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
 import de.dakror.factory.layer.HUDLayer;
+import de.dakror.factory.settings.CFG;
 import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
@@ -64,6 +69,15 @@ public class Game extends GameFrame
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/alagard.ttf")));
 			IronTube.init();
 			paused = false;
+			
+			// gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
+			if (gameName == null) gameName = System.currentTimeMillis() + "";
+			world = new World(50, 50);
+			world.generate();
+			world.render();
+			
+			addLayer(world);
+			addLayer(new HUDLayer());
 		}
 		catch (Exception e)
 		{
@@ -74,18 +88,6 @@ public class Game extends GameFrame
 	@Override
 	public void draw(Graphics2D g)
 	{
-		if (world == null)
-		{
-			// gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
-			if (gameName == null) gameName = System.currentTimeMillis() + "";
-			world = new World(50, 50);
-			world.generate();
-			world.render();
-			
-			addLayer(world);
-			addLayer(new HUDLayer());
-		}
-		
 		drawLayers(g);
 		
 		if (paused)
@@ -211,6 +213,13 @@ public class Game extends GameFrame
 		super.keyPressed(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.saveGame();
+		if (e.getKeyCode() == KeyEvent.VK_O && e.isControlDown())
+		{
+			JFileChooser jfc = new JFileChooser(new File(CFG.DIR, "maps"));
+			jfc.setFileFilter(new FileNameExtensionFilter("Factory-Maps (*.factory)", "factory"));
+			jfc.setMultiSelectionEnabled(false);
+			if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) SavegameHandler.loadGame(jfc.getSelectedFile());
+		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) paused = !paused;
 	}
 	
