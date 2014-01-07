@@ -99,7 +99,7 @@ public class Item extends Entity
 	@Override
 	protected void onReachTarget()
 	{
-		ArrayList<Tube> neighbors = new ArrayList<>();
+		Tube[] neighbors = new Tube[4];
 		
 		Tube t = Game.world.getTube(pos.x, pos.y);
 		
@@ -118,6 +118,8 @@ public class Item extends Entity
 		}
 		
 		int[][] neigh = { { -1, 0 }, { 0, -1 }, { 1, 0 }, { 0, 1 } };
+		
+		int[] neighborFilterResults = { 2, 2, 2, 2 };
 		
 		for (int i = 0; i < neigh.length; i++)
 		{
@@ -156,28 +158,54 @@ public class Item extends Entity
 					if (!ok) continue;
 				}
 				
-				if (t instanceof IronTube && !((IronTube) t).matchesFilters(type, i)) continue;
+				if (t instanceof IronTube)
+				{
+					neighborFilterResults[i] = ((IronTube) t).matchesFilters(type, i);
+					if (neighborFilterResults[i] == 2) continue;
+				}
 				
-				neighbors.add(l);
+				neighbors[i] = l;
 			}
 		}
 		
-		if (neighbors.size() == 0) return;
-		
-		if (neighbors.size() > 1)
+		boolean hasOneWithFilter = false;
+		for (int i = 0; i < 4; i++)
 		{
-			for (Tube tube : neighbors)
+			if (neighborFilterResults[i] == 0)
 			{
-				if (tube.x == lastPos.x && tube.y == lastPos.y)
+				hasOneWithFilter = true;
+				break;
+			}
+		}
+		
+		if (hasOneWithFilter) for (int i = 0; i < 4; i++)
+			if (neighborFilterResults[i] == 1) neighbors[i] = null;
+		
+		int size = 0;
+		for (int i = 0; i < 4; i++)
+			if (neighbors[i] != null) size++;
+		
+		if (size == 0) return;
+		
+		if (size > 1)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				Tube tube = neighbors[i];
+				if (tube != null && tube.x == lastPos.x && tube.y == lastPos.y)
 				{
-					neighbors.remove(tube);
+					neighbors[i] = null;
 					break;
 				}
 			}
 		}
 		
+		ArrayList<Tube> tubes = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			if (neighbors[i] != null) tubes.add(neighbors[i]);
+		
 		lastPos = pos.clone();
-		setTarget(neighbors.get((int) Math.floor((Math.random() * neighbors.size()))).getPos());
+		setTarget(tubes.get((int) Math.floor((Math.random() * tubes.size()))).getPos());
 	}
 	
 	@Override

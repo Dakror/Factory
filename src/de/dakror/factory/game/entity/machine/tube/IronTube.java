@@ -127,6 +127,7 @@ public class IronTube extends Tube
 				((ItemList) Game.currentGame.getActiveLayer()).items = null;
 				((ItemList) Game.currentGame.getActiveLayer()).killOnUnfocus = false;
 				((ItemList) Game.currentGame.getActiveLayer()).addCategories = true;
+				((ItemList) Game.currentGame.getActiveLayer()).keepSelected = false;
 				((ItemList) Game.currentGame.getActiveLayer()).init();
 			}
 		}
@@ -144,17 +145,25 @@ public class IronTube extends Tube
 		super.drawGUI(g);
 	}
 	
-	public boolean matchesFilters(ItemType type, int direction)
+	/**
+	 * 0 = true, 1 = empty, 2 = false
+	 */
+	public int matchesFilters(ItemType type, int direction)
 	{
+		int emtpy = 0;
 		for (int i = 0; i < outputFilters.size() / 4; i++)
 		{
 			Filter f = outputFilters.get(direction * outputFilters.size() / 4 + i);
-			if (f.t == null) continue;
+			if (f.t == null)
+			{
+				emtpy++;
+				continue;
+			}
 			
-			if (!type.matchesFilter(f)) return false;
+			if (!type.matchesFilter(f)) return 2;
 		}
 		
-		return true;
+		return emtpy == outputFilters.size() / 4 ? 1 : 0;
 	}
 	
 	@Override

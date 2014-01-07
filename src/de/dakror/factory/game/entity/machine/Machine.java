@@ -18,6 +18,7 @@ import de.dakror.factory.game.entity.item.Items;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
+import de.dakror.factory.settings.CFG;
 import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
@@ -135,6 +136,8 @@ public abstract class Machine extends Entity
 	@Override
 	protected void tick(int tick)
 	{
+		if (state != 0) CFG.p(items.getData()); // debug
+		
 		this.tick = tick;
 		if (inputFilters.size() > 0)
 		{
