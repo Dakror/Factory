@@ -316,7 +316,8 @@ public abstract class Machine extends Entity
 		for (Filter f : outputFilters)
 			is.put(f.getData());
 		o.put("os", os);
-		o.put("sT", startTick % Game.currentGame.getUPS());
+		
+		o.put("sT", tick - startTick);
 		
 		return o;
 	}
@@ -338,7 +339,7 @@ public abstract class Machine extends Entity
 		for (int i = 0; i < os.length(); i++)
 			outputFilters.add(new Filter(os.getJSONArray(i)));
 		
-		startTick = data.getInt("sT");
+		startTick = Game.currentGame.updater.tick - data.getInt("sT");
 	}
 	
 	public boolean hasInputFilters()

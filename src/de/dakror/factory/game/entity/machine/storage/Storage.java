@@ -49,6 +49,7 @@ public class Storage extends Machine
 	@Override
 	protected void tick(int tick)
 	{
+		this.tick = tick;
 		if (outputFilters.size() > 0)
 		{
 			if (startTick == 0)

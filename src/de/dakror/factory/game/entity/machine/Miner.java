@@ -19,9 +19,7 @@ import de.dakror.gamesetup.util.Helper;
 public class Miner extends Machine
 {
 	ItemType[] types;
-	int startTick;
 	int speed;
-	int tick;
 	
 	boolean spittout;
 	
