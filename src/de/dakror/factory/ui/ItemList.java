@@ -48,6 +48,17 @@ public class ItemList extends Layer
 	@Override
 	public void update(int tick)
 	{
+		if (items != null)
+		{
+			for (Component c : components)
+			{
+				if (c instanceof ItemSlot && ((ItemSlot) c).category == null)
+				{
+					((ItemSlot) c).amount = items.get(((ItemSlot) c).type);
+				}
+			}
+		}
+		
 		updateComponents(tick);
 	}
 	

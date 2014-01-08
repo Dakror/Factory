@@ -10,6 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -70,8 +72,7 @@ public class Game extends GameFrame
 			IronTube.init();
 			paused = false;
 			
-			// gameName = JOptionPane.showInputDialog(null, "enter a worldname", System.currentTimeMillis() + "");
-			if (gameName == null) gameName = System.currentTimeMillis() + "";
+			if (gameName == null) gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
 			world = new World(50, 50);
 			world.generate();
 			world.render();
