@@ -12,7 +12,6 @@ import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
-import de.dakror.factory.settings.CFG;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 
@@ -82,7 +81,6 @@ public class Item extends Entity
 		if ((target == null || target.equals(pos)) && (cause == Cause.ENTITY_ADDED || cause == Cause.MACHINE_DONE))
 		{
 			lastPos = pos.clone();
-			CFG.p(lastPos);
 			onReachTarget();
 		}
 	}
