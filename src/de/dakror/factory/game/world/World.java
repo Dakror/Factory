@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.storage.Storage;
 import de.dakror.factory.game.entity.machine.tube.Tube;
@@ -55,6 +56,11 @@ public class World extends Layer
 		blocks = new int[width][height];
 		x = y = 0;
 		
+		setStone();
+	}
+	
+	public void setStone()
+	{
 		for (int i = 0; i < blocks.length; i++)
 			for (int j = 0; j < blocks[0].length; j++)
 				blocks[i][j] = Block.stone.ordinal();
@@ -267,6 +273,14 @@ public class World extends Layer
 		dispatchEntityUpdate(Cause.ENTITY_ADDED, e.clone());
 	}
 	
+	public void addEntitySilently(Entity e)
+	{
+		if (e instanceof Machine) ((Machine) e).placeTubePoints();
+		
+		components.add(e);
+		entities.add(e);
+	}
+	
 	public long getSeed()
 	{
 		return seed;
@@ -283,6 +297,8 @@ public class World extends Layer
 		data.put("seed", seed);
 		
 		JSONArray e = new JSONArray();
+		JSONArray i = new JSONArray();
+		
 		ArrayList<Entity> entities = new ArrayList<>(this.entities);
 		Collections.sort(entities, new Comparator<Entity>()
 		{
@@ -295,10 +311,12 @@ public class World extends Layer
 		for (Entity e1 : entities)
 		{
 			if (e1 instanceof Tube && (((Tube) e1).isConnectedToExit() || ((Tube) e1).isConnectedToInput())) continue;
-			e.put(e1.getData());
+			if (e1 instanceof Item) i.put(e1.getData());
+			else e.put(e1.getData());
 		}
 		
 		data.put("entities", e);
+		data.put("items", i);
 		
 		return data;
 	}

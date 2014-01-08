@@ -98,7 +98,7 @@ public class Game extends GameFrame
 		
 		Helper.drawString("FPS: " + getFPS(), 0, 26, g, 18);
 		Helper.drawString("UPS: " + getUPS(), 0, 52, g, 18);
-		Helper.drawString("E: " + Game.world.getEntities().size(), 0, 78, g, 18);
+		Helper.drawString("E: " + Game.world.components.size(), 0, 78, g, 18);
 		
 		try
 		{

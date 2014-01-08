@@ -182,6 +182,15 @@ public class IronTube extends Tube
 	}
 	
 	@Override
+	public void setData(JSONObject data) throws Exception
+	{
+		outputFilters.clear();
+		JSONArray os = data.getJSONArray("f");
+		for (int i = 0; i < os.length(); i++)
+			outputFilters.add(new Filter(os.getJSONArray(i)));
+	}
+	
+	@Override
 	public Entity clone()
 	{
 		return new IronTube(x / Block.SIZE, y / Block.SIZE);

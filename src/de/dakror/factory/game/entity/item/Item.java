@@ -12,6 +12,7 @@ import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
+import de.dakror.factory.settings.CFG;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 
@@ -29,6 +30,7 @@ public class Item extends Entity
 		this.type = type;
 		drawBelow = false;
 		speed = 2f;
+		lastPos = pos.clone();
 	}
 	
 	public Item(float x, float y)
@@ -36,6 +38,7 @@ public class Item extends Entity
 		super(x, y, Block.SIZE, Block.SIZE);
 		drawBelow = false;
 		speed = 2f;
+		lastPos = pos.clone();
 	}
 	
 	@Override
@@ -79,6 +82,7 @@ public class Item extends Entity
 		if ((target == null || target.equals(pos)) && (cause == Cause.ENTITY_ADDED || cause == Cause.MACHINE_DONE))
 		{
 			lastPos = pos.clone();
+			CFG.p(lastPos);
 			onReachTarget();
 		}
 	}
@@ -92,10 +96,14 @@ public class Item extends Entity
 	{
 		JSONObject o = new JSONObject();
 		
-		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
 		o.put("x", (int) getPos().x);
 		o.put("y", (int) getPos().y);
 		o.put("t", type.ordinal());
+		if (target != null)
+		{
+			o.put("tx", target.x);
+			o.put("ty", target.y);
+		}
 		
 		return o;
 	}
@@ -106,6 +114,8 @@ public class Item extends Entity
 		Tube[] neighbors = new Tube[4];
 		
 		Tube t = Game.world.getTube(pos.x, pos.y);
+		
+		if (t == null) return;
 		
 		if (t.isConnectedToInput())
 		{
@@ -220,5 +230,6 @@ public class Item extends Entity
 	public void setData(JSONObject data) throws Exception
 	{
 		type = ItemType.values()[data.getInt("t")];
+		if (data.has("tx")) target = new Vector(data.getInt("tx"), data.getInt("ty"));
 	}
 }

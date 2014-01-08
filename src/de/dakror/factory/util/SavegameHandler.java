@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
+import de.dakror.factory.game.entity.item.Item;
+import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.settings.CFG;
 import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
@@ -47,6 +49,7 @@ public class SavegameHandler
 				try
 				{
 					JSONObject o = new JSONObject(Compressor.decompressFile(file));
+					Game.world.setStone();
 					Game.world.generate(o.getLong("seed"));
 					Game.world.render();
 					Game.gameName = file.getName().replace(".factory", "");
@@ -59,7 +62,28 @@ public class SavegameHandler
 						Entity entity = (Entity) Class.forName("de.dakror.factory.game.entity." + e.getString("c")).getConstructor(float.class, float.class).newInstance(e.getInt("x"), e.getInt("y"));
 						entity.setData(e);
 						
-						Game.world.addEntity(entity);
+						Game.world.addEntitySilently(entity);
+					}
+					
+					for (Cause cause : Cause.values())
+					{
+						Game.world.dispatchEntityUpdate(cause, null);
+					}
+					
+					JSONArray items = o.getJSONArray("items");
+					for (int i = 0; i < items.length(); i++)
+					{
+						JSONObject e = items.getJSONObject(i);
+						Item item = new Item(e.getInt("x"), e.getInt("y"));
+						item.setData(e);
+						
+						Game.world.addEntitySilently(item);
+					}
+					
+					
+					for (Cause cause : Cause.values())
+					{
+						Game.world.dispatchEntityUpdate(cause, null);
 					}
 				}
 				catch (Exception e)
