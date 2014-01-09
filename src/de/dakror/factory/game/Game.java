@@ -34,6 +34,7 @@ import de.dakror.factory.game.entity.machine.tube.SilverTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
+import de.dakror.factory.layer.HUDLayer;
 import de.dakror.factory.layer.MenuLayer;
 import de.dakror.factory.settings.CFG;
 import de.dakror.factory.util.SavegameHandler;
@@ -82,14 +83,31 @@ public class Game extends GameFrame
 	
 	public void newGame()
 	{
+		new Thread()
+		{
+			@Override
+			public void run()
+			{
+				paused = true;
+				gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
+				world = new World(50, 50);
+				world.generate();
+				world.render();
+				SavegameHandler.saveGame();
+				
+				addLayer(world);
+				addLayer(new HUDLayer());
+			}
+		}.start();
+	}
+	
+	public void loadGame(File file)
+	{
 		paused = true;
-		gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
 		world = new World(50, 50);
-		world.generate();
-		world.render();
-		SavegameHandler.saveGame();
-		
 		addLayer(world);
+		addLayer(new HUDLayer());
+		SavegameHandler.loadGame(file);
 	}
 	
 	@Override
@@ -104,7 +122,7 @@ public class Game extends GameFrame
 			
 			Helper.drawString("FPS: " + getFPS(), 10, 26, g, 18);
 			Helper.drawString("UPS: " + getUPS(), 10, 52, g, 18);
-			Helper.drawString("E: " + Game.world.components.size(), 10, 78, g, 18);
+			if (world != null) Helper.drawString("E: " + world.components.size(), 10, 78, g, 18);
 		}
 		
 		try
@@ -244,4 +262,5 @@ public class Game extends GameFrame
 		mouseDown = e.getPoint();
 		mouseDownWorld = new Point(world.x, world.y);
 	}
+	
 }

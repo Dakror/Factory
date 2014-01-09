@@ -50,6 +50,10 @@ public class MenuLayer extends Layer
 		{
 			theta = Helper.round(theta, speed);
 			theta -= speed * (dir > 0 ? 1 : -1);
+			
+			if (theta == 220) Game.currentGame.newGame();
+			if (theta == 320) Game.currentGame.addLayer(new LoadGameLayer());
+			if (theta == 90) System.exit(0);
 		}
 		else dir = 0;
 	}
@@ -70,16 +74,8 @@ public class MenuLayer extends Layer
 		if (new Rectangle(200, Game.getHeight() / 4 + 50, 612, 100).contains(e.getPoint())) // newGame
 		{
 			thetaTo = 220;
-			if (theta == 220)
-			{
-				Game.currentGame.setLayer(new HUDLayer());
-				Game.currentGame.newGame();
-			}
-			else
-			{
-				if (theta == 90) dir = -1;
-				else dir = 1;
-			}
+			if (theta == 90) dir = -1;
+			else dir = 1;
 		}
 		if (new Rectangle(Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100).contains(e.getPoint())) // loadGame
 		{
@@ -90,12 +86,8 @@ public class MenuLayer extends Layer
 		if (new Rectangle((Game.getWidth() - 746) / 2, Game.getHeight() / 4 * 3, 746, 100).contains(e.getPoint())) // endGame
 		{
 			thetaTo = 90;
-			if (theta == 90) System.exit(0);
-			else
-			{
-				if (theta == 220) dir = 1;
-				else dir = -1;
-			}
+			if (theta == 220) dir = 1;
+			else dir = -1;
 		}
 	}
 }
