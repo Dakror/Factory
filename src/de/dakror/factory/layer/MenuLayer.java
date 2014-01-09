@@ -14,15 +14,18 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class MenuLayer extends Layer
 {
-	float theta;
-	float thetaTo;
+	int theta;
+	int thetaTo;
+	int dir = 0;
 	
-	float speed = 5;
+	int speed = 5;
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
-		g.drawImage(Game.getImage("menu/bg.png"), 0, 0, Game.w);
+		for (int i = 0; i < Math.ceil(Game.getWidth() / 512f); i++)
+			for (int j = 0; j < Math.ceil(Game.getHeight() / 512f); j++)
+				g.drawImage(Game.getImage("menu/bg.png"), i * 512, j * 512, Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("menu/factory.png"), 40, 1, 1500, Game.getWidth(), Game.getHeight(), g);
 		g.drawImage(Game.getImage("menu/newGame.png"), 200, Game.getHeight() / 4 + 50, 612, 100, Game.w);
 		g.drawImage(Game.getImage("menu/loadGame.png"), Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100, Game.w);
@@ -41,26 +44,29 @@ public class MenuLayer extends Layer
 	public void update(int tick)
 	{
 		theta = theta % 360;
-		if (thetaTo != theta)
+		if (theta <= 0) theta = 360 - theta;
+		
+		if (thetaTo != theta && dir != 0)
 		{
-			float dist = theta - thetaTo;
-			float dist2 = (thetaTo + theta) % 360;
-			if (dist2 < dist) dist = -dist2;
-			float speed = Math.abs(dist) < this.speed ? Math.abs(dist) : this.speed;
-			theta -= speed * (dist > 0 ? 1 : -1);
+			theta = Helper.round(theta, speed);
+			theta -= speed * (dir > 0 ? 1 : -1);
 		}
+		else dir = 0;
 	}
 	
 	@Override
 	public void init()
 	{
-		theta = thetaTo = 270;
+		theta = thetaTo = 220;
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
 		super.mousePressed(e);
+		
+		if (dir != 0) return;
+		
 		if (new Rectangle(200, Game.getHeight() / 4 + 50, 612, 100).contains(e.getPoint())) // newGame
 		{
 			thetaTo = 220;
@@ -69,15 +75,27 @@ public class MenuLayer extends Layer
 				Game.currentGame.setLayer(new HUDLayer());
 				Game.currentGame.newGame();
 			}
+			else
+			{
+				if (theta == 90) dir = -1;
+				else dir = 1;
+			}
 		}
 		if (new Rectangle(Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100).contains(e.getPoint())) // loadGame
 		{
 			thetaTo = 320;
+			if (theta == 220) dir = -1;
+			else dir = 1;
 		}
 		if (new Rectangle((Game.getWidth() - 746) / 2, Game.getHeight() / 4 * 3, 746, 100).contains(e.getPoint())) // endGame
 		{
 			thetaTo = 90;
 			if (theta == 90) System.exit(0);
+			else
+			{
+				if (theta == 220) dir = 1;
+				else dir = -1;
+			}
 		}
 	}
 }
