@@ -1,10 +1,18 @@
 package de.dakror.factory.util;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -20,22 +28,34 @@ public class SavegameHandler
 {
 	public static void saveGame()
 	{
-		File maps = new File(CFG.DIR, "maps");
-		maps.mkdir();
-		
-		File file = new File(maps, Game.gameName + ".factory");
-		try
+		new Thread()
 		{
-			file.createNewFile();
-			JSONObject o = Game.world.getData();
-			
-			Compressor.compressFile(file, o.toString());
-			Helper.setFileContent(new File(file.getPath() + ".raw"), o.toString());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+			@Override
+			public void run()
+			{
+				File maps = new File(CFG.DIR, "maps");
+				maps.mkdir();
+				
+				File file = new File(maps, Game.gameName + ".factory");
+				try
+				{
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(Game.world.getThumbnail(), "PNG", baos);
+					String string = new BASE64Encoder().encode(baos.toByteArray());
+					
+					file.createNewFile();
+					JSONObject o = Game.world.getData();
+					o.put("thumb", string);
+					
+					Compressor.compressFile(file, o.toString());
+					Helper.setFileContent(new File(file.getPath() + ".raw"), o.toString());
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}.start();
 	}
 	
 	public static void loadGame(final File file)
@@ -80,7 +100,6 @@ public class SavegameHandler
 						Game.world.addEntitySilently(item);
 					}
 					
-					
 					for (Cause cause : Cause.values())
 					{
 						Game.world.dispatchEntityUpdate(cause, null);
@@ -92,5 +111,18 @@ public class SavegameHandler
 				}
 			}
 		}.start();
+	}
+	
+	public static BufferedImage getBase64Thumbnail(String b64)
+	{
+		try
+		{
+			return ImageIO.read(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(b64)));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

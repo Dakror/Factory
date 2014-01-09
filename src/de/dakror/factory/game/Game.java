@@ -34,7 +34,7 @@ import de.dakror.factory.game.entity.machine.tube.SilverTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
-import de.dakror.factory.layer.HUDLayer;
+import de.dakror.factory.layer.MenuLayer;
 import de.dakror.factory.settings.CFG;
 import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.GameFrame;
@@ -72,18 +72,24 @@ public class Game extends GameFrame
 			IronTube.init();
 			paused = false;
 			
-			if (gameName == null) gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
-			world = new World(50, 50);
-			world.generate();
-			world.render();
-			
-			addLayer(world);
-			addLayer(new HUDLayer());
+			addLayer(new MenuLayer());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void newGame()
+	{
+		paused = true;
+		gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
+		world = new World(50, 50);
+		world.generate();
+		world.render();
+		SavegameHandler.saveGame();
+		
+		addLayer(world);
 	}
 	
 	@Override
@@ -95,11 +101,11 @@ public class Game extends GameFrame
 		{
 			Helper.drawShadow(0, 0, Game.getWidth(), 110, g);
 			Helper.drawHorizontallyCenteredString("Pausiert", Game.getWidth(), 80, g, 80);
+			
+			Helper.drawString("FPS: " + getFPS(), 10, 26, g, 18);
+			Helper.drawString("UPS: " + getUPS(), 10, 52, g, 18);
+			Helper.drawString("E: " + Game.world.components.size(), 10, 78, g, 18);
 		}
-		
-		Helper.drawString("FPS: " + getFPS(), 0, 26, g, 18);
-		Helper.drawString("UPS: " + getUPS(), 0, 52, g, 18);
-		Helper.drawString("E: " + Game.world.components.size(), 0, 78, g, 18);
 		
 		try
 		{
@@ -161,6 +167,8 @@ public class Game extends GameFrame
 	{
 		super.mouseDragged(e);
 		
+		if (world == null) return;
+		
 		if ((world.width > getWidth() || world.height > getHeight()) && mouseDown != null && e.getModifiers() == MouseEvent.BUTTON2_MASK)
 		{
 			int x = mouseDown.x - e.getX() - mouseDownWorld.x;
@@ -213,6 +221,8 @@ public class Game extends GameFrame
 	{
 		super.keyPressed(e);
 		
+		if (world == null) return;
+		
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.saveGame();
 		if (e.getKeyCode() == KeyEvent.VK_O && e.isControlDown())
 		{
@@ -228,6 +238,8 @@ public class Game extends GameFrame
 	public void mousePressed(MouseEvent e)
 	{
 		super.mousePressed(e);
+		
+		if (world == null) return;
 		
 		mouseDown = e.getPoint();
 		mouseDownWorld = new Point(world.x, world.y);

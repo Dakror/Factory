@@ -29,7 +29,7 @@ public class CloseButton extends ClickableComponent
 		else Helper.drawContainer(x, y, width, height, true, state == 1, false, g);
 		
 		int size = 25;
-		g.drawImage(Game.getImage("close.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
+		g.drawImage(Game.getImage("menu/close.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package de.dakror.factory.game.world;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -325,5 +327,13 @@ public class World extends Layer
 	{
 		components.clear();
 		entities.clear();
+	}
+	
+	public BufferedImage getThumbnail()
+	{
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		draw((Graphics2D) bi.getGraphics());
+		Dimension s = Helper.scaleTo(new Dimension(width, height), new Dimension(200, 200));
+		return Helper.toBufferedImage(bi.getScaledInstance(s.width, s.height, Image.SCALE_REPLICATE));
 	}
 }
