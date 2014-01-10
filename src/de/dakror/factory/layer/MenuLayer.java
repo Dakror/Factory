@@ -78,21 +78,21 @@ public class MenuLayer extends Layer
 		
 		if (dir != 0) return;
 		
-		if (new Rectangle(200, Game.getHeight() / 4 + 50, 612, 100).contains(e.getPoint())) // newGame
+		if (new Rectangle(200, Game.getHeight() / 4 + 50, newGame.width, newGame.height).contains(e.getPoint())) // newGame
 		{
 			if (theta == 220) Game.currentGame.newGame();
 			thetaTo = 220;
 			if (theta == 90) dir = -1;
 			else dir = 1;
 		}
-		if (new Rectangle(Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100).contains(e.getPoint())) // loadGame
+		if (new Rectangle(Game.getWidth() - 200 - loadGame.width, Game.getHeight() / 4 + 50, loadGame.width, loadGame.height).contains(e.getPoint())) // loadGame
 		{
 			if (theta == 320) Game.currentGame.addLayer(new LoadGameLayer());
 			thetaTo = 320;
 			if (theta == 220) dir = -1;
 			else dir = 1;
 		}
-		if (new Rectangle((Game.getWidth() - 746) / 2, Game.getHeight() / 4 * 3, 746, 100).contains(e.getPoint())) // endGame
+		if (new Rectangle((Game.getWidth() - endGame.width) / 2, Game.getHeight() / 4 * 3, endGame.width, endGame.height).contains(e.getPoint())) // endGame
 		{
 			if (theta == 90) System.exit(0);
 			thetaTo = 90;

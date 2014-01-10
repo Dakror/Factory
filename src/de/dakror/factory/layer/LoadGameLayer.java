@@ -1,6 +1,8 @@
 package de.dakror.factory.layer;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -17,15 +19,19 @@ import de.dakror.gamesetup.util.Helper;
  */
 public class LoadGameLayer extends Layer
 {
+	int y;
+	
 	public LoadGameLayer()
 	{
 		modal = true;
+		y = Game.getHeight() / 4 + 20;
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
 		drawModality(g);
+		
 		Helper.drawContainer(Game.getWidth() / 4, Game.getHeight() / 4, Game.getWidth() / 2, Game.getHeight() / 2, true, false, g);
 		
 		drawComponents(g);
@@ -67,6 +73,27 @@ public class LoadGameLayer extends Layer
 		{
 			SavegameLabel sgl = new SavegameLabel(i, files[i]);
 			components.add(sgl);
+		}
+	}
+	
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e)
+	{
+		super.mouseWheelMoved(e);
+		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint()))
+		{
+			y += e.getWheelRotation() * -40;
+			int h = Game.getHeight() / 4 + 20;
+			
+			int h2 = (components.size() - 1) * SavegameLabel.HEIGHT;
+			
+			if (y > h) y = h;
+			if (y + h2 < h + Game.getHeight() / 2 - 40) y = h + Game.getHeight() / 2 - 40 - h2;
+			
+			for (int i = 1; i < components.size(); i++)
+			{
+				components.get(i).y = y + (i - 1) * SavegameLabel.HEIGHT;
+			}
 		}
 	}
 }

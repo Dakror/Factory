@@ -36,6 +36,7 @@ import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World;
 import de.dakror.factory.layer.HUDLayer;
 import de.dakror.factory.layer.MenuLayer;
+import de.dakror.factory.layer.PauseLayer;
 import de.dakror.factory.settings.CFG;
 import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.GameFrame;
@@ -254,7 +255,16 @@ public class Game extends GameFrame
 			jfc.setMultiSelectionEnabled(false);
 			if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) SavegameHandler.loadGame(jfc.getSelectedFile());
 		}
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) paused = !paused;
+		if (e.getKeyCode() == KeyEvent.VK_SPACE && !(getActiveLayer() instanceof PauseLayer)) paused = !paused;
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			if (paused && getActiveLayer() instanceof PauseLayer) removeLayer(getActiveLayer()); // remove pause layer
+			else
+			{
+				addLayer(new PauseLayer());
+				paused = true;
+			}
+		}
 	}
 	
 	@Override

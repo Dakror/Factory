@@ -1,6 +1,9 @@
 package de.dakror.factory.ui;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -58,6 +61,9 @@ public class SavegameLabel extends ClickableComponent
 	@Override
 	public void draw(Graphics2D g)
 	{
+		Shape c = g.getClip();
+		g.setClip(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40);
+		
 		if (state == 0)
 		{
 			Helper.drawShadow(x, y, width, height, g);
@@ -66,8 +72,10 @@ public class SavegameLabel extends ClickableComponent
 		else Helper.drawContainer(x, y, width, height, false, state == 1, g);
 		
 		g.drawImage(thm, x + 10, y + 10, HEIGHT - 20, HEIGHT - 20, Game.w);
-		Helper.drawString("Factory vom " + file.getName().replace(".factory", "").replace("-", ":"), x + HEIGHT, y + 40, g, 40);
+		Helper.drawString("Factory vom " + file.getName().replace(".factory", "").replace("-", ":"), x + HEIGHT, y + 30, g, 30);
 		Helper.drawRightAlignedString("zuletzt gespielt am " + lmd, x + width - 10, y + height - 10, g, 20);
+		
+		g.setClip(c);
 	}
 	
 	@Override
@@ -81,5 +89,24 @@ public class SavegameLabel extends ClickableComponent
 		{
 			g.drawImage(thm, x, y, Game.w);
 		}
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint())) super.mouseMoved(e);
+		else state = 0;
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint())) super.mousePressed(e);
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint())) super.mouseReleased(e);
 	}
 }
