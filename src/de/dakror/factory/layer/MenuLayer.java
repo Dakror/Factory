@@ -1,5 +1,6 @@
 package de.dakror.factory.layer;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -20,6 +21,8 @@ public class MenuLayer extends Layer
 	
 	int speed = 5;
 	
+	Dimension newGame = new Dimension(1378, 225), loadGame = new Dimension(1281, 222), endGame = new Dimension(1643, 220);
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -27,15 +30,15 @@ public class MenuLayer extends Layer
 			for (int j = 0; j < Math.ceil(Game.getHeight() / 512f); j++)
 				g.drawImage(Game.getImage("menu/bg.png"), i * 512, j * 512, Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("menu/factory.png"), 40, 1, 1500, Game.getWidth(), Game.getHeight(), g);
-		g.drawImage(Game.getImage("menu/newGame.png"), 200, Game.getHeight() / 4 + 50, 612, 100, Game.w);
-		g.drawImage(Game.getImage("menu/loadGame.png"), Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100, Game.w);
-		g.drawImage(Game.getImage("menu/endGame.png"), (Game.getWidth() - 746) / 2, Game.getHeight() / 4 * 3, 746, 100, Game.w);
+		g.drawImage(Game.getImage("menu/newGame.png"), 200, Game.getHeight() / 4 + 50, newGame.width, newGame.height, Game.w);
+		g.drawImage(Game.getImage("menu/loadGame.png"), Game.getWidth() - 200 - loadGame.width, Game.getHeight() / 4 + 50, loadGame.width, loadGame.height, Game.w);
+		g.drawImage(Game.getImage("menu/endGame.png"), (Game.getWidth() - endGame.width) / 2, Game.getHeight() / 4 * 3, endGame.width, endGame.height, Game.w);
 		
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
 		at.rotate(Math.toRadians(theta), Game.getWidth() / 2, Game.getHeight() / 2 + 50);
 		g.setTransform(at);
-		int size = Game.getWidth() - 100 - 612 - 577;
+		int size = Game.getWidth() - 100 - newGame.width - loadGame.width;
 		g.drawImage(Game.getImage("menu/wheel.png"), (Game.getWidth() - size) / 2, (Game.getHeight() - size) / 2 + 50, size, size, Game.w);
 		g.setTransform(old);
 	}
@@ -62,6 +65,10 @@ public class MenuLayer extends Layer
 	public void init()
 	{
 		theta = thetaTo = 220;
+		
+		newGame = Helper.getRelativeScaled(newGame, new Dimension(1920, 1080), newGame);
+		loadGame = Helper.getRelativeScaled(loadGame, new Dimension(1920, 1080), loadGame);
+		endGame = Helper.getRelativeScaled(endGame, new Dimension(1920, 1080), endGame);
 	}
 	
 	@Override
@@ -73,18 +80,21 @@ public class MenuLayer extends Layer
 		
 		if (new Rectangle(200, Game.getHeight() / 4 + 50, 612, 100).contains(e.getPoint())) // newGame
 		{
+			if (theta == 220) Game.currentGame.newGame();
 			thetaTo = 220;
 			if (theta == 90) dir = -1;
 			else dir = 1;
 		}
 		if (new Rectangle(Game.getWidth() - 777, Game.getHeight() / 4 + 50, 577, 100).contains(e.getPoint())) // loadGame
 		{
+			if (theta == 320) Game.currentGame.addLayer(new LoadGameLayer());
 			thetaTo = 320;
 			if (theta == 220) dir = -1;
 			else dir = 1;
 		}
 		if (new Rectangle((Game.getWidth() - 746) / 2, Game.getHeight() / 4 * 3, 746, 100).contains(e.getPoint())) // endGame
 		{
+			if (theta == 90) System.exit(0);
 			thetaTo = 90;
 			if (theta == 220) dir = 1;
 			else dir = -1;

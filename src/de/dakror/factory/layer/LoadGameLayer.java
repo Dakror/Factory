@@ -52,6 +52,8 @@ public class LoadGameLayer extends Layer
 		});
 		components.add(cb);
 		
+		new File(CFG.DIR, "maps").mkdirs();
+		
 		File[] files = new File(CFG.DIR, "maps").listFiles(new FilenameFilter()
 		{
 			@Override

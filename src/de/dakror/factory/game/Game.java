@@ -72,8 +72,6 @@ public class Game extends GameFrame
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/alagard.ttf")));
 			IronTube.init();
 			paused = false;
-			
-			addLayer(new MenuLayer());
 		}
 		catch (Exception e)
 		{
@@ -95,6 +93,8 @@ public class Game extends GameFrame
 				world.render();
 				SavegameHandler.saveGame();
 				
+				layers.clear();
+				
 				addLayer(world);
 				addLayer(new HUDLayer());
 			}
@@ -105,6 +105,9 @@ public class Game extends GameFrame
 	{
 		paused = true;
 		world = new World(50, 50);
+		
+		layers.clear();
+		
 		addLayer(world);
 		addLayer(new HUDLayer());
 		SavegameHandler.loadGame(file);
@@ -113,6 +116,8 @@ public class Game extends GameFrame
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (layers.size() == 0) addLayer(new MenuLayer());
+		
 		drawLayers(g);
 		
 		if (paused)
