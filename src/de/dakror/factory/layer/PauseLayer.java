@@ -70,6 +70,8 @@ public class PauseLayer extends Layer
 			@Override
 			public void trigger()
 			{
+				Game.currentGame.paused = false;
+				Game.world = null;
 				Game.currentGame.setLayer(new MenuLayer());
 			}
 		});

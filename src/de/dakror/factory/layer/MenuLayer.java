@@ -21,7 +21,7 @@ public class MenuLayer extends Layer
 	
 	int speed = 5;
 	
-	Dimension newGame = new Dimension(1378, 225), loadGame = new Dimension(1281, 222), endGame = new Dimension(1643, 220);
+	Dimension newGame = new Dimension(612, 100), loadGame = new Dimension(577, 100), endGame = new Dimension(746, 100);
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -65,10 +65,9 @@ public class MenuLayer extends Layer
 	public void init()
 	{
 		theta = thetaTo = 220;
-		
-		newGame = Helper.getRelativeScaled(newGame, new Dimension(1920, 1080), newGame);
-		loadGame = Helper.getRelativeScaled(loadGame, new Dimension(1920, 1080), loadGame);
-		endGame = Helper.getRelativeScaled(endGame, new Dimension(1920, 1080), endGame);
+		newGame = Helper.getRelativeScaled(newGame, new Dimension(1920, 1080), new Dimension(Game.getWidth(), Game.getHeight()));
+		loadGame = Helper.getRelativeScaled(loadGame, new Dimension(1920, 1080), new Dimension(Game.getWidth(), Game.getHeight()));
+		endGame = Helper.getRelativeScaled(endGame, new Dimension(1920, 1080), new Dimension(Game.getWidth(), Game.getHeight()));
 	}
 	
 	@Override

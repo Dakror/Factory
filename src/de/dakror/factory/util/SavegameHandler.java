@@ -19,7 +19,6 @@ import de.dakror.factory.game.entity.item.Item;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.settings.CFG;
 import de.dakror.gamesetup.util.Compressor;
-import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -48,7 +47,6 @@ public class SavegameHandler
 					o.put("thumb", string);
 					
 					Compressor.compressFile(file, o.toString());
-					Helper.setFileContent(new File(file.getPath() + ".raw"), o.toString());
 				}
 				catch (Exception e)
 				{
