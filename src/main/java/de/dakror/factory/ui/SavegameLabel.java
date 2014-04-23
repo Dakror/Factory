@@ -9,11 +9,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.dakror.factory.game.Game;
+import de.dakror.factory.util.SavegameHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.factory.game.Game;
-import de.dakror.factory.util.SavegameHandler;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.util.Compressor;

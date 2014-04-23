@@ -2,6 +2,7 @@ package de.dakror.factory;
 
 import javax.swing.UIManager;
 
+import de.dakror.dakrorbin.Launch;
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.UpdateThread;
 
@@ -20,6 +21,7 @@ public class Factory
 		{
 			e.printStackTrace();
 		}
+		Launch.init(args);
 		
 		// CFG.INTERNET = Helper.isInternetReachable();
 		// UniVersion.offline = !CFG.INTERNET;

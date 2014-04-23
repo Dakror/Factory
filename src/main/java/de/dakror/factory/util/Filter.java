@@ -1,11 +1,11 @@
 package de.dakror.factory.util;
 
+import de.dakror.factory.game.entity.item.ItemType;
+import de.dakror.factory.game.entity.item.ItemType.Category;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import de.dakror.factory.game.entity.item.ItemType;
-import de.dakror.factory.game.entity.item.ItemType.Category;
 
 public class Filter
 {

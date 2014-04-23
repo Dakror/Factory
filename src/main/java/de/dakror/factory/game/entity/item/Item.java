@@ -3,8 +3,6 @@ package de.dakror.factory.game.entity.item;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
@@ -12,6 +10,9 @@ import de.dakror.factory.game.entity.machine.tube.IronTube;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
+
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 

@@ -7,9 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -21,6 +18,10 @@ import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.util.Filter;
 import de.dakror.factory.util.TubePoint;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Container.DefaultContainer;
 

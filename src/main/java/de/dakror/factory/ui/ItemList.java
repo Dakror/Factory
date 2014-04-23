@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.item.ItemType;
-import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.game.entity.item.Items;
+import de.dakror.factory.game.entity.item.ItemType.Category;
 import de.dakror.factory.util.Filter;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;

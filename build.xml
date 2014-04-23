@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build">
+    
+    <basename property="project.name" file="${basedir}"/>
+	<property environment="env" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.7" />
+	<property name="source" value="1.7" />
+	<property name="mainclass" value="factory.${project.name}" /> <!--  The only line that has to be changed -->
+	
+	<path id="classpath">
+		<pathelement location="bin" />
+		<fileset dir="libs">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="build">	    
+		<delete file="${project.name}.jar" />
+
+		<mkdir dir="bin" />
+
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src/main/java">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src/main/resources">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin"
+			includeantruntime="false" source="${source}" target="${target}">
+			<src path="src/main/java" />
+			<src path="src/main/resources" />
+			<classpath refid="classpath" />
+		</javac>
+
+		<tstamp>
+			<format property="DATE" pattern="dd.MM.yyyy HH:mm:ss" />
+		</tstamp>
+
+		<script language="javascript">
+ 		<![CDATA[
+  		  property = project.setProperty("now", (new Date()).getTime());
+  		]]>
+		</script>
+
+		<jar destfile="${project.name}.jar" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="de.dakror.${mainclass}" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Application-Name" value="${project.name}" />
+				<attribute name="Build-Date" value="${DATE}" />
+				<attribute name="Build-Timestamp" value="${now}" />
+				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Trusted-Only" value="true" />
+			</manifest>
+			<fileset dir="bin">
+				<exclude name="**/*.applet" />
+			</fileset>
+			<zipgroupfileset dir="libs" excludes="META-INF/*.SF" includes="**/*.jar" />
+		</jar>
+
+		<signjar jar="${project.name}.jar" keystore="http://dakror.de/bin/dakrorKeystore.jks" alias="dakror"
+			storepass="dakrorKeystore" />
+
+		<echo message="starting FTP file upload" />
+		<java classname="de.dakror.dakrorbin.Uploader">
+			<arg value="${project.name}" />
+			<classpath>
+				<pathelement location="bin/Uploader.jar" />
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</java>
+
+		<delete dir="bin" />
+	</target>
+</project>

@@ -12,9 +12,6 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.Item;
@@ -22,6 +19,10 @@ import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.entity.machine.storage.Storage;
 import de.dakror.factory.game.entity.machine.tube.Tube;
 import de.dakror.factory.util.TubePoint;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.Component;

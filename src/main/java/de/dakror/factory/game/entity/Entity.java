@@ -5,11 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
+
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.gamesetup.util.path.Path;

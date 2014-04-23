@@ -5,9 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.item.ItemType;
@@ -16,6 +13,10 @@ import de.dakror.factory.ui.CloseButton;
 import de.dakror.factory.ui.ItemList;
 import de.dakror.factory.ui.ItemSlot;
 import de.dakror.factory.util.Filter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.util.Helper;
 

@@ -3,14 +3,14 @@ package de.dakror.factory.game.entity.machine.tube;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import org.json.JSONObject;
-
 import de.dakror.factory.game.Game;
 import de.dakror.factory.game.entity.Entity;
 import de.dakror.factory.game.entity.machine.Machine;
 import de.dakror.factory.game.world.Block;
 import de.dakror.factory.game.world.World.Cause;
 import de.dakror.factory.util.TubePoint;
+
+import org.json.JSONObject;
 
 /**
  * @author Dakror

@@ -3,11 +3,11 @@ package de.dakror.factory.game.entity.item;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
+import de.dakror.factory.util.Filter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import de.dakror.factory.util.Filter;
 
 /**
  * @author Dakror

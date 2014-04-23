@@ -1,0 +1,6 @@
+language: java
+script: ant -file build.xml
+after_script: ant -file build_server.xml
+branches:
+  only:
+    - master
