@@ -28,8 +28,7 @@ import de.dakror.gamesetup.ui.Container.DefaultContainer;
 /**
  * @author Dakror
  */
-public abstract class Machine extends Entity
-{
+public abstract class Machine extends Entity {
 	public static final int REQUEST_SPEED = 40;
 	
 	protected String name;
@@ -50,26 +49,22 @@ public abstract class Machine extends Entity
 	
 	public DefaultContainer container;
 	
-	public Machine(float x, float y, int width, int height)
-	{
+	public Machine(float x, float y, int width, int height) {
 		super(x * Block.SIZE, y * Block.SIZE, width * Block.SIZE, height * Block.SIZE);
 		
 		items = new Items();
 		container = new DefaultContainer();
 		
-		addClickEvent(new ClickEvent()
-		{
+		addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				if (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay) Game.currentGame.worldActiveMachine = Machine.this;
 			}
 		});
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		Color c = g.getColor();
 		g.setColor(Color.black);
 		if (drawFrame) g.drawRect(x, y, width, height);
@@ -79,15 +74,12 @@ public abstract class Machine extends Entity
 		if (this instanceof Tube) drawIcon(g);
 	}
 	
-	public void drawAbove(Graphics2D g)
-	{
-		if (!(this instanceof Tube))
-		{
+	public void drawAbove(Graphics2D g) {
+		if (!(this instanceof Tube)) {
 			
 			Color c = g.getColor();
 			
-			for (TubePoint p : points)
-			{
+			for (TubePoint p : points) {
 				g.setColor(Color.white);
 				g.fillRect(x + p.x * Block.SIZE + 4, y + p.y * Block.SIZE + 4, Block.SIZE - 8, Block.SIZE - 8);
 				g.setColor(p.in ? Color.blue : Color.red);
@@ -99,8 +91,7 @@ public abstract class Machine extends Entity
 			
 			drawIcon(g);
 		}
-		if (state != 0)
-		{
+		if (state != 0) {
 			Color c = g.getColor();
 			g.setColor(Color.darkGray);
 			g.drawRect(x, y, width - 1, height - 1);
@@ -108,13 +99,11 @@ public abstract class Machine extends Entity
 		}
 	}
 	
-	public void drawGUI(Graphics2D g)
-	{
+	public void drawGUI(Graphics2D g) {
 		container.draw(g);
 	}
 	
-	public BufferedImage getImage()
-	{
+	public BufferedImage getImage() {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) bi.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -133,15 +122,11 @@ public abstract class Machine extends Entity
 	protected abstract void drawIcon(Graphics2D g);
 	
 	@Override
-	protected void tick(int tick)
-	{
+	protected void tick(int tick) {
 		this.tick = tick;
-		if (inputFilters.size() > 0)
-		{
-			if (!working)
-			{
-				if (tick % REQUEST_SPEED == 0 && items.getLength(outputFilters) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE))
-				{
+		if (inputFilters.size() > 0) {
+			if (!working) {
+				if (tick % REQUEST_SPEED == 0 && items.getLength(outputFilters) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE)) {
 					ItemType it = items.getFilled().get(0);
 					Item item = new Item(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE, it);
 					Game.world.addEntity(item);
@@ -149,23 +134,17 @@ public abstract class Machine extends Entity
 					if (items.getLength() == 0) Game.world.dispatchEntityUpdate(Cause.MACHINE_DONE, this);
 				}
 				
-				if (items.getLength(inputFilters) == inputFilters.size())
-				{
+				if (items.getLength(inputFilters) == inputFilters.size()) {
 					working = true;
 					startTick = tick;
 				}
 			}
 			
-			if (working && (tick - startTick) % speed == 0 && startTick != tick)
-			{
-				for (ItemType t : items.getFilled(inputFilters))
-				{
-					if (t.hasMaterial() && outputSameMaterial)
-					{
-						for (Filter f : outputFilters)
-						{
-							if (f.c != null)
-							{
+			if (working && (tick - startTick) % speed == 0 && startTick != tick) {
+				for (ItemType t : items.getFilled(inputFilters)) {
+					if (t.hasMaterial() && outputSameMaterial) {
+						for (Filter f : outputFilters) {
+							if (f.c != null) {
 								items.add(ItemType.getItemsByCategories(t.getMaterial(), f.c)[0], 1);
 							}
 						}
@@ -183,14 +162,11 @@ public abstract class Machine extends Entity
 	}
 	
 	@Override
-	protected void onReachTarget()
-	{}
+	protected void onReachTarget() {}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
-		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay) && Game.currentGame.activeMachine == null)
-		{
+	public void mouseReleased(MouseEvent e) {
+		if (contains2(e.getPoint()) && e.getButton() == MouseEvent.BUTTON3 && (Game.currentGame.worldActiveMachine == null || !Game.currentGame.worldActiveMachine.forceGuiToStay) && Game.currentGame.activeMachine == null) {
 			for (Entity e1 : Game.world.getEntities())
 				if (e1 instanceof Item && getArea().intersects(e1.getArea())) return;
 			
@@ -200,58 +176,48 @@ public abstract class Machine extends Entity
 		if (!dead) super.mouseReleased(e);
 	}
 	
-	public ArrayList<TubePoint> getTubePoints()
-	{
+	public ArrayList<TubePoint> getTubePoints() {
 		return points;
 	}
 	
-	public void placeTubePoints()
-	{
+	public void placeTubePoints() {
 		for (TubePoint tp : points)
 			Game.world.getEntities().add(new Tube(x / Block.SIZE + tp.x, y / Block.SIZE + tp.y));
 		
 		running = true;
 	}
 	
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 	
-	public Items getItems()
-	{
+	public Items getItems() {
 		return items;
 	}
 	
 	@Override
-	public void onRemoval()
-	{
+	public void onRemoval() {
 		if (this instanceof Tube) return;
 		
-		for (Entity e : Game.world.getEntities())
-		{
+		for (Entity e : Game.world.getEntities()) {
 			if (e instanceof Tube && getArea().contains(e.getArea())) e.setDead(true);
 		}
 		
 		if (Game.currentGame.getActiveLayer() instanceof ItemList) Game.currentGame.removeLayer(Game.currentGame.getActiveLayer());
 	}
 	
-	public boolean isRunning()
-	{
+	public boolean isRunning() {
 		return running;
 	}
 	
-	public boolean isWorking()
-	{
+	public boolean isWorking() {
 		return working;
 	}
 	
 	@Override
-	public void onReachPathNode()
-	{}
+	public void onReachPathNode() {}
 	
-	public boolean matchesFilters(ItemType t)
-	{
+	public boolean matchesFilters(ItemType t) {
 		if (inputFilters.size() == 0) return true;
 		
 		for (Filter f : inputFilters)
@@ -260,8 +226,7 @@ public abstract class Machine extends Entity
 		return false;
 	}
 	
-	public boolean matchSameFilters(ItemType t, ItemType t2)
-	{
+	public boolean matchSameFilters(ItemType t, ItemType t2) {
 		if (inputFilters.size() == 0) return false;
 		
 		for (Filter f : inputFilters)
@@ -270,8 +235,7 @@ public abstract class Machine extends Entity
 		return false;
 	}
 	
-	public boolean wantsItem(ItemType t)
-	{
+	public boolean wantsItem(ItemType t) {
 		if (working || items.getLength(outputFilters) > 0) return false;
 		
 		if (inputFilters.size() == 0) return true;
@@ -280,10 +244,8 @@ public abstract class Machine extends Entity
 		
 		int amount = 0;
 		Filter filter = null;
-		for (Filter f : inputFilters)
-		{
-			if (t.matchesFilter(f) && (filter == null || (f.c == filter.c && f.t == filter.t)))
-			{
+		for (Filter f : inputFilters) {
+			if (t.matchesFilter(f) && (filter == null || (f.c == filter.c && f.t == filter.t))) {
 				filter = f;
 				amount++;
 			}
@@ -293,12 +255,10 @@ public abstract class Machine extends Entity
 	}
 	
 	@Override
-	public void onEntityUpdate(Cause cause, Object source)
-	{}
+	public void onEntityUpdate(Cause cause, Object source) {}
 	
 	@Override
-	public JSONObject getData() throws Exception
-	{
+	public JSONObject getData() throws Exception {
 		JSONObject o = new JSONObject();
 		
 		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
@@ -324,8 +284,7 @@ public abstract class Machine extends Entity
 	}
 	
 	@Override
-	public void setData(JSONObject data) throws Exception
-	{
+	public void setData(JSONObject data) throws Exception {
 		items = new Items(data.getJSONObject("i"));
 		working = data.getBoolean("w");
 		running = data.getBoolean("r");
@@ -343,8 +302,7 @@ public abstract class Machine extends Entity
 		startTick = Game.currentGame.updater.tick - data.getInt("sT");
 	}
 	
-	public boolean hasInputFilters()
-	{
+	public boolean hasInputFilters() {
 		return inputFilters.size() > 0;
 	}
 }

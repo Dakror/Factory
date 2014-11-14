@@ -3,8 +3,7 @@ package de.dakror.factory.game.world;
 /**
  * @author Dakror
  */
-public enum Block
-{
+public enum Block {
 	stone(0, 0),
 	redstone_ore(1, 0),
 	coal_ore(2, 0),
@@ -26,8 +25,7 @@ public enum Block
 	
 	int tx, ty;
 	
-	private Block(int tx, int ty)
-	{
+	private Block(int tx, int ty) {
 		this.tx = tx;
 		this.ty = ty;
 	}

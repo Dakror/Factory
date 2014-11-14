@@ -4,13 +4,11 @@ package de.dakror.factory.util;
 /**
  * @author Dakror
  */
-public class TubePoint
-{
+public class TubePoint {
 	public int x, y;
 	public boolean in, horizontal, up;
 	
-	public TubePoint(int x, int y, boolean in, boolean horizontal, boolean up)
-	{
+	public TubePoint(int x, int y, boolean in, boolean horizontal, boolean up) {
 		this.x = x;
 		this.y = y;
 		this.in = in;

@@ -15,10 +15,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Crusher extends Machine
-{
-	public Crusher(float x, float y)
-	{
+public class Crusher extends Machine {
+	public Crusher(float x, float y) {
 		super(x, y, 2, 2);
 		
 		name = "Verschrotter";
@@ -34,16 +32,14 @@ public class Crusher extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		int size = 64;
 		g.drawImage(Game.getImage("machine/crusher.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 		if (working) Helper.drawCooldownCircle(x, y, width, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Crusher(x / Block.SIZE, y / Block.SIZE);
 	}
 }

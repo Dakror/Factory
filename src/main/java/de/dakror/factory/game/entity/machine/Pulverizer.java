@@ -14,10 +14,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Pulverizer extends Machine
-{
-	public Pulverizer(float x, float y)
-	{
+public class Pulverizer extends Machine {
+	public Pulverizer(float x, float y) {
 		super(x, y, 3, 2);
 		
 		name = "Pulverisierer";
@@ -35,16 +33,14 @@ public class Pulverizer extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		int size = 64;
 		g.drawImage(Game.getImage("machine/pulverizer.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 		if (working) Helper.drawCooldownCircle(x + Block.SIZE / 2, y, height, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Pulverizer(x / Block.SIZE, y / Block.SIZE);
 	}
 }

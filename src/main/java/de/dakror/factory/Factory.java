@@ -9,16 +9,11 @@ import de.dakror.factory.game.UpdateThread;
 /**
  * @author Dakror
  */
-public class Factory
-{
-	public static void main(String[] args)
-	{
-		try
-		{
+public class Factory {
+	public static void main(String[] args) {
+		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Launch.init(args);
@@ -31,12 +26,9 @@ public class Factory
 		
 		new Game();
 		Game.currentFrame.init("Factory");
-		try
-		{
+		try {
 			Game.currentFrame.setFullscreen();
-		}
-		catch (IllegalStateException e)
-		{
+		} catch (IllegalStateException e) {
 			System.exit(0);
 		}
 		

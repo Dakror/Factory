@@ -6,10 +6,8 @@ import de.dakror.factory.game.world.Block;
 /**
  * @author Dakror
  */
-public class SuperStorage extends Storage
-{
-	public SuperStorage(float x, float y)
-	{
+public class SuperStorage extends Storage {
+	public SuperStorage(float x, float y) {
 		super(x, y);
 		width = 12 * Block.SIZE;
 		height = 6 * Block.SIZE;
@@ -23,8 +21,7 @@ public class SuperStorage extends Storage
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new SuperStorage(x / Block.SIZE, y / Block.SIZE);
 	}
 }

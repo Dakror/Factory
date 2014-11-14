@@ -23,21 +23,18 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class IronTube extends Tube
-{
+public class IronTube extends Tube {
 	static ItemList itemList;
 	static Image[] arrows = new Image[4];
 	
 	protected boolean showItemList = true;
 	
-	public static void init()
-	{
+	public static void init() {
 		for (int i = 0; i < 4; i++)
 			arrows[i] = Game.getImage("arrow.png").getSubimage(i * 64, 0, 64, 64);
 	}
 	
-	public IronTube(float x, float y)
-	{
+	public IronTube(float x, float y) {
 		super(x, y);
 		color = Color.darkGray;
 		bgColor = Color.decode("#999999");
@@ -51,34 +48,27 @@ public class IronTube extends Tube
 		if (Game.world != null) initGUI();
 	}
 	
-	protected void initFilters(int length)
-	{
+	protected void initFilters(int length) {
 		outputFilters.clear();
 		
 		for (int i = 0; i < length; i++)
 			outputFilters.add(new Filter(null, null));
 	}
 	
-	protected void initGUI()
-	{
+	protected void initGUI() {
 		container.components.clear();
 		
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < (576 / ItemSlot.SIZE); j++)
-			{
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < (576 / ItemSlot.SIZE); j++) {
 				final ItemSlot is = new ItemSlot((Game.getWidth() - 616) / 2 + 16 + j * ItemSlot.SIZE, (Game.getHeight() - 300) / 3 + 20 + i * ItemSlot.SIZE, outputFilters.get(i * 9 + j).t, outputFilters.get(i * 9 + j).t == null ? 0 : 1);
 				is.category = outputFilters.get(i * 9 + j).c;
 				is.bg = arrows[i];
 				is.rightClickClear = true;
-				is.pressEvent = new ClickEvent()
-				{
+				is.pressEvent = new ClickEvent() {
 					@Override
-					public void trigger()
-					{
+					public void trigger() {
 						ItemSlot a = itemList.getSelectedItemSlot();
-						if (a != null)
-						{
+						if (a != null) {
 							is.category = a.category;
 							is.amount = a.amount;
 							is.type = a.type;
@@ -90,13 +80,10 @@ public class IronTube extends Tube
 		}
 		
 		CloseButton cb = new CloseButton((Game.getWidth() + 660) / 2 - CloseButton.SIZE, (Game.getHeight() - 300) / 3);
-		cb.addClickEvent(new ClickEvent()
-		{
+		cb.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
-				for (int i = 0; i < container.components.size() - 1; i++)
-				{
+			public void trigger() {
+				for (int i = 0; i < container.components.size() - 1; i++) {
 					ItemSlot is = (ItemSlot) container.components.get(i);
 					outputFilters.get(i).c = is.category;
 					outputFilters.get(i).t = is.type;
@@ -110,21 +97,16 @@ public class IronTube extends Tube
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
 		
 		if (state == 2 && Game.currentGame.worldActiveMachine == this) initGUI();
-		if (state == 2 && Game.currentGame.worldActiveMachine == this && showItemList)
-		{
-			if (!(Game.currentGame.getActiveLayer() instanceof ItemList))
-			{
+		if (state == 2 && Game.currentGame.worldActiveMachine == this && showItemList) {
+			if (!(Game.currentGame.getActiveLayer() instanceof ItemList)) {
 				itemList = new ItemList();
 				itemList.addCategories = true;
 				Game.currentGame.addLayer(itemList);
-			}
-			else
-			{
+			} else {
 				((ItemList) Game.currentGame.getActiveLayer()).items = null;
 				((ItemList) Game.currentGame.getActiveLayer()).killOnUnfocus = false;
 				((ItemList) Game.currentGame.getActiveLayer()).addCategories = true;
@@ -135,30 +117,25 @@ public class IronTube extends Tube
 	}
 	
 	@Override
-	public void drawGUI(Graphics2D g)
-	{
+	public void drawGUI(Graphics2D g) {
 		Helper.drawContainer((Game.getWidth() - 660) / 2, (Game.getHeight() - 300) / 3, 660, 300, true, false, g);
 		drawSuper(g);
 	}
 	
-	public void drawSuper(Graphics2D g)
-	{
+	public void drawSuper(Graphics2D g) {
 		super.drawGUI(g);
 	}
 	
 	/**
 	 * 0 = true, 1 = empty, 2 = false
 	 */
-	public int matchesFilters(ItemType type, int direction)
-	{
+	public int matchesFilters(ItemType type, int direction) {
 		int emtpy = 0;
 		
 		boolean match = false;
-		for (int i = 0; i < outputFilters.size() / 4; i++)
-		{
+		for (int i = 0; i < outputFilters.size() / 4; i++) {
 			Filter f = outputFilters.get(direction * outputFilters.size() / 4 + i);
-			if (f.t == null)
-			{
+			if (f.t == null) {
 				emtpy++;
 				continue;
 			}
@@ -170,8 +147,7 @@ public class IronTube extends Tube
 	}
 	
 	@Override
-	public JSONObject getData() throws Exception
-	{
+	public JSONObject getData() throws Exception {
 		JSONObject o = super.getData();
 		
 		JSONArray fs = new JSONArray();
@@ -183,8 +159,7 @@ public class IronTube extends Tube
 	}
 	
 	@Override
-	public void setData(JSONObject data) throws Exception
-	{
+	public void setData(JSONObject data) throws Exception {
 		outputFilters.clear();
 		JSONArray os = data.getJSONArray("f");
 		for (int i = 0; i < os.length(); i++)
@@ -192,8 +167,7 @@ public class IronTube extends Tube
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new IronTube(x / Block.SIZE, y / Block.SIZE);
 	}
 }

@@ -15,8 +15,7 @@ import org.json.JSONObject;
 /**
  * @author Dakror
  */
-public class Tube extends Machine
-{
+public class Tube extends Machine {
 	public static float highestSpeed = 10f; // keep in sync!!
 	
 	boolean connectedToExit;
@@ -30,8 +29,7 @@ public class Tube extends Machine
 	 */
 	boolean[] connections = { false, false, false, false };
 	
-	public Tube(float x, float y)
-	{
+	public Tube(float x, float y) {
 		super(x, y, 1, 1);
 		
 		name = "Stein-Rohr";
@@ -43,8 +41,7 @@ public class Tube extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		Color c = g.getColor();
 		g.setColor(color);
 		
@@ -53,25 +50,21 @@ public class Tube extends Machine
 		if (!connections[2]) g.fillRect(x + width - 4, y, 4, height);
 		if (!connections[3]) g.fillRect(x, y + height - 4, width, 4);
 		
-		if (connections[1])
-		{
+		if (connections[1]) {
 			if (connections[0]) g.fillRect(x, y, 4, 4);
 			if (connections[2]) g.fillRect(x + width - 4, y, 4, 4);
 		}
-		if (connections[3])
-		{
+		if (connections[3]) {
 			if (connections[0]) g.fillRect(x, y + height - 4, 4, 4);
 			if (connections[2]) g.fillRect(x + width - 4, y + height - 4, 4, 4);
 		}
 		
-		if (connectedToInput)
-		{
+		if (connectedToInput) {
 			g.setColor(Color.blue);
 			g.drawRect(x, y, width - 1, height - 1);
 		}
 		
-		if (connectedToExit)
-		{
+		if (connectedToExit) {
 			g.setColor(Color.blue);
 			g.drawRect(x + 1, y + 1, width - 1, height - 1);
 		}
@@ -80,26 +73,21 @@ public class Tube extends Machine
 	}
 	
 	@Override
-	public float getSpeed()
-	{
+	public float getSpeed() {
 		return speed;
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Tube(x / Block.SIZE, y / Block.SIZE);
 	}
 	
 	@Override
-	public void onEntityUpdate(Cause cause, Object source)
-	{
-		if (cause == Cause.ENTITY_ADDED || cause == Cause.ENTITY_REMOVED)
-		{
+	public void onEntityUpdate(Cause cause, Object source) {
+		if (cause == Cause.ENTITY_ADDED || cause == Cause.ENTITY_REMOVED) {
 			connectedToExit = connectedToInput = false;
 			TubePoint tp = Game.world.getTubePoint(x, y);
-			if (tp != null)
-			{
+			if (tp != null) {
 				if (tp.in) connectedToInput = true;
 				else connectedToExit = true;
 			}
@@ -122,18 +110,14 @@ public class Tube extends Machine
 		}
 	}
 	
-	public boolean isConnectedTo(Tube o)
-	{
+	public boolean isConnectedTo(Tube o) {
 		onEntityUpdate(null, null);
 		o.onEntityUpdate(null, null);
 		
-		if (o.x == x && Math.abs(o.y - y) == Block.SIZE)
-		{
+		if (o.x == x && Math.abs(o.y - y) == Block.SIZE) {
 			if (o.y > y) return connections[3] && o.connections[1];
 			else return connections[1] && o.connections[3];
-		}
-		else if (o.y == y && Math.abs(o.x - x) == Block.SIZE)
-		{
+		} else if (o.y == y && Math.abs(o.x - x) == Block.SIZE) {
 			if (o.x > x) return connections[2] && o.connections[0];
 			else return connections[0] && o.connections[2];
 		}
@@ -142,8 +126,7 @@ public class Tube extends Machine
 	}
 	
 	@Override
-	public JSONObject getData() throws Exception
-	{
+	public JSONObject getData() throws Exception {
 		JSONObject o = new JSONObject();
 		
 		o.put("c", getClass().getName().replace("de.dakror.factory.game.entity.", ""));
@@ -154,16 +137,13 @@ public class Tube extends Machine
 	}
 	
 	@Override
-	public void setData(JSONObject data) throws Exception
-	{}
+	public void setData(JSONObject data) throws Exception {}
 	
-	public boolean isConnectedToExit()
-	{
+	public boolean isConnectedToExit() {
 		return connectedToExit;
 	}
 	
-	public boolean isConnectedToInput()
-	{
+	public boolean isConnectedToInput() {
 		return connectedToInput;
 	}
 }

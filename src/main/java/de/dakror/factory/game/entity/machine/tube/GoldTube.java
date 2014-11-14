@@ -8,10 +8,8 @@ import de.dakror.factory.game.world.Block;
 /**
  * @author Dakror
  */
-public class GoldTube extends Tube
-{
-	public GoldTube(float x, float y)
-	{
+public class GoldTube extends Tube {
+	public GoldTube(float x, float y) {
 		super(x, y);
 		speed = 10f;
 		color = Color.decode("#cd6f00");
@@ -21,8 +19,7 @@ public class GoldTube extends Tube
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new GoldTube(x / Block.SIZE, y / Block.SIZE);
 	}
 }

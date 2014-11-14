@@ -16,15 +16,13 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Miner extends Machine
-{
+public class Miner extends Machine {
 	ItemType[] types;
 	int speed;
 	
 	boolean spittout;
 	
-	public Miner(float x, float y)
-	{
+	public Miner(float x, float y) {
 		super(x, y, 2, 2);
 		
 		name = "Mine";
@@ -36,33 +34,28 @@ public class Miner extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		int size = 64;
 		g.drawImage(Game.getImage("machine/miner.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 		if (running) Helper.drawCooldownCircle(x, y, width, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Miner(x / Block.SIZE, y / Block.SIZE);
 	}
 	
 	@Override
-	protected void tick(int tick)
-	{
+	protected void tick(int tick) {
 		this.tick = tick;
 		if (startTick == 0) startTick = tick;
 		
-		if (running && (tick - startTick) % speed == 0 && tick != startTick)
-		{
+		if (running && (tick - startTick) % speed == 0 && tick != startTick) {
 			items.add(types[(int) (Math.random() * types.length)], 1);
 			return;
 		}
 		
-		if ((tick - startTick) % REQUEST_SPEED == 0 && spittout && items.getLength() > 0)
-		{
+		if ((tick - startTick) % REQUEST_SPEED == 0 && spittout && items.getLength() > 0) {
 			ArrayList<ItemType> filled = items.getFilled();
 			ItemType type = filled.get((int) (Math.random() * filled.size()));
 			Item item = new Item(x + points.get(0).x * Block.SIZE, y + points.get(0).y * Block.SIZE, type);
@@ -72,14 +65,12 @@ public class Miner extends Machine
 	}
 	
 	@Override
-	public void onEntityUpdate(Cause cause, Object source)
-	{
+	public void onEntityUpdate(Cause cause, Object source) {
 		running = true;
 		
 		if (cause == Cause.ENTITY_ADDED || cause == Cause.ENTITY_REMOVED) spittout = Game.world.isTube(x, y - Block.SIZE);
 		
-		if (cause == Cause.ENTITY_ADDED)
-		{
+		if (cause == Cause.ENTITY_ADDED) {
 			types = new ItemType[4];
 			
 			if (Game.world != null) for (int i = 0; i < 4; i++)

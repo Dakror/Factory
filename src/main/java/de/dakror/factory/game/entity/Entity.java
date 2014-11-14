@@ -18,8 +18,7 @@ import de.dakror.gamesetup.util.path.Path;
 /**
  * @author Dakror
  */
-public abstract class Entity extends ClickableComponent
-{
+public abstract class Entity extends ClickableComponent {
 	protected float speed;
 	protected boolean drawBelow, dead;
 	protected Vector pos, target;
@@ -28,61 +27,50 @@ public abstract class Entity extends ClickableComponent
 	public Cause deathCause;
 	protected Color bgColor = Color.white;
 	
-	public Entity(float x, float y, int width, int height)
-	{
+	public Entity(float x, float y, int width, int height) {
 		super((int) x, (int) y, width, height);
 		pos = new Vector(x, y);
 		drawBelow = true;
 	}
 	
-	public Vector getPos()
-	{
+	public Vector getPos() {
 		return pos;
 	}
 	
-	public float getSpeed()
-	{
+	public float getSpeed() {
 		return speed;
 	}
 	
-	public void setSpeed(float speed)
-	{
+	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
 	
-	public boolean isDead()
-	{
+	public boolean isDead() {
 		return dead;
 	}
 	
-	public void setDead(boolean dead)
-	{
+	public void setDead(boolean dead) {
 		this.dead = dead;
 	}
 	
-	public Vector getTarget()
-	{
+	public Vector getTarget() {
 		return target;
 	}
 	
-	public void setTarget(Vector target)
-	{
+	public void setTarget(Vector target) {
 		this.target = target;
 	}
 	
-	public void setPathTarget(Vector target)
-	{
+	public void setPathTarget(Vector target) {
 		pathTarget = target;
 	}
 	
-	public synchronized void setPath(Path p)
-	{
+	public synchronized void setPath(Path p) {
 		path = p;
 		if (path != null) target = path.getNode().clone().mul(Block.SIZE);
 	}
 	
-	public void move()
-	{
+	public void move() {
 		if (target == null || target.equals(getPos())) return;
 		Vector distance = target.clone().sub(getPos());
 		if (distance.getLength() > speed) distance.setLength(speed);
@@ -90,11 +78,9 @@ public abstract class Entity extends ClickableComponent
 		pos.x = newPos.x;
 		pos.y = newPos.y;
 		
-		if (target.equals(getPos()))
-		{
+		if (target.equals(getPos())) {
 			if (path != null) path.setNodeReached();
-			if (path != null && !path.isPathComplete())
-			{
+			if (path != null && !path.isPathComplete()) {
 				target = path.getNode().clone().mul(Block.SIZE);
 				onReachPathNode();
 			}
@@ -104,8 +90,7 @@ public abstract class Entity extends ClickableComponent
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		move();
 		
 		x = (int) pos.x;
@@ -114,16 +99,14 @@ public abstract class Entity extends ClickableComponent
 		tick(tick);
 	}
 	
-	public boolean contains(Point p)
-	{
+	public boolean contains(Point p) {
 		Rectangle rectangle = getArea();
 		rectangle.translate(Game.world.x, Game.world.y);
 		
 		return rectangle.contains(p);
 	}
 	
-	public boolean contains2(Point p)
-	{
+	public boolean contains2(Point p) {
 		Rectangle rectangle = getArea();
 		
 		return rectangle.contains(p);
@@ -131,10 +114,8 @@ public abstract class Entity extends ClickableComponent
 	
 	protected abstract void tick(int tick);
 	
-	public void drawBelow(Graphics2D g)
-	{
-		if (drawBelow)
-		{
+	public void drawBelow(Graphics2D g) {
+		if (drawBelow) {
 			Color c = g.getColor();
 			g.setColor(bgColor);
 			g.fillRect(x, y, width, height);
@@ -145,13 +126,11 @@ public abstract class Entity extends ClickableComponent
 	@Override
 	public abstract Entity clone();
 	
-	public Rectangle getArea()
-	{
+	public Rectangle getArea() {
 		return new Rectangle(x, y, width, height);
 	}
 	
-	public boolean isVisible()
-	{
+	public boolean isVisible() {
 		return y + Game.world.y >= -height && x + Game.world.x >= -width && y + Game.world.y <= Game.getHeight() && x + Game.world.x <= Game.getWidth();
 	}
 	

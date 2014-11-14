@@ -17,19 +17,16 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class LoadGameLayer extends Layer
-{
+public class LoadGameLayer extends Layer {
 	int y;
 	
-	public LoadGameLayer()
-	{
+	public LoadGameLayer() {
 		modal = true;
 		y = Game.getHeight() / 4 + 20;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		
 		Helper.drawContainer(Game.getWidth() / 4, Game.getHeight() / 4, Game.getWidth() / 2, Game.getHeight() / 2, true, false, g);
@@ -38,21 +35,17 @@ public class LoadGameLayer extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		components.clear();
 		CloseButton cb = new CloseButton(Game.getWidth() / 4 * 3 - CloseButton.SIZE, Game.getHeight() / 4);
-		cb.addClickEvent(new ClickEvent()
-		{
+		cb.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.removeLayer(LoadGameLayer.this);
 			}
 		});
@@ -60,28 +53,23 @@ public class LoadGameLayer extends Layer
 		
 		new File(CFG.DIR, "maps").mkdirs();
 		
-		File[] files = new File(CFG.DIR, "maps").listFiles(new FilenameFilter()
-		{
+		File[] files = new File(CFG.DIR, "maps").listFiles(new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name)
-			{
+			public boolean accept(File dir, String name) {
 				return name.endsWith(".factory");
 			}
 		});
 		
-		for (int i = 0; i < files.length; i++)
-		{
+		for (int i = 0; i < files.length; i++) {
 			SavegameLabel sgl = new SavegameLabel(i, files[i]);
 			components.add(sgl);
 		}
 	}
 	
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent e)
-	{
+	public void mouseWheelMoved(MouseWheelEvent e) {
 		super.mouseWheelMoved(e);
-		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint()))
-		{
+		if (new Rectangle(Game.getWidth() / 4 + 20, Game.getHeight() / 4 + 20, Game.getWidth() / 2 - 40, Game.getHeight() / 2 - 40).contains(e.getPoint())) {
 			y += e.getWheelRotation() * -40;
 			int h = Game.getHeight() / 4 + 20;
 			
@@ -90,8 +78,7 @@ public class LoadGameLayer extends Layer
 			if (y > h) y = h;
 			if (y + h2 < h + Game.getHeight() / 2 - 40) y = h + Game.getHeight() / 2 - 40 - h2;
 			
-			for (int i = 1; i < components.size(); i++)
-			{
+			for (int i = 1; i < components.size(); i++) {
 				components.get(i).y = y + (i - 1) * SavegameLabel.HEIGHT;
 			}
 		}

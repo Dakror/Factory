@@ -19,13 +19,11 @@ import de.dakror.gamesetup.util.Vector;
 /**
  * @author Dakror
  */
-public class Item extends Entity
-{
+public class Item extends Entity {
 	ItemType type;
 	Vector lastPos;
 	
-	public Item(float x, float y, ItemType type)
-	{
+	public Item(float x, float y, ItemType type) {
 		super(x, y, Block.SIZE, Block.SIZE);
 		this.type = type;
 		drawBelow = false;
@@ -33,8 +31,7 @@ public class Item extends Entity
 		lastPos = pos.clone();
 	}
 	
-	public Item(float x, float y)
-	{
+	public Item(float x, float y) {
 		super(x, y, Block.SIZE, Block.SIZE);
 		drawBelow = false;
 		speed = 2f;
@@ -42,14 +39,12 @@ public class Item extends Entity
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		type.draw(x + (width - 32) / 2, y + (height - 32) / 2, g);
 	}
 	
 	@Override
-	protected void tick(int tick)
-	{
+	protected void tick(int tick) {
 		if (!Game.world.isTube(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE))) // kill if stuck
 		{
 			pos = lastPos;
@@ -59,47 +54,39 @@ public class Item extends Entity
 	}
 	
 	@Override
-	public void move()
-	{
+	public void move() {
 		speed = Game.world.getTubeSpeed(Helper.round(x, Block.SIZE), Helper.round(y, Block.SIZE));
 		super.move();
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Item(x, y, type);
 	}
 	
-	public ItemType getItemType()
-	{
+	public ItemType getItemType() {
 		return type;
 	}
 	
 	@Override
-	public void onEntityUpdate(Cause cause, Object source)
-	{
-		if ((target == null || target.equals(pos)) && (cause == Cause.ENTITY_ADDED || cause == Cause.MACHINE_DONE))
-		{
+	public void onEntityUpdate(Cause cause, Object source) {
+		if ((target == null || target.equals(pos)) && (cause == Cause.ENTITY_ADDED || cause == Cause.MACHINE_DONE)) {
 			lastPos = pos.clone();
 			onReachTarget();
 		}
 	}
 	
 	@Override
-	public void onRemoval()
-	{}
+	public void onRemoval() {}
 	
 	@Override
-	public JSONObject getData() throws Exception
-	{
+	public JSONObject getData() throws Exception {
 		JSONObject o = new JSONObject();
 		
 		o.put("x", (int) getPos().x);
 		o.put("y", (int) getPos().y);
 		o.put("t", type.ordinal());
-		if (target != null)
-		{
+		if (target != null) {
 			o.put("tx", target.x);
 			o.put("ty", target.y);
 		}
@@ -108,20 +95,16 @@ public class Item extends Entity
 	}
 	
 	@Override
-	protected void onReachTarget()
-	{
+	protected void onReachTarget() {
 		Tube[] neighbors = new Tube[4];
 		
 		Tube t = Game.world.getTube(pos.x, pos.y);
 		
 		if (t == null) return;
 		
-		if (t.isConnectedToInput())
-		{
-			for (Entity e : Game.world.getEntities())
-			{
-				if (e instanceof Machine && e.getArea().contains(pos.x, pos.y) && ((Machine) e).getTubePoints().size() > 0)
-				{
+		if (t.isConnectedToInput()) {
+			for (Entity e : Game.world.getEntities()) {
+				if (e instanceof Machine && e.getArea().contains(pos.x, pos.y) && ((Machine) e).getTubePoints().size() > 0) {
 					((Machine) e).getItems().add(type, 1);
 					deathCause = Cause.ITEM_CONSUMED;
 					dead = true;
@@ -134,35 +117,27 @@ public class Item extends Entity
 		
 		int[] neighborFilterResults = { 2, 2, 2, 2 };
 		
-		for (int i = 0; i < neigh.length; i++)
-		{
+		for (int i = 0; i < neigh.length; i++) {
 			Tube l = Game.world.getTube(pos.x + Block.SIZE * neigh[i][0], pos.y + Block.SIZE * neigh[i][1]);
-			if (l != null && l.isConnectedTo(t) && !l.isConnectedToExit())
-			{
-				if (l.isConnectedToInput())
-				{
+			if (l != null && l.isConnectedTo(t) && !l.isConnectedToExit()) {
+				if (l.isConnectedToInput()) {
 					boolean ok = true;
 					
 					Machine machine = null;
-					for (Entity e : Game.world.getEntities())
-					{
-						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && ((Machine) e).getTubePoints().size() > 0)
-						{
+					for (Entity e : Game.world.getEntities()) {
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && ((Machine) e).getTubePoints().size() > 0) {
 							machine = (Machine) e;
 							break;
 						}
 					}
 					
-					for (Entity e : Game.world.getEntities())
-					{
-						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).wantsItem(type))
-						{
+					for (Entity e : Game.world.getEntities()) {
+						if (e instanceof Machine && e.getArea().contains(l.x, l.y) && !((Machine) e).wantsItem(type)) {
 							ok = false;
 							break;
 						}
 						
-						if (e instanceof Item && e.getTarget() != null && e.getTarget().equals(l.getPos()) && machine.matchSameFilters(type, ((Item) e).type))
-						{
+						if (e instanceof Item && e.getTarget() != null && e.getTarget().equals(l.getPos()) && machine.matchSameFilters(type, ((Item) e).type)) {
 							ok = false;
 							break;
 						}
@@ -171,8 +146,7 @@ public class Item extends Entity
 					if (!ok) continue;
 				}
 				
-				if (t instanceof IronTube)
-				{
+				if (t instanceof IronTube) {
 					neighborFilterResults[i] = ((IronTube) t).matchesFilters(type, i);
 					if (neighborFilterResults[i] == 2) continue;
 				}
@@ -182,10 +156,8 @@ public class Item extends Entity
 		}
 		
 		boolean hasOneWithFilter = false;
-		for (int i = 0; i < 4; i++)
-		{
-			if (neighborFilterResults[i] == 0)
-			{
+		for (int i = 0; i < 4; i++) {
+			if (neighborFilterResults[i] == 0) {
 				hasOneWithFilter = true;
 				break;
 			}
@@ -200,13 +172,10 @@ public class Item extends Entity
 		
 		if (size == 0) return;
 		
-		if (size > 1)
-		{
-			for (int i = 0; i < 4; i++)
-			{
+		if (size > 1) {
+			for (int i = 0; i < 4; i++) {
 				Tube tube = neighbors[i];
-				if (tube != null && tube.x == lastPos.x && tube.y == lastPos.y)
-				{
+				if (tube != null && tube.x == lastPos.x && tube.y == lastPos.y) {
 					neighbors[i] = null;
 					break;
 				}
@@ -222,12 +191,10 @@ public class Item extends Entity
 	}
 	
 	@Override
-	public void onReachPathNode()
-	{}
+	public void onReachPathNode() {}
 	
 	@Override
-	public void setData(JSONObject data) throws Exception
-	{
+	public void setData(JSONObject data) throws Exception {
 		type = ItemType.values()[data.getInt("t")];
 		if (data.has("tx")) target = new Vector(data.getInt("tx"), data.getInt("ty"));
 	}

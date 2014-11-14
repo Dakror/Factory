@@ -16,10 +16,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class CopperTube extends IronTube
-{
-	public CopperTube(float x, float y)
-	{
+public class CopperTube extends IronTube {
+	public CopperTube(float x, float y) {
 		super(x, y);
 		
 		name = "Kupfer-Rohr";
@@ -33,11 +31,9 @@ public class CopperTube extends IronTube
 	}
 	
 	@Override
-	protected void initGUI()
-	{
+	protected void initGUI() {
 		container.components.clear();
-		for (int i = 0; i < 4; i++)
-		{
+		for (int i = 0; i < 4; i++) {
 			final ItemSlot is = new ItemSlot((Game.getWidth() - 318) / 2 + 16 + i * ItemSlot.SIZE, (Game.getHeight() - 104) / 3 + 20, null, 0);
 			is.category = outputFilters.get(i).c;
 			if (isFilled()) is.selected = is.category == null;
@@ -45,11 +41,9 @@ public class CopperTube extends IronTube
 			is.keepClicked = true;
 			is.keepSelected = true;
 			final int j = i;
-			is.addClickEvent(new ClickEvent()
-			{
+			is.addClickEvent(new ClickEvent() {
 				@Override
-				public void trigger()
-				{
+				public void trigger() {
 					for (int i = 0; i < outputFilters.size(); i++)
 						outputFilters.set(i, new Filter(Category.nul, null));
 					
@@ -62,19 +56,16 @@ public class CopperTube extends IronTube
 		}
 		
 		CloseButton cb = new CloseButton((Game.getWidth() + 318) / 2 - CloseButton.SIZE, (Game.getHeight() - 100) / 3);
-		cb.addClickEvent(new ClickEvent()
-		{
+		cb.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.worldActiveMachine = null;
 			}
 		});
 		container.components.add(cb);
 	}
 	
-	public boolean isFilled()
-	{
+	public boolean isFilled() {
 		for (Filter f : outputFilters)
 			if (f.c != null || f.t != null) return true;
 		
@@ -82,15 +73,13 @@ public class CopperTube extends IronTube
 	}
 	
 	@Override
-	public void drawGUI(Graphics2D g)
-	{
+	public void drawGUI(Graphics2D g) {
 		Helper.drawContainer((Game.getWidth() - 318) / 2, (Game.getHeight() - 104) / 3, 318, 104, true, false, g);
 		drawSuper(g);
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new CopperTube(x / Block.SIZE, y / Block.SIZE);
 	}
 }

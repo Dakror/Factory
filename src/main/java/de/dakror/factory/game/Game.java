@@ -45,8 +45,7 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Game extends GameFrame
-{
+public class Game extends GameFrame {
 	public static final Machine[] buildableMachines = { new Tube(0, 0), new CopperTube(0, 0), new IronTube(0, 0), new GoldTube(0, 0), new SilverTube(0, 0), new Miner(0, 0), new Pulverizer(0, 0), new Washer(0, 0), new Smeltery(0, 0), new Platery(0, 0), new Crusher(0, 0), new Storage(0, 0), new SuperStorage(0, 0) };
 	public static Game currentGame;
 	public static World world;
@@ -60,33 +59,25 @@ public class Game extends GameFrame
 	
 	int tickWhenPaused;
 	
-	public Game()
-	{
+	public Game() {
 		currentGame = this;
 	}
 	
 	@Override
-	public void initGame()
-	{
-		try
-		{
+	public void initGame() {
+		try {
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/alagard.ttf")));
 			IronTube.init();
 			paused = false;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void newGame()
-	{
-		new Thread()
-		{
+	public void newGame() {
+		new Thread() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				paused = true;
 				gameName = new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
 				world = new World(50, 50);
@@ -102,8 +93,7 @@ public class Game extends GameFrame
 		}.start();
 	}
 	
-	public void loadGame(File file)
-	{
+	public void loadGame(File file) {
 		paused = true;
 		world = new World(50, 50);
 		
@@ -115,14 +105,12 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (layers.size() == 0) addLayer(new MenuLayer());
 		
 		drawLayers(g);
 		
-		if (paused)
-		{
+		if (paused) {
 			Helper.drawShadow(0, 0, Game.getWidth(), 110, g);
 			Helper.drawHorizontallyCenteredString("Pausiert", Game.getWidth(), 80, g, 80);
 			
@@ -131,10 +119,8 @@ public class Game extends GameFrame
 			if (world != null) Helper.drawString("E: " + world.components.size(), 10, 78, g, 18);
 		}
 		
-		try
-		{
-			if (activeMachine != null)
-			{
+		try {
+			if (activeMachine != null) {
 				Point p = mouseDrag == null ? mouse : mouseDrag;
 				activeMachine.setX(Helper.round(p.x - activeMachine.getWidth() / 2 - world.x % Block.SIZE, Block.SIZE) + world.x % Block.SIZE);
 				activeMachine.setY(Helper.round(p.y - activeMachine.getHeight() / 2 - world.y % Block.SIZE, Block.SIZE) + world.y % Block.SIZE);
@@ -151,18 +137,14 @@ public class Game extends GameFrame
 				
 				boolean cp = true;
 				
-				for (int i = 0; i < activeMachine.getWidth() / Block.SIZE; i++)
-				{
-					for (int j = 0; j < activeMachine.getHeight() / Block.SIZE; j++)
-					{
+				for (int i = 0; i < activeMachine.getWidth() / Block.SIZE; i++) {
+					for (int j = 0; j < activeMachine.getHeight() / Block.SIZE; j++) {
 						boolean free = true;
-						for (Entity e : world.getEntities())
-						{
+						for (Entity e : world.getEntities()) {
 							if (e instanceof Item) continue;
 							Rectangle r = e.getArea();
 							r.translate(world.x, world.y);
-							if (r.intersects(new Rectangle(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE)))
-							{
+							if (r.intersects(new Rectangle(activeMachine.getX() + i * Block.SIZE, activeMachine.getY() + j * Block.SIZE, Block.SIZE, Block.SIZE))) {
 								free = false;
 								break;
 							}
@@ -181,20 +163,16 @@ public class Game extends GameFrame
 				g.setColor(c);
 				g.setComposite(composite);
 			}
-		}
-		catch (NullPointerException e)
-		{}
+		} catch (NullPointerException e) {}
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent e)
-	{
+	public void mouseDragged(MouseEvent e) {
 		super.mouseDragged(e);
 		
 		if (world == null) return;
 		
-		if ((world.width > getWidth() || world.height > getHeight()) && mouseDown != null && e.getModifiers() == MouseEvent.BUTTON2_MASK)
-		{
+		if ((world.width > getWidth() || world.height > getHeight()) && mouseDown != null && e.getModifiers() == MouseEvent.BUTTON2_MASK) {
 			int x = mouseDown.x - e.getX() - mouseDownWorld.x;
 			int y = mouseDown.y - e.getY() - mouseDownWorld.y;
 			
@@ -206,16 +184,14 @@ public class Game extends GameFrame
 			world.x = -x;
 			world.y = -y;
 		}
-		if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
+		if (e.getModifiers() == MouseEvent.BUTTON1_MASK) {
 			mouseDrag = e.getPoint();
 			if (canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100) build();
 		}
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
 		
 		mouseDown = null;
@@ -223,16 +199,13 @@ public class Game extends GameFrame
 		if (mouseDrag != null) mouse = (Point) mouseDrag.clone();
 		mouseDrag = null;
 		
-		if (e.getButton() == MouseEvent.BUTTON3)
-		{
+		if (e.getButton() == MouseEvent.BUTTON3) {
 			activeMachine = null;
 			canPlace = false;
-		}
-		else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100) build();
+		} else if (e.getButton() == MouseEvent.BUTTON1 && canPlace && activeMachine != null && e.getY() < Game.getHeight() - 100) build();
 	}
 	
-	public void build()
-	{
+	public void build() {
 		Machine machine = (Machine) activeMachine.clone();
 		machine.setX(activeMachine.getX() - world.x);
 		machine.setY(activeMachine.getY() - world.y);
@@ -241,26 +214,22 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		
 		if (world == null) return;
 		
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.saveGame();
-		if (e.getKeyCode() == KeyEvent.VK_O && e.isControlDown())
-		{
+		if (e.getKeyCode() == KeyEvent.VK_O && e.isControlDown()) {
 			JFileChooser jfc = new JFileChooser(new File(CFG.DIR, "maps"));
 			jfc.setFileFilter(new FileNameExtensionFilter("Factory-Maps (*.factory)", "factory"));
 			jfc.setMultiSelectionEnabled(false);
 			if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) SavegameHandler.loadGame(jfc.getSelectedFile());
 		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE && !(getActiveLayer() instanceof PauseLayer)) paused = !paused;
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-		{
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			if (paused && getActiveLayer() instanceof PauseLayer) removeLayer(getActiveLayer()); // remove pause layer
-			else
-			{
+			else {
 				addLayer(new PauseLayer());
 				paused = true;
 			}
@@ -268,8 +237,7 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		
 		if (world == null) return;

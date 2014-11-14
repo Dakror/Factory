@@ -24,21 +24,16 @@ import de.dakror.gamesetup.util.Compressor;
 /**
  * @author Dakror
  */
-public class SavegameHandler
-{
-	public static void saveGame()
-	{
-		new Thread()
-		{
+public class SavegameHandler {
+	public static void saveGame() {
+		new Thread() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				File maps = new File(CFG.DIR, "maps");
 				maps.mkdir();
 				
 				File file = new File(maps, Game.gameName + ".factory");
-				try
-				{
+				try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					ImageIO.write(Game.world.getThumbnail(), "PNG", baos);
 					String string = new BASE64Encoder().encode(baos.toByteArray());
@@ -48,25 +43,19 @@ public class SavegameHandler
 					o.put("thumb", string);
 					
 					Compressor.compressFile(file, o.toString());
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}.start();
 	}
 	
-	public static void loadGame(final File file)
-	{
-		new Thread()
-		{
+	public static void loadGame(final File file) {
+		new Thread() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				setPriority(Thread.MAX_PRIORITY);
-				try
-				{
+				try {
 					JSONObject o = new JSONObject(Compressor.decompressFile(file));
 					Game.world.setStone();
 					Game.world.generate(o.getLong("seed"));
@@ -75,8 +64,7 @@ public class SavegameHandler
 					Game.world.clear();
 					
 					JSONArray entities = o.getJSONArray("entities");
-					for (int i = 0; i < entities.length(); i++)
-					{
+					for (int i = 0; i < entities.length(); i++) {
 						JSONObject e = entities.getJSONObject(i);
 						Entity entity = (Entity) Class.forName("de.dakror.factory.game.entity." + e.getString("c")).getConstructor(float.class, float.class).newInstance(e.getInt("x"), e.getInt("y"));
 						entity.setData(e);
@@ -84,14 +72,12 @@ public class SavegameHandler
 						Game.world.addEntitySilently(entity);
 					}
 					
-					for (Cause cause : Cause.values())
-					{
+					for (Cause cause : Cause.values()) {
 						Game.world.dispatchEntityUpdate(cause, null);
 					}
 					
 					JSONArray items = o.getJSONArray("items");
-					for (int i = 0; i < items.length(); i++)
-					{
+					for (int i = 0; i < items.length(); i++) {
 						JSONObject e = items.getJSONObject(i);
 						Item item = new Item(e.getInt("x"), e.getInt("y"));
 						item.setData(e);
@@ -99,27 +85,20 @@ public class SavegameHandler
 						Game.world.addEntitySilently(item);
 					}
 					
-					for (Cause cause : Cause.values())
-					{
+					for (Cause cause : Cause.values()) {
 						Game.world.dispatchEntityUpdate(cause, null);
 					}
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}.start();
 	}
 	
-	public static BufferedImage getBase64Thumbnail(String b64)
-	{
-		try
-		{
+	public static BufferedImage getBase64Thumbnail(String b64) {
+		try {
 			return ImageIO.read(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(b64)));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}

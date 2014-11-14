@@ -14,10 +14,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Platery extends Machine
-{
-	public Platery(float x, float y)
-	{
+public class Platery extends Machine {
+	public Platery(float x, float y) {
 		super(x, y, 3, 9);
 		
 		name = "Walzwerk";
@@ -34,8 +32,7 @@ public class Platery extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		int size = 120;
 		g.drawImage(Game.getImage("machine/plater.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 		if (working) Helper.drawCooldownCircle(x - 16, y + Block.SIZE * 3 - 16, Block.SIZE * 3 + 32, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
@@ -43,8 +40,7 @@ public class Platery extends Machine
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Platery(x / Block.SIZE, y / Block.SIZE);
 	}
 }

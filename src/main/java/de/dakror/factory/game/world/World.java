@@ -31,10 +31,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class World extends Layer
-{
-	public static enum Cause
-	{
+public class World extends Layer {
+	public static enum Cause {
 		ENTITY_ADDED,
 		ENTITY_REMOVED,
 		
@@ -52,8 +50,7 @@ public class World extends Layer
 	
 	public int x, y;
 	
-	public World(int width, int height)
-	{
+	public World(int width, int height) {
 		this.width = width * Block.SIZE;
 		this.height = height * Block.SIZE;
 		blocks = new int[width][height];
@@ -62,29 +59,24 @@ public class World extends Layer
 		setStone();
 	}
 	
-	public void setStone()
-	{
+	public void setStone() {
 		for (int i = 0; i < blocks.length; i++)
 			for (int j = 0; j < blocks[0].length; j++)
 				blocks[i][j] = Block.stone.ordinal();
 	}
 	
-	public void render()
-	{
+	public void render() {
 		render = new BufferedImage(blocks.length * Block.SIZE, blocks[0].length * Block.SIZE, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) render.getGraphics();
-		for (int i = 0; i < blocks.length; i++)
-		{
-			for (int j = 0; j < blocks[0].length; j++)
-			{
+		for (int i = 0; i < blocks.length; i++) {
+			for (int j = 0; j < blocks[0].length; j++) {
 				Helper.drawImage(Game.getImage("blocks.png"), i * Block.SIZE, j * Block.SIZE, Block.SIZE, Block.SIZE, Block.values()[blocks[i][j]].tx * 16, Block.values()[blocks[i][j]].ty * 16, 16, 16, g);
 			}
 		}
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (render == null) return;
 		
 		g.drawImage(render, x, y, Game.w);
@@ -106,11 +98,9 @@ public class World extends Layer
 	}
 	
 	@Override
-	protected void drawComponents(Graphics2D g)
-	{
+	protected void drawComponents(Graphics2D g) {
 		Component hovered = null;
-		for (Component c : components)
-		{
+		for (Component c : components) {
 			if (c instanceof Entity && !((Entity) c).isVisible()) continue;
 			c.draw(g);
 			if (c.state == 2) hovered = c;
@@ -120,37 +110,30 @@ public class World extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		translateX = -x;
 		translateY = -y;
 		
-		for (Entity e : entities)
-		{
-			if (e.isDead())
-			{
+		for (Entity e : entities) {
+			if (e.isDead()) {
 				e.onRemoval();
 				entities.remove(e);
 				components.remove(e);
 				dispatchEntityUpdate(e.deathCause == null ? Cause.ENTITY_REMOVED : e.deathCause, e);
-			}
-			else if (!Game.currentGame.paused) e.update(tick);
+			} else if (!Game.currentGame.paused) e.update(tick);
 		}
 	}
 	
-	public void generate()
-	{
+	public void generate() {
 		long seed = (long) (System.nanoTime() + Math.random() * System.currentTimeMillis());
 		generate(seed);
 		this.seed = seed;
 	}
 	
-	public void generate(long seed)
-	{
+	public void generate(long seed) {
 		Random random = new Random(seed);
 		Block[] ores = { Block.coal_ore, Block.iron_ore, Block.copper_ore, Block.tin_ore, Block.silver_ore, Block.gold_ore };
-		for (int i = 0; i < random.nextDouble() * ores.length * 2 + ores.length; i++)
-		{
+		for (int i = 0; i < random.nextDouble() * ores.length * 2 + ores.length; i++) {
 			int radius = (int) Math.round(random.nextDouble() * 2) + 2;
 			int index = i % ores.length;
 			Point point = new Point((int) (random.nextDouble() * (blocks.length - radius * 2) + radius), (int) (random.nextDouble() * (blocks[0].length - radius * 2) + radius));
@@ -192,30 +175,20 @@ public class World extends Layer
 		// addEntity(new Tube(8, 0));
 	}
 	
-	public void fillCircle(Point center, int radius, Block tile, float chance, Random random)
-	{
-		for (int i = -radius; i < radius; i++)
-		{
-			for (int j = -radius; j < radius; j++)
-			{
-				try
-				{
+	public void fillCircle(Point center, int radius, Block tile, float chance, Random random) {
+		for (int i = -radius; i < radius; i++) {
+			for (int j = -radius; j < radius; j++) {
+				try {
 					if (new Point(i + center.x, j + center.y).distance(center) <= radius && random.nextDouble() <= chance) blocks[i + center.x][j + center.y] = tile.ordinal();
-				}
-				catch (ArrayIndexOutOfBoundsException e)
-				{}
+				} catch (ArrayIndexOutOfBoundsException e) {}
 			}
 		}
 	}
 	
-	public TubePoint getTubePoint(int x, int y)
-	{
-		for (Entity e : entities)
-		{
-			if (e instanceof Machine)
-			{
-				for (TubePoint tp : ((Machine) e).getTubePoints())
-				{
+	public TubePoint getTubePoint(int x, int y) {
+		for (Entity e : entities) {
+			if (e instanceof Machine) {
+				for (TubePoint tp : ((Machine) e).getTubePoints()) {
 					if (e.getX() + tp.x * Block.SIZE == x && e.getY() + tp.y * Block.SIZE == y) return tp;
 				}
 			}
@@ -224,50 +197,43 @@ public class World extends Layer
 		return null;
 	}
 	
-	public int getBlock(int x, int y)
-	{
+	public int getBlock(int x, int y) {
 		if (x < 0 || y < 0 || x >= blocks.length || y >= blocks[0].length) return -1;
 		
 		return blocks[x][y];
 	}
 	
-	public boolean isTube(float x, float y)
-	{
+	public boolean isTube(float x, float y) {
 		for (Entity e : entities)
 			if (e instanceof Tube && e.getX() == x && e.getY() == y) return true;
 		
 		return false;
 	}
 	
-	public float getTubeSpeed(float x, float y)
-	{
+	public float getTubeSpeed(float x, float y) {
 		for (Entity e : entities)
 			if (e instanceof Tube && e.getX() == x && e.getY() == y) return e.getSpeed();
 		
 		return 0;
 	}
 	
-	public Tube getTube(float x, float y)
-	{
+	public Tube getTube(float x, float y) {
 		for (Entity e : entities)
 			if (e instanceof Tube && e.getX() == x && e.getY() == y) return (Tube) e;
 		
 		return null;
 	}
 	
-	public CopyOnWriteArrayList<Entity> getEntities()
-	{
+	public CopyOnWriteArrayList<Entity> getEntities() {
 		return entities;
 	}
 	
-	public void dispatchEntityUpdate(Cause cause, Object source)
-	{
+	public void dispatchEntityUpdate(Cause cause, Object source) {
 		for (Entity e : entities)
 			e.onEntityUpdate(cause, source);
 	}
 	
-	public void addEntity(Entity e)
-	{
+	public void addEntity(Entity e) {
 		if (e instanceof Machine) ((Machine) e).placeTubePoints();
 		
 		components.add(e);
@@ -276,25 +242,21 @@ public class World extends Layer
 		dispatchEntityUpdate(Cause.ENTITY_ADDED, e.clone());
 	}
 	
-	public void addEntitySilently(Entity e)
-	{
+	public void addEntitySilently(Entity e) {
 		if (e instanceof Machine) ((Machine) e).placeTubePoints();
 		
 		components.add(e);
 		entities.add(e);
 	}
 	
-	public long getSeed()
-	{
+	public long getSeed() {
 		return seed;
 	}
 	
 	@Override
-	public void init()
-	{}
+	public void init() {}
 	
-	public JSONObject getData() throws Exception
-	{
+	public JSONObject getData() throws Exception {
 		JSONObject data = new JSONObject();
 		
 		data.put("seed", seed);
@@ -303,16 +265,13 @@ public class World extends Layer
 		JSONArray i = new JSONArray();
 		
 		ArrayList<Entity> entities = new ArrayList<>(this.entities);
-		Collections.sort(entities, new Comparator<Entity>()
-		{
+		Collections.sort(entities, new Comparator<Entity>() {
 			@Override
-			public int compare(Entity o1, Entity o2)
-			{
+			public int compare(Entity o1, Entity o2) {
 				return Float.compare(o1.getPos().getLength(), o2.getPos().getLength());
 			}
 		});
-		for (Entity e1 : entities)
-		{
+		for (Entity e1 : entities) {
 			if (e1 instanceof Tube && (((Tube) e1).isConnectedToExit() || ((Tube) e1).isConnectedToInput())) continue;
 			if (e1 instanceof Item) i.put(e1.getData());
 			else e.put(e1.getData());
@@ -324,14 +283,12 @@ public class World extends Layer
 		return data;
 	}
 	
-	public void clear()
-	{
+	public void clear() {
 		components.clear();
 		entities.clear();
 	}
 	
-	public BufferedImage getThumbnail()
-	{
+	public BufferedImage getThumbnail() {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		draw((Graphics2D) bi.getGraphics());
 		Dimension s = Helper.scaleTo(new Dimension(width, height), new Dimension(200, 200));

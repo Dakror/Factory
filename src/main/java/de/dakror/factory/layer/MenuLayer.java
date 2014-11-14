@@ -13,8 +13,7 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class MenuLayer extends Layer
-{
+public class MenuLayer extends Layer {
 	int theta;
 	int thetaTo;
 	int dir = 0;
@@ -24,8 +23,7 @@ public class MenuLayer extends Layer
 	Dimension newGame = new Dimension(612, 100), loadGame = new Dimension(577, 100), endGame = new Dimension(746, 100);
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		for (int i = 0; i < Math.ceil(Game.getWidth() / 512f); i++)
 			for (int j = 0; j < Math.ceil(Game.getHeight() / 512f); j++)
 				g.drawImage(Game.getImage("menu/bg.png"), i * 512, j * 512, Game.w);
@@ -44,26 +42,22 @@ public class MenuLayer extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		theta = theta % 360;
 		if (theta <= 0) theta = 360 - theta;
 		
-		if (thetaTo != theta && dir != 0)
-		{
+		if (thetaTo != theta && dir != 0) {
 			theta = Helper.round(theta, speed);
 			theta -= speed * (dir > 0 ? 1 : -1);
 			
 			if (theta == 220) Game.currentGame.newGame();
 			if (theta == 320) Game.currentGame.addLayer(new LoadGameLayer());
 			if (theta == 90) System.exit(0);
-		}
-		else dir = 0;
+		} else dir = 0;
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		theta = thetaTo = 220;
 		newGame = Helper.getRelativeScaled(newGame, new Dimension(1920, 1080), new Dimension(Game.getWidth(), Game.getHeight()));
 		loadGame = Helper.getRelativeScaled(loadGame, new Dimension(1920, 1080), new Dimension(Game.getWidth(), Game.getHeight()));
@@ -71,8 +65,7 @@ public class MenuLayer extends Layer
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		
 		if (dir != 0) return;

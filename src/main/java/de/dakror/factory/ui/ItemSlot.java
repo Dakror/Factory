@@ -15,8 +15,7 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class ItemSlot extends ClickableComponent
-{
+public class ItemSlot extends ClickableComponent {
 	public static final int SIZE = 64;
 	
 	public ItemType type;
@@ -33,27 +32,22 @@ public class ItemSlot extends ClickableComponent
 	
 	public boolean selected;
 	
-	public ItemSlot(int x, int y, ItemType type, int amount)
-	{
+	public ItemSlot(int x, int y, ItemType type, int amount) {
 		super(x, y, SIZE, SIZE);
 		this.type = type;
 		this.amount = amount;
 		
-		addClickEvent(new ClickEvent()
-		{
+		addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				selected = !selected;
 			}
 		});
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (state == 0 || (keepClicked && !selected))
-		{
+	public void draw(Graphics2D g) {
+		if (state == 0 || (keepClicked && !selected)) {
 			if (amount > 0 || category != null || type == null) Helper.drawShadow(x, y, width, height, g);
 			Helper.drawOutline(x, y, width, getHeight(), false, g);
 		}
@@ -63,14 +57,12 @@ public class ItemSlot extends ClickableComponent
 		
 		if (type != null) type.draw(x + (width - 32) / 2, y + (height - 32) / 2, g);
 		
-		if (amount == 0 && category == null && bg == null)
-		{
+		if (amount == 0 && category == null && bg == null) {
 			int off = selected || state != 0 ? 8 : 0;
 			Helper.drawShadow(x - off, y - off, width + off * 2, height + off * 2, g);
 		}
 		
-		if (category != null && type != null)
-		{
+		if (category != null && type != null) {
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 			Helper.drawHorizontallyCenteredString("?", x, width, y + 50, g, 64);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -80,23 +72,19 @@ public class ItemSlot extends ClickableComponent
 	}
 	
 	@Override
-	public void update(int tick)
-	{}
+	public void update(int tick) {}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		if (state == 1 && pressEvent != null) pressEvent.trigger();
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
 		if (!contains(e.getX(), e.getY()) && !keepSelected) selected = false;
-		else if (e.getButton() == MouseEvent.BUTTON3 && rightClickClear)
-		{
+		else if (e.getButton() == MouseEvent.BUTTON3 && rightClickClear) {
 			category = null;
 			amount = 0;
 			type = null;
@@ -104,8 +92,7 @@ public class ItemSlot extends ClickableComponent
 	}
 	
 	@Override
-	public void drawTooltip(int x, int y, Graphics2D g)
-	{
+	public void drawTooltip(int x, int y, Graphics2D g) {
 		if (type == null) return;
 		
 		int width = g.getFontMetrics(g.getFont().deriveFont(25f)).stringWidth(category == null ? type.name : "Kategorie: " + category.name) + 20;

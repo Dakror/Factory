@@ -18,8 +18,7 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class ItemList extends Layer
-{
+public class ItemList extends Layer {
 	public static final int WIDTH = 360;
 	
 	public boolean killOnUnfocus = false;
@@ -30,30 +29,23 @@ public class ItemList extends Layer
 	
 	public ClickEvent generalEvent;
 	
-	public ItemList()
-	{}
+	public ItemList() {}
 	
-	public ItemList(Items items)
-	{
+	public ItemList(Items items) {
 		this.items = items;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		Helper.drawContainer(Game.getWidth() - WIDTH, 0, WIDTH, Game.getHeight() - 110, true, false, g);
 		drawComponents(g);
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		if (items != null)
-		{
-			for (Component c : components)
-			{
-				if (c instanceof ItemSlot && ((ItemSlot) c).category == null)
-				{
+	public void update(int tick) {
+		if (items != null) {
+			for (Component c : components) {
+				if (c instanceof ItemSlot && ((ItemSlot) c).category == null) {
 					((ItemSlot) c).amount = items.get(((ItemSlot) c).type);
 				}
 			}
@@ -63,23 +55,19 @@ public class ItemList extends Layer
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		if (!new Rectangle(Game.getWidth() - WIDTH, 0, WIDTH, Game.getHeight() - 110).contains(e.getPoint()) && killOnUnfocus) Game.currentGame.removeLayer(this);
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		components.clear();
 		
 		int perRow = (WIDTH - 40) / ItemSlot.SIZE;
 		
-		if (addCategories)
-		{
-			for (Category c : Category.values())
-			{
+		if (addCategories) {
+			for (Category c : Category.values()) {
 				ItemSlot is = new ItemSlot(Game.getWidth() - WIDTH + 20 + (c.ordinal() % perRow) * ItemSlot.SIZE, 20 + (c.ordinal() / perRow) * ItemSlot.SIZE, ItemType.getItemsByCategories(c)[0], 0);
 				is.keepClicked = true;
 				is.category = c;
@@ -89,8 +77,7 @@ public class ItemList extends Layer
 				components.add(is);
 			}
 		}
-		for (ItemType it : ItemType.values())
-		{
+		for (ItemType it : ItemType.values()) {
 			if (it == ItemType.nul) continue;
 			
 			ItemSlot is = new ItemSlot(Game.getWidth() - WIDTH + 20 + ((it.ordinal() + (addCategories ? Category.values().length : 0)) % perRow) * ItemSlot.SIZE, 20 + ((it.ordinal() + (addCategories ? Category.values().length : 0)) / perRow) * ItemSlot.SIZE, it, items == null ? 1 : items.get(it));
@@ -102,16 +89,14 @@ public class ItemList extends Layer
 		}
 	}
 	
-	public ItemSlot getSelectedItemSlot()
-	{
+	public ItemSlot getSelectedItemSlot() {
 		for (Component c : components)
 			if (c instanceof ItemSlot && ((ItemSlot) c).selected) return (ItemSlot) c;
 		
 		return null;
 	}
 	
-	public ArrayList<Filter> getSelectedItemSlots()
-	{
+	public ArrayList<Filter> getSelectedItemSlots() {
 		ArrayList<Filter> f = new ArrayList<>();
 		
 		for (Component c : components)
@@ -120,15 +105,11 @@ public class ItemList extends Layer
 		return f;
 	}
 	
-	public void setSelectedItemSlots(ArrayList<Filter> f)
-	{
+	public void setSelectedItemSlots(ArrayList<Filter> f) {
 		if (f.size() == 0) return;
-		for (Component c : components)
-		{
-			if (c instanceof ItemSlot)
-			{
-				for (Filter fi : f)
-				{
+		for (Component c : components) {
+			if (c instanceof ItemSlot) {
+				for (Filter fi : f) {
 					if (((ItemSlot) c).category == fi.c && ((ItemSlot) c).type == fi.t) ((ItemSlot) c).selected = true;
 				}
 			}

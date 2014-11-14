@@ -8,10 +8,8 @@ import de.dakror.factory.game.world.Block;
 /**
  * @author Dakror
  */
-public class SilverTube extends IronTube
-{
-	public SilverTube(float x, float y)
-	{
+public class SilverTube extends IronTube {
+	public SilverTube(float x, float y) {
 		super(x, y);
 		speed = 10f;
 		color = Color.decode("#3c6d76");
@@ -20,8 +18,7 @@ public class SilverTube extends IronTube
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new SilverTube(x / Block.SIZE, y / Block.SIZE);
 	}
 }

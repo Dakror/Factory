@@ -15,8 +15,7 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public enum ItemType
-{
+public enum ItemType {
 	stone(0, 0, "Stein", Category.block),
 	coal_ore(2, 0, "Kohle-Erz", Category.block),
 	iron_ore(3, 0, "Eisenerz", Category.ore, Category.block, Category.material_iron),
@@ -51,8 +50,7 @@ public enum ItemType
 	
 	;
 	
-	public static enum Category
-	{
+	public static enum Category {
 		block("Block"),
 		ore("Erz"),
 		dust("Staub"),
@@ -74,15 +72,13 @@ public enum ItemType
 		
 		public String name;
 		
-		private Category(String name)
-		{
+		private Category(String name) {
 			this.name = name;
 		}
 	}
 	
 	public static EnumMap<ItemType, BufferedImage> images;
-	static
-	{
+	static {
 		images = new EnumMap<>(ItemType.class);
 	}
 	
@@ -91,8 +87,7 @@ public enum ItemType
 	public List<Category> categories;
 	public String name;
 	
-	private ItemType(int tx, int ty, String name, Category... category)
-	{
+	private ItemType(int tx, int ty, String name, Category... category) {
 		this.tx = tx;
 		this.ty = ty;
 		categories = new ArrayList<>();
@@ -103,11 +98,9 @@ public enum ItemType
 		this.name = name;
 	}
 	
-	public void draw(int x, int y, Graphics2D g)
-	{
+	public void draw(int x, int y, Graphics2D g) {
 		if (images.containsKey(this)) g.drawImage(images.get(this), x, y, Game.w);
-		else
-		{
+		else {
 			BufferedImage bi = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g1 = (Graphics2D) bi.getGraphics();
 			Helper.drawImage(Game.getImage((categories.contains(Category.block) ? "blocks" : "items") + ".png"), 0, 0, 32, 32, tx * 16, ty * 16, 16, 16, g1);
@@ -118,27 +111,23 @@ public enum ItemType
 		}
 	}
 	
-	public boolean matchesFilter(Filter f)
-	{
+	public boolean matchesFilter(Filter f) {
 		if (f.c == null) return f.t == this;
 		return categories.contains(f.c);
 	}
 	
-	public boolean hasMaterial()
-	{
+	public boolean hasMaterial() {
 		return getMaterial() != null;
 	}
 	
-	public Category getMaterial()
-	{
+	public Category getMaterial() {
 		for (Category c : categories)
 			if (c.name().startsWith("material_")) return c;
 		
 		return null;
 	}
 	
-	public static ItemType[] getItemsByCategories(Category... categories)
-	{
+	public static ItemType[] getItemsByCategories(Category... categories) {
 		ArrayList<ItemType> t = new ArrayList<>();
 		List<Category> list = Arrays.asList(categories);
 		

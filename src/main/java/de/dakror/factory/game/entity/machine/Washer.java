@@ -14,10 +14,8 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class Washer extends Machine
-{
-	public Washer(float x, float y)
-	{
+public class Washer extends Machine {
+	public Washer(float x, float y) {
 		super(x, y, 3, 3);
 		
 		name = "Erzwaescher";
@@ -36,16 +34,14 @@ public class Washer extends Machine
 	}
 	
 	@Override
-	protected void drawIcon(Graphics2D g)
-	{
+	protected void drawIcon(Graphics2D g) {
 		int size = 64;
 		g.drawImage(Game.getImage("machine/washer.png"), x + (width - size) / 2, y + (height - size) / 2, size, size, Game.w);
 		if (working) Helper.drawCooldownCircle(x + Block.SIZE / 2, y + Block.SIZE / 2, Block.SIZE * 2, 0.6f, Color.black, 1 - (((tick - startTick) % speed) / (float) speed), g);
 	}
 	
 	@Override
-	public Entity clone()
-	{
+	public Entity clone() {
 		return new Washer(x / Block.SIZE, y / Block.SIZE);
 	}
 }
