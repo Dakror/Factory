@@ -51,7 +51,8 @@ public class Storage extends Machine {
 				return;
 			}
 			
-			if ((tick - startTick) % REQUEST_SPEED == 0 && items.getLength(outputFilters) > 0 && Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE)) {
+			if ((tick - startTick) % REQUEST_SPEED == 0 && items.getLength(outputFilters) > 0
+					&& Game.world.isTube(x + points.get(1).x * Block.SIZE, y + points.get(1).y * Block.SIZE + Block.SIZE)) {
 				ArrayList<ItemType> f = items.getFilled(outputFilters);
 				ItemType it = f.get((int) (Math.random() * f.size()));
 				

@@ -70,7 +70,8 @@ public class World extends Layer {
 		Graphics2D g = (Graphics2D) render.getGraphics();
 		for (int i = 0; i < blocks.length; i++) {
 			for (int j = 0; j < blocks[0].length; j++) {
-				Helper.drawImage(Game.getImage("blocks.png"), i * Block.SIZE, j * Block.SIZE, Block.SIZE, Block.SIZE, Block.values()[blocks[i][j]].tx * 16, Block.values()[blocks[i][j]].ty * 16, 16, 16, g);
+				Helper.drawImage(	Game.getImage("blocks.png"), i * Block.SIZE, j * Block.SIZE, Block.SIZE, Block.SIZE, Block.values()[blocks[i][j]].tx * 16,
+													Block.values()[blocks[i][j]].ty * 16, 16, 16, g);
 			}
 		}
 	}

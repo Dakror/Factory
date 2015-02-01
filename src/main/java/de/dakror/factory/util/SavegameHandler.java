@@ -66,7 +66,8 @@ public class SavegameHandler {
 					JSONArray entities = o.getJSONArray("entities");
 					for (int i = 0; i < entities.length(); i++) {
 						JSONObject e = entities.getJSONObject(i);
-						Entity entity = (Entity) Class.forName("de.dakror.factory.game.entity." + e.getString("c")).getConstructor(float.class, float.class).newInstance(e.getInt("x"), e.getInt("y"));
+						Entity entity = (Entity) Class.forName("de.dakror.factory.game.entity." + e.getString("c")).getConstructor(float.class, float.class).newInstance(e.getInt("x"),
+																																																																															e.getInt("y"));
 						entity.setData(e);
 						
 						Game.world.addEntitySilently(entity);

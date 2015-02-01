@@ -60,7 +60,8 @@ public class IronTube extends Tube {
 		
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < (576 / ItemSlot.SIZE); j++) {
-				final ItemSlot is = new ItemSlot((Game.getWidth() - 616) / 2 + 16 + j * ItemSlot.SIZE, (Game.getHeight() - 300) / 3 + 20 + i * ItemSlot.SIZE, outputFilters.get(i * 9 + j).t, outputFilters.get(i * 9 + j).t == null ? 0 : 1);
+				final ItemSlot is = new ItemSlot((Game.getWidth() - 616) / 2 + 16 + j * ItemSlot.SIZE, (Game.getHeight() - 300) / 3 + 20 + i * ItemSlot.SIZE,
+																					outputFilters.get(i * 9 + j).t, outputFilters.get(i * 9 + j).t == null ? 0 : 1);
 				is.category = outputFilters.get(i * 9 + j).c;
 				is.bg = arrows[i];
 				is.rightClickClear = true;
