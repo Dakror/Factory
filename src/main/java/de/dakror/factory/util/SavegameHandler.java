@@ -34,8 +34,7 @@ import de.dakror.factory.settings.CFG;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 import de.dakror.gamesetup.util.Compressor;
 
 /**
@@ -53,7 +52,7 @@ public class SavegameHandler {
 				try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					ImageIO.write(Game.world.getThumbnail(), "PNG", baos);
-					String string = new BASE64Encoder().encode(baos.toByteArray());
+					String string = Base64.getMimeEncoder().encodeToString(baos.toByteArray());
 					
 					file.createNewFile();
 					JSONObject o = Game.world.getData();
@@ -115,7 +114,7 @@ public class SavegameHandler {
 	
 	public static BufferedImage getBase64Thumbnail(String b64) {
 		try {
-			return ImageIO.read(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(b64)));
+			return ImageIO.read(new ByteArrayInputStream(Base64.getMimeDecoder().decode(b64)));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
